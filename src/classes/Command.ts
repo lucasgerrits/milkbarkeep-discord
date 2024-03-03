@@ -5,6 +5,7 @@ export class Command implements ChatInputApplicationCommandData {
     public name: string;
     public description: string;
     public run: RunFunction;
+    public options?;
     // public builder: Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">;
     
 
@@ -12,5 +13,6 @@ export class Command implements ChatInputApplicationCommandData {
         this.name = commandData.name;
         this.description = commandData.description;
         this.run = commandData.run;
+        this.options = commandData.options || [];
     }
 }

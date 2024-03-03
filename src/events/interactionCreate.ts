@@ -1,4 +1,4 @@
-import { Collection, CommandInteractionOptionResolver, Events, Interaction } from "discord.js";
+import { Channel, CommandInteractionOptionResolver, Events, Interaction, TextChannel } from "discord.js";
 import { Event } from "../classes/Event";
 import { Logger } from "../util/Logger";
 import { client } from "..";
@@ -10,7 +10,6 @@ export default new Event(
         if (!interaction.isChatInputCommand()) return;
 
         const command = client.commands.get(interaction.commandName);
-        console.log(command);
         if (!command) {
             console.error(`No command matching ${interaction.commandName} was found.`);
             return;
@@ -20,7 +19,8 @@ export default new Event(
         if (interaction.commandName === "anon") {
             logStr = "/anon ran.";
         } else {
-            logStr = `${interaction.user.tag} ran /${interaction.commandName} in #${interaction.channel}.`;
+            const channel: Channel = interaction.channel as TextChannel;
+            logStr = `${interaction.user.tag} ran /${interaction.commandName} in #${channel.name}.`;
         }
         Logger.log(logStr, "white");
 
