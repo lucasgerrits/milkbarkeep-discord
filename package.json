@@ -1,0 +1,21 @@
+{
+    "name": "milkbarkeep-discord",
+    "version": "1.0.0",
+    "description": "",
+    "main": "./prod/index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "@types/glob": "^8.1.0",
+        "@types/node": "^20.11.24",
+        "typescript": "^5.3.3"
+    },
+    "dependencies": {
+        "discord.js": "^14.14.1",
+        "glob": "^10.3.10"
+    }
+}
