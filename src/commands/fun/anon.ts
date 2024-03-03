@@ -1,0 +1,29 @@
+import { ApplicationCommandOptionType, Channel, TextChannel } from "discord.js";
+import { Command } from "../../classes/Command";
+import channelIDs from "../../../data/channelIDs.json";
+
+export default new Command({
+    name: "anon",
+    description: "Speak in the anonymous channel.",
+    options: [
+        {
+            name: "message",
+            description: "The text to be sent.",
+            type: ApplicationCommandOptionType.String,
+            required: true
+        }
+    ],
+    run: async (args): Promise<void> => {
+        const content: string = args.options.getString("message", true);
+        const channelID: string = channelIDs.anonymous;
+
+        try {
+            const channel: Channel = args.client.channels.cache.get(channelID) as TextChannel;
+            await channel.send(content);
+            await args.interaction.reply({ content: "Message success.", ephemeral: true });
+        } catch (error) {
+            console.error(error);
+            await args.interaction.reply({ content: "Something went wrong with sending the message.", ephemeral: true });
+        }
+    }
+});
