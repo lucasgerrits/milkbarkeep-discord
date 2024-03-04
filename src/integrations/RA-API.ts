@@ -18,7 +18,6 @@ import { users as raUsers } from "../../data/raUsers.json";
 import channelIDs from "../../data/channelIDs.json";
 import type { achievementData, userPoints } from "../types/RATypes";
 
-
 export class RetroAchievementsApi {
     private callDelayInMS: number = 175;
     private gmtOffsetInMS: number = 21600000;

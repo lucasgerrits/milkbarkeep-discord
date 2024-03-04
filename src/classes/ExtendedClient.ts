@@ -7,10 +7,12 @@ import {
 import { glob } from "glob";
 import { Event } from "./Event";
 import { Logger } from "../util/Logger";
+import { RetroAchievementsApi } from "../integrations/RA-API";
 import { guildId, token } from "../../data/discordSecrets.json";
 import type { CommandType } from "../types/CommandTypes";
 
 export class ExtendedClient extends Client {
+    public ra: RetroAchievementsApi;
     public commands: Collection<string, CommandType> = new Collection();
     private slashCommands: ApplicationCommandDataResolvable[] = [];
 
@@ -29,6 +31,9 @@ export class ExtendedClient extends Client {
                 repliedUser: false,
             },
         })
+
+        this.start();
+        this.ra = new RetroAchievementsApi();
     }
 
     start(): void {
