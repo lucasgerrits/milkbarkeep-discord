@@ -7,12 +7,14 @@ import {
 import { glob } from "glob";
 import { Event } from "./Event";
 import { Logger } from "../util/Logger";
+import { TimerManager } from "./TimerManager";
 import { RetroAchievementsApi } from "../integrations/RA-API";
 import { guildId, token } from "../../data/discordSecrets.json";
 import type { CommandType } from "../types/CommandTypes";
 
 export class ExtendedClient extends Client {
     public ra: RetroAchievementsApi;
+    public timers: TimerManager;
     public commands: Collection<string, CommandType> = new Collection();
     private slashCommands: ApplicationCommandDataResolvable[] = [];
     public shouldRegisterCommands: boolean = false;
@@ -36,6 +38,7 @@ export class ExtendedClient extends Client {
         this.shouldRegisterCommands = shouldRegisterCommands;
         this.start();
         this.ra = new RetroAchievementsApi();
+        this.timers = new TimerManager(this);
     }
 
     start(): void {
