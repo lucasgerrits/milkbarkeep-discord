@@ -1,9 +1,10 @@
-import { ApplicationCommandOptionType, Channel, ChannelType, ClientUser, TextChannel } from "discord.js";
+import { ClientUser, PermissionFlagsBits } from "discord.js";
 import { Command } from "../../classes/Command";
 
 export default new Command({
     name: "set-avatar",
     description: "Sets the avatar of the bot.",
+    defaultMemberPermissions: PermissionFlagsBits.Administrator,
     run: async (args): Promise<void> => {
         await args.interaction.deferReply();
 

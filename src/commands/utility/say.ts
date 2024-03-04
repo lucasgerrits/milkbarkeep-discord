@@ -1,9 +1,10 @@
-import { ApplicationCommandOptionType, Channel, ChannelType, TextChannel } from "discord.js";
+import { ApplicationCommandOptionType, Channel, ChannelType, PermissionFlagsBits, TextChannel } from "discord.js";
 import { Command } from "../../classes/Command";
 
 export default new Command({
     name: "say",
     description: "Speak on Barkeep's behalf.",
+    defaultMemberPermissions: PermissionFlagsBits.Administrator,
     options: [
         {
             name: "message",
