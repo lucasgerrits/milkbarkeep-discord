@@ -18,7 +18,9 @@ export default new Event(
         const bar: string = "========================================================================";
         console.log(Logger.colorize(bar, "red"));
 
-        client.registerCommands();
+        if (client.shouldRegisterCommands) {
+            client.registerCommands();
+        }
 
         const readyStr: string = `${client.user?.tag} logged in and ready to serve!`;
         Logger.log(readyStr, "red");

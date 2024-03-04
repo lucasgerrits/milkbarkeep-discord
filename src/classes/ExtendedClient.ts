@@ -15,8 +15,9 @@ export class ExtendedClient extends Client {
     public ra: RetroAchievementsApi;
     public commands: Collection<string, CommandType> = new Collection();
     private slashCommands: ApplicationCommandDataResolvable[] = [];
+    public shouldRegisterCommands: boolean = false;
 
-    constructor() {
+    constructor(shouldRegisterCommands: boolean = false) {
         super({
             intents: [
                 GatewayIntentBits.Guilds,
@@ -32,6 +33,7 @@ export class ExtendedClient extends Client {
             },
         })
 
+        this.shouldRegisterCommands = shouldRegisterCommands;
         this.start();
         this.ra = new RetroAchievementsApi();
     }
@@ -65,12 +67,7 @@ export class ExtendedClient extends Client {
     }
 
     async registerCommands(): Promise<void> {
-        // Register to Discord
         Logger.log(`Registering ${this.slashCommands.length} slash commands...`, "red");
-        await this.guilds.cache.get(guildId)?.commands.set([]);
         await this.guilds.cache.get(guildId)?.commands.set(this.slashCommands);
-
-        await this.application?.commands.set([]);
-        await this.application?.commands.set(this.slashCommands);
     }
 }
