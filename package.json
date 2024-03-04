@@ -16,7 +16,7 @@
     },
     "dependencies": {
         "@retroachievements/api": "^1.5.1",
-        "discord.js": "^14.14.1",
+        "discord.js": "^14.12.1",
         "glob": "^10.3.10"
     }
 }
