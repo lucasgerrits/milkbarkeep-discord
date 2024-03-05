@@ -12,8 +12,11 @@ export class TimerManager {
 
     constructor(client: ExtendedClient) {
         this.clientRef = client;
+    }
 
+    public initialize(): void {
         this.initialTimeUntilNextHalfHour();
+        this.initialTimeUntilMidnight();
     }
 
     // #region Determine Waits

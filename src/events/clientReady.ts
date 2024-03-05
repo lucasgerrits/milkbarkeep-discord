@@ -27,6 +27,6 @@ export default new Event(
 
         // client.user.setActivity("gorpin", { type: ActivityType.Custom });
 
-        // client.timer.initialize(client);
+        client.timers.initialize();
     }
 );
