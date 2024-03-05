@@ -13,6 +13,19 @@ export class Util {
         return Math.floor(Math.random() * (max - min + 1) + min); // Min and max are inclusive
     }
 
+    static msToTime(duration: number): string {
+        const milliseconds: number = Math.floor((duration % 1000) / 100);
+        const seconds: number = Math.floor((duration / 1000) % 60);
+        const minutes: number = Math.floor((duration / (1000 * 60)) % 60);
+        const hours: number = Math.floor((duration / (1000 * 60 * 60)) % 24);
+
+        const hoursStr: string = (hours < 10) ? "0" + hours : hours.toString();
+        const minutesStr: string = (minutes < 10) ? "0" + minutes : minutes.toString();
+        const secondsStr: string = (seconds < 10) ? "0" + seconds : seconds.toString();
+
+        return hoursStr + ":" + minutesStr + ":" + secondsStr + "." + milliseconds;
+    }
+
     static async sleep(ms: number): Promise<void> {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
