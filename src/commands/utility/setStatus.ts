@@ -17,7 +17,15 @@ export default new Command({
         const statusText = args.options.getString("text", true);
         try {
             const clientUser: ClientUser = args.client.user as ClientUser;
-            clientUser.setActivity(statusText); // { type: ActivityType.Custom }
+            clientUser.setPresence({
+                activities: [
+                    {
+                        type: ActivityType.Custom,
+                        name: "custom",
+                        state: statusText,
+                    }
+                ]
+            }); // 
             await args.interaction.reply({ content: "Status set successfully.", ephemeral: true });
         } catch (error) {
             console.log(error);
