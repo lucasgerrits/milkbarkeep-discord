@@ -27,8 +27,9 @@ export default new Command({
 
         try {
             await args.client.ra.updateFeed(args.client, toPostChannelID, minutesToLookBack);
-            await args.interaction.editReply({
-                content: "Update successful."
+            await args.interaction.reply({
+                content: "Update successful.",
+                ephemeral: true,
             });
         } catch (error) {
             console.log(error);
