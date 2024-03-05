@@ -1,4 +1,4 @@
-import {  EmbedBuilder } from "discord.js";
+import { EmbedBuilder } from "discord.js";
 import { Command } from "../../classes/Command";
 
 export default new Command({
