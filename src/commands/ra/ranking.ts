@@ -3,7 +3,7 @@ import { Command } from "../../classes/Command";
 import type { userPoints } from "../../types/RATypes";
 
 export default new Command({
-    name: "ranking",
+    name: "ra-ranking",
     description: "Get a ranking of RA users in this Discord.",
     options: [
         {
