@@ -12,6 +12,7 @@ import {
 import { ColorResolvable, EmbedBuilder, TextChannel } from "discord.js";
 import { ExtendedClient } from "../classes/ExtendedClient";
 import { Logger } from "../util/Logger";
+import { Timestamps } from "../classes/Timestamps";
 import { Util } from "../util/Util";
 import { retroAchievements as api } from "../../data/apiKeys.json";
 import { users as raUsers } from "../../data/raUsers.json";
@@ -169,10 +170,12 @@ export class RetroAchievementsApi {
         const profileURL: string = baseURL + "user/" + data.userName;
         const badgeURL: string = baseURL + data.badgeUrl;
         const gameURL: string = baseURL + "game/" + data.gameId;
-        const gameString: string = `[${data.gameTitle}](${gameURL})`;
+        const gameString: string = `[${data.gameTitle}](${gameURL})\n${data.consoleName}`;
         const achievementURL: string = baseURL + "achievement/" + data.achievementId;
         const achievementString: string = `${data.title} (${data.points})`;
         const color: ColorResolvable = this.determinePointValueColor(data.points) as ColorResolvable;
+        const centralUSDate = Util.gmtStringToCTDateObj(data.date);
+        const discordTimestamp: string = Timestamps.default(centralUSDate);
 
         const embed: EmbedBuilder = new EmbedBuilder()
             .setColor(color)
@@ -187,8 +190,8 @@ export class RetroAchievementsApi {
             .setThumbnail(badgeURL)
             .addFields(
                 { name: "Game:", value: gameString, inline: false },
-                { name: "Date:", value: data.date, inline: true },
-                { name: "Console:", value: data.consoleName, inline: true },
+                { name: "DateTime (GMT/RA):", value: data.date, inline: true },
+                { name: "DateTime (Yours):", value: discordTimestamp, inline: true },
             );
         return embed;
     }
