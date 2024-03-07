@@ -44,22 +44,23 @@ export class TimerManager {
 
     private initialTimeUntilMidnight(): void {
         // Get midnight
-        const later = new Date();
-        later.setHours(24, 1, 0, 0); // hours, minutes, seconds, ms
-        const midnight = later.getTime();
+        const later: Date = new Date();
+        later.setHours(0, 0, 0, 0); // Hours, minutes, seconds, ms
+        later.setDate(later.getDate() + 1); // Add a day
+        later.setMinutes(1); // Add an extra minute to curb early checks
+        const midnight: number = later.getTime();
 
         // Get current timestamp
-        const now = new Date().getTime();
+        const now: number = new Date().getTime();
 
         // Subtract to get remaining time
-        const remainingMS = midnight - now;
+        const remainingMS: number = midnight - now;
 
-        const remainingTime = Util.msToTime(remainingMS);
-        const remainingStr = remainingTime + " remaining until daily event checks at midnight.";
-        Logger.red(remainingStr);
-        // client.channels.cache.get("95663899566669824").send(remainingStr);
+        const remainingTime: string = Util.msToTime(remainingMS);
+        const remainingConsoleStr: string = remainingTime + " remaining until daily event checks at midnight.";
+        Logger.red(remainingConsoleStr);
 
-        const oneDayInMS = 86400000;
+        const oneDayInMS: number = 86400000;
         this.midnightWait = setTimeout(() => {
             this.midnightWait = setInterval(() => {
                 this.midnightActivities();
