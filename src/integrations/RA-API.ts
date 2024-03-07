@@ -218,9 +218,7 @@ export class RetroAchievementsApi {
             const embed: EmbedBuilder = await this.createAchievementEmbed(row);
             embeds.push(embed);
         }
-
         const chunkedEmbeds: Array<EmbedBuilder[]> = Util.chunkArray(embeds, 10);
-        console.log(chunkedEmbeds);
 
         // Send all embeds in one message to chat
         try {

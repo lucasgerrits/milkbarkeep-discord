@@ -1,10 +1,10 @@
 export class Util {
-    static chunkArray(arr: Array<any>, size: number): Array<any> {
-        const chunks: Array<any> = [];
-        for (let i: number = 0; i < arr.length; i += size) {
-            chunks.push(arr.slice(i, size));
+    static chunkArray(arr: Array<any>, chunkSize: number): Array<any> {
+        const newArr: Array<any> = [];
+        for (let i: number = 0; i < arr.length; i += chunkSize) {
+            newArr.push(arr.slice(i, i + chunkSize));
         }
-        return chunks;
+        return newArr;
     }
 
     static getRandomIntegerInclusive(min: number, max: number): number {
