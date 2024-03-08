@@ -43,13 +43,12 @@ export default new Command({
                     const percentage: string = ((parseInt(data.launches) / parseInt(data.total_launches)) * 100).toFixed(2);
                     const timestamp: string = Timestamps.default(new Date(data.most_recent));
 
-                    formattedText = `
-                        **User:** [\`${userArg}\`](https://www.twitch.tv/${userArg})
-                        **Rank:** ${data.rank} (of ${data.total_users})
-                        **Launches:** ${data.launches}
-                        **Contribution:** ${percentage}% (of ${data.total_launches})
-                        **Most Recent:** ${timestamp}
-                    `;
+                    formattedText = `` +
+                        `**User:** [\`${userArg}\`](https://www.twitch.tv/${userArg})\n` +
+                        `**Rank:** ${data.rank} (of ${data.total_users})\n` +
+                        `**Launches:** ${data.launches}\n` +
+                        `**Contribution:** ${percentage}% (of ${data.total_launches})\n` +
+                        `**Most Recent:** ${timestamp}`;
                 }
 
                 const embed: EmbedBuilder = new EmbedBuilder()
