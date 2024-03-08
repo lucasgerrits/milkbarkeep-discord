@@ -117,30 +117,42 @@ export class RetroAchievementsApi {
      * Docs: https://api-docs.retroachievements.org/v1/get-user-recent-achievements.html
      * Repo: https://github.com/RetroAchievements/api-js/blob/main/src/user/getUserRecentAchievements.ts
      */
-    public async getRecentList(minutesToLookBack: number = 30): Promise<Array<achievementData>> {
+    public async getRecentList(client: ExtendedClient, minutesToLookBack: number = 30): Promise<Array<achievementData>> {
         // Request normally defaults to 60
         const recent: achievementData[] = [];
-        for (const user of this.users) {
-            const userEarnedRecent: UserRecentAchievement[] = await getUserRecentAchievements(this.auth, {
-                userName: user,
-                recentMinutes: minutesToLookBack,
+        try {
+            for (const user of this.users) {
+                const userEarnedRecent: UserRecentAchievement[] = await getUserRecentAchievements(this.auth, {
+                    userName: user,
+                    recentMinutes: minutesToLookBack,
+                });
+                for (const achievement of userEarnedRecent) {
+                    recent.push({ ...achievement, userName: user });
+                }
+                // recent.push(...userEarnedRecent);
+                await Util.sleep(this.callDelayInMS);
+            }
+            recent.sort((a: achievementData, b: achievementData) => {
+                if (a.date > b.date) {
+                    return -1;
+                } else if (b.date < a.date) {
+                    return 1;
+                } else {
+                    return 0;
+                }
             });
-            for (const achievement of userEarnedRecent) {
-                recent.push({ ...achievement, userName: user });
+            recent.reverse();
+        } catch (error: any) {
+            console.error("An error occurred while fetching user recent achievements: ", error);
+            if (error.response && error.response.status) {
+                console.log("Status code: ", error.response.status);
+                if (error.response.status === 522) {
+                    const channelID: string = channelIDs.raFeed;
+                    const channel: TextChannel = client.channels.cache.get(channelID) as TextChannel;
+                    await channel.send({ content: "HTTP Error: Status 522 - The RA servers appear to be down." });
+                }
             }
-            // recent.push(...userEarnedRecent);
-            await Util.sleep(this.callDelayInMS);
         }
-        recent.sort((a: achievementData, b: achievementData) => {
-            if (a.date > b.date) {
-                return -1;
-            } else if (b.date < a.date) {
-                return 1;
-            } else {
-                return 0;
-            }
-        });
-        recent.reverse();
         return recent;
     }
 
@@ -200,7 +212,7 @@ export class RetroAchievementsApi {
         // Get array of recent achievements
         let recent: achievementData[];
         try {
-            recent = await this.getRecentList(minutesToLookBack);
+            recent = await this.getRecentList(client, minutesToLookBack);
             if (recent.length === 0) {
                 this.log("No new achievements found.");
                 return;
