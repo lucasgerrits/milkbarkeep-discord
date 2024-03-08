@@ -10,7 +10,6 @@ export class Oddball {
 
     constructor(interactionUser: User) {
         this.oddballArr = this.readJson() ?? [];
-        console.log(this.oddballArr);
         this.interactionUser = interactionUser;
         this.dropUser = this.updateDropUser();
         this.pickupUser = this.updateOrAddPickupUser();
@@ -19,11 +18,9 @@ export class Oddball {
     }
 
     private readJson(): Array<OddballData> | void {
-        console.log(this.jsonFile);
         try {
             const data: string = fs.readFileSync(this.jsonFile, "utf8");
             try{
-                console.log(data);
                 return JSON.parse(data);
             } catch (parseError) {
                 console.error("Error parsing JSON: ", parseError);
@@ -35,7 +32,6 @@ export class Oddball {
 
     private writeJson(): void {
         const updatedData = JSON.stringify(this.oddballArr, null, 4);
-        console.log(updatedData);
         fs.writeFile(this.jsonFile, updatedData, "utf8", (err) => {
             if (err) {
                 console.error("Error writing file: ", err);
@@ -57,7 +53,6 @@ export class Oddball {
         // Properties to search for
         const propName = "userID";
         const propValue = userIDToLocate;
-        console.log(userIDToLocate);
         const foundIndex = this.oddballArr.findIndex(obj => obj[propName] === propValue);
         return foundIndex;
     }
@@ -68,7 +63,6 @@ export class Oddball {
         const propName = "hasBall";
         const propValue = true;
         const foundIndex = this.oddballArr.findIndex(obj => obj[propName] === propValue);
-        console.log(foundIndex);
         return foundIndex;
     }
 
@@ -93,7 +87,6 @@ export class Oddball {
     private updateDropUser(): OddballData | undefined {
         const lastDropTimestamp: string = new Date().toISOString();
         const userIndex: number = this.getDropUserIndex();
-        console.log(userIndex);
         if (userIndex === -1) {
             return undefined;
         } else {
@@ -118,7 +111,6 @@ export class Oddball {
                 rank: this.oddballArr.length + 1,
             }
             this.oddballArr.push(newUser);
-            console.log(this.oddballArr);
             return newUser;
         } else {
             // Update existing user
