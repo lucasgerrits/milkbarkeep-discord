@@ -1,4 +1,4 @@
-import { APIEmbedField, Channel, EmbedBuilder, TextChannel, User, userMention } from "discord.js";
+import { EmbedBuilder, userMention } from "discord.js";
 import { Command } from "../../classes/Command";
 import { Oddball } from "../../classes/Oddball";
 

@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType, EmbedBuilder } from "discord.js";
+import { ApplicationCommandOptionType } from "discord.js";
 import { Command } from "../../classes/Command";
 import { birthdays } from "../../../data/birthdays.json";
 

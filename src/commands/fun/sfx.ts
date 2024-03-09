@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType, Channel, TextChannel } from "discord.js";
+import { ApplicationCommandOptionType } from "discord.js";
 import { Command } from "../../classes/Command";
 
 export default new Command({
