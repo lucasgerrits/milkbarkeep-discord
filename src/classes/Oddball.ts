@@ -1,15 +1,16 @@
 import * as fs from "fs";
 import { User } from "discord.js";
+import { Util } from "../util/Util";
 
 export class Oddball {
-    private jsonFile: string = `${__dirname}/../../data/oddballStats.json`;
+    private static jsonFile: string = `${__dirname}/../../data/oddballStats.json`;
     private oddballArr: Array<OddballData>;
     private interactionUser: User;
     public dropUser: OddballData | undefined;
     public pickupUser: OddballData;
 
     constructor(interactionUser: User) {
-        this.oddballArr = this.readJson() ?? [];
+        this.oddballArr = Oddball.readJson() ?? [];
         this.interactionUser = interactionUser;
         this.dropUser = this.updateDropUser();
         this.pickupUser = this.updateOrAddPickupUser();
@@ -17,22 +18,18 @@ export class Oddball {
         this.writeJson();
     }
 
-    private readJson(): Array<OddballData> | void {
+    public static readJson(): Array<OddballData> | null {
         try {
-            const data: string = fs.readFileSync(this.jsonFile, "utf8");
-            try{
-                return JSON.parse(data);
-            } catch (parseError) {
-                console.error("Error parsing JSON: ", parseError);
-            }
-        } catch (readError) {
-            console.error("Error reading file: ", readError);
+            return Util.readJsonSync(Oddball.jsonFile) as Array<OddballData>;
+        } catch (parseError) {
+            console.error("Error parsing JSON: ", parseError);
+            return null;
         }
     }
 
     private writeJson(): void {
         const updatedData = JSON.stringify(this.oddballArr, null, 4);
-        fs.writeFile(this.jsonFile, updatedData, "utf8", (err) => {
+        fs.writeFile(Oddball.jsonFile, updatedData, "utf8", (err) => {
             if (err) {
                 console.error("Error writing file: ", err);
                 return;

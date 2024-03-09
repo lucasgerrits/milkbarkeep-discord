@@ -39,8 +39,8 @@ export default new Command({
 
         // Create message embed
         const embed: EmbedBuilder = new EmbedBuilder()
-        .setColor("#000000")
-        .addFields(fields);
+            .setColor("#000000")
+            .addFields(fields);
 
         // Send to Discord
         try {

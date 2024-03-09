@@ -1,3 +1,5 @@
+import * as fs from "fs";
+
 export class Util {
     static chunkArray(arr: Array<any>, chunkSize: number): Array<any> {
         const newArr: Array<any> = [];
@@ -30,6 +32,19 @@ export class Util {
         const secondsStr: string = (seconds < 10) ? "0" + seconds : seconds.toString();
 
         return hoursStr + ":" + minutesStr + ":" + secondsStr + "." + milliseconds;
+    }
+
+    static readJsonSync(fileName: string): unknown | null {
+        try {
+            const data: string = fs.readFileSync(fileName, "utf8");
+            try{
+                return JSON.parse(data);
+            } catch (parseError) {
+                console.error("Error parsing JSON: ", parseError);
+            }
+        } catch (readError) {
+            console.error("Error reading file: ", readError);
+        }
     }
 
     static async sleep(ms: number): Promise<void> {
