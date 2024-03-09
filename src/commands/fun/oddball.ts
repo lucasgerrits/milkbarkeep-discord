@@ -13,28 +13,24 @@ export default new Command({
         // Call game logic
         const oddball = new Oddball(user);
 
-        // Get relevant data
+        // Format data for embed
         const fields: Array<APIEmbedField> = [];
+
+        const createField = (user: OddballData, prefix: string, includeIncrease: boolean = false): APIEmbedField => {
+            let userStr: string = `#${user.rank}: ${userMention(user.userID)} (${user.score})`;
+            userStr += (includeIncrease) ? ` (+${user.lastIncrease})` : "";
+            return { name: "Ball still held by:", value: userStr, inline: false };
+        };
 
         // In the event someone uses the command again while holding the ball
         if (oddball.dropUser !== undefined && oddball.dropUser.userID === oddball.pickupUser.userID) {
-            const keepUserStr: string = `#${oddball.dropUser.rank}: ` + userMention(oddball.dropUser.userID) +
-                ` (${oddball.dropUser.score}) (+${oddball.dropUser.lastIncrease})`;
-            const keepField: APIEmbedField = { name: "Ball still held by:", value: keepUserStr, inline: false };
-            fields.push(keepField);
+            fields.push(createField(oddball.dropUser, "Ball still held by:", true));
         } else {
             // First ever ball pickup would have no dropUser
             if (oddball.dropUser !== undefined) {
-                const dropUserStr: string = `#${oddball.dropUser.rank}: ` + userMention(oddball.dropUser.userID) +
-                    ` (${oddball.dropUser.score}) (+${oddball.dropUser.lastIncrease})`;
-                const dropField: APIEmbedField = { name: "Ball dropped by:", value: dropUserStr, inline: false };
-                fields.push(dropField);
+                fields.push(createField(oddball.dropUser, "Ball dropped by:", true));
             }
-            const pickupUserStr: string = `#${oddball.pickupUser.rank}: ` +
-                userMention(oddball.pickupUser.userID) +
-                ` (${oddball.pickupUser.score})`;
-            const pickupField: APIEmbedField = { name: "Ball taken by:", value: pickupUserStr, inline: false };
-            fields.push(pickupField);
+            fields.push(createField(oddball.pickupUser, "Ball dropped by:"));
         }
 
         // Create message embed
