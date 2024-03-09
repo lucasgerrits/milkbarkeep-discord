@@ -18,17 +18,15 @@ export default new Command({
 
         // In the event someone uses the command again while holding the ball
         if (oddball.dropUser !== undefined && oddball.dropUser.userID === oddball.pickupUser.userID) {
-            const keepUserStr: string = `#${oddball.dropUser.rank}: ` +
-                    userMention(oddball.dropUser.userID) +
-                    ` (${oddball.dropUser.score})`;
+            const keepUserStr: string = `#${oddball.dropUser.rank}: ` + userMention(oddball.dropUser.userID) +
+                ` (${oddball.dropUser.score}) (+${oddball.dropUser.lastIncrease})`;
             const keepField: APIEmbedField = { name: "Ball still held by:", value: keepUserStr, inline: false };
             fields.push(keepField);
         } else {
             // First ever ball pickup would have no dropUser
             if (oddball.dropUser !== undefined) {
-                const dropUserStr: string = `#${oddball.dropUser.rank}: ` +
-                    userMention(oddball.dropUser.userID) +
-                    ` (${oddball.dropUser.score})`;
+                const dropUserStr: string = `#${oddball.dropUser.rank}: ` + userMention(oddball.dropUser.userID) +
+                    ` (${oddball.dropUser.score}) (+${oddball.dropUser.lastIncrease})`;
                 const dropField: APIEmbedField = { name: "Ball dropped by:", value: dropUserStr, inline: false };
                 fields.push(dropField);
             }

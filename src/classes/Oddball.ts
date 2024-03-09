@@ -80,6 +80,7 @@ export class Oddball {
             const lastPickup: string = this.oddballArr[userIndex].lastPickup as string;
             const lastDrop: string = this.oddballArr[userIndex].lastDrop as string;
             scoreToAdd = this.getSecondsDifference(lastDrop, lastPickup);
+            this.oddballArr[userIndex].lastIncrease = scoreToAdd;
             this.oddballArr[userIndex].score += scoreToAdd;
         }
     }

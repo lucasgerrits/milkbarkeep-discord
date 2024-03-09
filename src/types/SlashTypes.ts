@@ -4,6 +4,7 @@ interface OddballData {
     lastPickup?: string;
     lastDrop?: string;
     score: number;
+    lastIncrease?: number;
     rank: number;
     hasBall: boolean;
 }
