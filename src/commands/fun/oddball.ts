@@ -19,7 +19,7 @@ export default new Command({
         const createField = (user: OddballData, prefix: string, includeIncrease: boolean = false): APIEmbedField => {
             let userStr: string = `#${user.rank}: ${userMention(user.userID)} (${user.score})`;
             userStr += (includeIncrease) ? ` (+${user.lastIncrease})` : "";
-            return { name: "Ball still held by:", value: userStr, inline: false };
+            return { name: prefix, value: userStr, inline: false };
         };
 
         // In the event someone uses the command again while holding the ball
