@@ -30,7 +30,7 @@ export default new Command({
             if (oddball.dropUser !== undefined) {
                 fields.push(createField(oddball.dropUser, "Ball dropped by:", true));
             }
-            fields.push(createField(oddball.pickupUser, "Ball dropped by:"));
+            fields.push(createField(oddball.pickupUser, "Ball taken by:"));
         }
 
         // Create message embed
