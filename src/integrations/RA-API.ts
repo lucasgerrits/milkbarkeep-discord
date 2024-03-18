@@ -1,11 +1,15 @@
 import { 
+    AchievementUnlocksMetadata,
     AuthObject, 
     DatedUserAchievement, 
+    GameExtended, 
     UserPoints, 
     UserRecentAchievement, 
     buildAuthorization, 
+    getAchievementUnlocks, 
     getAchievementsEarnedBetween, 
     getAchievementsEarnedOnDay, 
+    getGameExtended, 
     getUserPoints,
     getUserRecentAchievements
 } from "@retroachievements/api";
@@ -42,6 +46,31 @@ export class RetroAchievementsApi {
     }
 
     // #region API CALLS
+
+    /**
+     * Docs: https://api-docs.retroachievements.org/v1/get-achievement-unlocks.html
+     * Repo: https://github.com/RetroAchievements/api-js/blob/main/src/achievement/getAchievementUnlocks.ts
+     */
+    public async getAchievementUnlocks(id: number, count: number = 0, offset: number = 50): Promise<AchievementUnlocksMetadata> {
+        const achievement: AchievementUnlocksMetadata = await getAchievementUnlocks(this.auth, {
+            achievementId: id,
+            count: count,
+            offset: offset,
+        });
+        return achievement;
+    }
+
+    /**
+     * Docs: https://api-docs.retroachievements.org/v1/get-game-extended.html
+     * Repo: https://github.com/RetroAchievements/api-js/blob/main/src/game/getGameExtended.ts
+     */
+    public async getGameExtended(id: number, unofficialSet: boolean = false): Promise<GameExtended> {
+        const game: GameExtended = await getGameExtended(this.auth, {
+            gameId: id,
+            isRequestingUnofficialAchievements: unofficialSet
+        });
+        return game;
+    }
 
     /**
      * Docs: https://api-docs.retroachievements.org/v1/get-user-points.html
@@ -183,7 +212,7 @@ export class RetroAchievementsApi {
         const badgeURL: string = baseURL + data.badgeUrl;
         const gameURL: string = baseURL + "game/" + data.gameId;
         const gameString: string = `[${data.gameTitle}](${gameURL})\n${data.consoleName}`;
-        const achievementURL: string = baseURL + "achievement/" + data.achievementId;
+        const achievementUrl: string = baseURL + "achievement/" + data.achievementId;
         const achievementString: string = `${data.title} (${data.points})`;
         const color: ColorResolvable = this.determinePointValueColor(data.points) as ColorResolvable;
         const centralUSDate = Util.gmtStringToCTDateObj(data.date);
@@ -192,7 +221,7 @@ export class RetroAchievementsApi {
         const embed: EmbedBuilder = new EmbedBuilder()
             .setColor(color)
             .setTitle(achievementString)
-            .setURL(achievementURL)
+            .setURL(achievementUrl)
             .setAuthor({
                 name: data.userName,
                 iconURL: avatarURL,
