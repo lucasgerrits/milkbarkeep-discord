@@ -5,7 +5,6 @@ import { OpenAIApi } from "../../integrations/OpenAI-API";
 export default new Command({
     name: "heybarkeep",
     description: "Ask Barkeep a question!",
-    defaultMemberPermissions: PermissionFlagsBits.Administrator,
     options: [
         {
             name: "prompt",
