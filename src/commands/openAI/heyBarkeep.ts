@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType, ColorResolvable, EmbedBuilder, PermissionFlagsBits, userMention } from "discord.js";
+import { ApplicationCommandOptionType, ColorResolvable, EmbedBuilder } from "discord.js";
 import { Command } from "../../classes/Command";
 import { OpenAIApi } from "../../integrations/OpenAI-API";
 
@@ -22,7 +22,7 @@ export default new Command({
         const response = await openAI.chat(prompt);
 
         // User embed
-        const userColor: ColorResolvable = args.interaction.user.hexAccentColor ?? "#000000";
+        const userColor: ColorResolvable = "#1E1F22";
         const userDisplay: string = args.interaction.user.displayName;
         const userAvatar: string = args.interaction.user.displayAvatarURL();
 
@@ -48,6 +48,7 @@ export default new Command({
                 iconURL: botAvatar,
             })
 
+        // Send Discord message
         try {
             await args.interaction.editReply({
                 embeds: embeds,
