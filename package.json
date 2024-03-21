@@ -16,9 +16,11 @@
     },
     "dependencies": {
         "@retroachievements/api": "^1.5.1",
+        "@types/selenium-webdriver": "^4.1.22",
         "discord.js": "^14.14.1",
         "glob": "^10.3.10",
         "openai": "^4.29.1",
+        "selenium-webdriver": "^4.18.1",
         "zalgo-js": "^1.0.0"
     }
 }
