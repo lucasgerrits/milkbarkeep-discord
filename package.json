@@ -18,6 +18,7 @@
         "@retroachievements/api": "^1.5.1",
         "discord.js": "^14.14.1",
         "glob": "^10.3.10",
-        "openai": "^4.29.1"
+        "openai": "^4.29.1",
+        "zalgo-js": "^1.0.0"
     }
 }
