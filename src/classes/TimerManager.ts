@@ -1,11 +1,13 @@
 import { ExtendedClient } from "./ExtendedClient";
 import { Logger } from "../util/Logger";
+import { OpenWeatherMapApi } from "../integrations/OpenWeatherMap-API";
 import { SeleniumWebDriver } from "../integrations/SeleniumWebDriver";
-import { TextChannel } from "discord.js";
-import { Timestamps } from "./Timestamps";
+import { EmbedBuilder, TextChannel } from "discord.js";
 import { Util } from "../util/Util";
 import { birthdays } from "../../data/birthdays.json";
 import channelIDs from "../../data/channelIDs.json";
+import type { CurrentResponse } from "openweathermap-ts/dist/types";
+
 
 export class TimerManager {
     clientRef: ExtendedClient;
@@ -64,24 +66,25 @@ export class TimerManager {
         const remainingMS: number = next60 - now;
 
         const appCamToDisc = async () => {
-            // Get cam screen
+            // Get screenshot data
             const driver: SeleniumWebDriver = new SeleniumWebDriver();
             const screenString: string = await driver.getAppletonCamScreen();
             const base64Data: string = screenString.replace(/^data:image\/png;base64,/, '');
             const buffer: Buffer = Buffer.from(base64Data, "base64");
 
-            // Get timestamps
-            const now: Date = new Date();
-            const longDateTime: string = Timestamps.longDateTime(now);
-            const relativeTime: string = Timestamps.relative(now);
-            const outputStr: string = `${longDateTime} (${relativeTime})`;
+            // Get weather info
+            const owm: OpenWeatherMapApi = new OpenWeatherMapApi();
+            const weatherData: CurrentResponse = await owm.getCurrentWeatherByZipcode(54911, "US");
+
+            // Create embed
+            const embed: EmbedBuilder = await owm.createEmbed(weatherData, "attachment://cam.png");
 
             // Send to Discord
             try {
                 const channelId: string = channelIDs.appletonCam;
                 const channel: TextChannel = this.clientRef.channels.cache.get(channelId) as TextChannel;
                 await channel.send({
-                    content: outputStr,
+                    embeds: [ embed ],
                     files: [{
                         attachment: buffer,
                         name: "cam.png"
