@@ -12,6 +12,8 @@ A Discord chatbot written in TypeScript for Node.js using the discord.js library
 
 [RetroAchievements api-js](https://github.com/RetroAchievements/api-js)
 
+[Selenium](https://github.com/SeleniumHQ/selenium)
+
 ## Contact
 
 [Twitter](https://twitter.com/carefreeb0mb)
