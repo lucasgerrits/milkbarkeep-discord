@@ -10,6 +10,8 @@ A Discord chatbot written in TypeScript for Node.js using the discord.js library
 
 [openai-node](https://github.com/openai/openai-node)
 
+[openweathermap-ts](https://github.com/Endunry/openweathermap-ts)
+
 [RetroAchievements api-js](https://github.com/RetroAchievements/api-js)
 
 [Selenium](https://github.com/SeleniumHQ/selenium)
