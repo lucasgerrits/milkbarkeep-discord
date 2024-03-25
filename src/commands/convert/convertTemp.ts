@@ -1,5 +1,6 @@
 import { ApplicationCommandOptionType, EmbedBuilder } from "discord.js";
 import { Command } from "../../classes/Command";
+import { Convert } from "../../util/Convert";
 
 export default new Command({
     name: "convert-temperature",
@@ -34,11 +35,11 @@ export default new Command({
         let msg: string = "";
         if (units === "c-to-f") {
             c = value;
-            f = ((9 / 5) * c) + 32;
+            f = Convert.cToF(c);
             msg = `${c} °C = ${f} °F`;
         } else if (units === "f-to-c") {
             f = value;
-            c = (f - 32) * (5 / 9);
+            c = Convert.fToC(f);
             msg = `${f} °F = ${c} °C`;
         } else {
             console.log("Something is goofed.");
