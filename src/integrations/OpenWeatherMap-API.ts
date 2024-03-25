@@ -43,9 +43,9 @@ export class OpenWeatherMapApi extends OpenWeatherMap {
         const formattedTime = new Intl.DateTimeFormat('en-US', options).format(now);
         
         // Formatted embed strings
-        const tempStr: string = `${temp.toFixed(0)} °F / ${Convert.fToC(temp).toFixed(0)} °C`;
-        const feelsLikeStr: string = `${feelsLike.toFixed(0)} °F / ${Convert.fToC(feelsLike).toFixed(0)} °C`;
-        const windStr: string = `${windDir} ${windSpeed.toFixed(0)} miles/hour / ${Convert.mphToMps(windSpeed).toFixed(0)} meters/sec`;
+        const tempStr: string = `${temp.toFixed(0)} °F = ${Convert.fToC(temp).toFixed(0)} °C`;
+        const feelsLikeStr: string = `${feelsLike.toFixed(0)} °F = ${Convert.fToC(feelsLike).toFixed(0)} °C`;
+        const windStr: string = `${windDir} ${windSpeed.toFixed(0)} miles/hour = ${Convert.mphToMps(windSpeed).toFixed(0)} meters/sec`;
         const titleStr: string = `${formattedTime} - ${weatherDesc}`;
         const descStr: string = `
             **Your Time:** ${outputStr}\n
