@@ -1,14 +1,17 @@
 import { ExtendedClient } from "./ExtendedClient";
 import { Logger } from "../util/Logger";
+import { SeleniumWebDriver } from "../integrations/SeleniumWebDriver";
+import { TextChannel } from "discord.js";
+import { Timestamps } from "./Timestamps";
 import { Util } from "../util/Util";
 import { birthdays } from "../../data/birthdays.json";
 import channelIDs from "../../data/channelIDs.json";
-import { TextChannel } from "discord.js";
 
 export class TimerManager {
     clientRef: ExtendedClient;
     midnightWait: NodeJS.Timeout | null = null;
     raWait: NodeJS.Timeout | null = null;
+    appCamWait: NodeJS.Timeout | null = null;
 
     constructor(client: ExtendedClient) {
         this.clientRef = client;
@@ -16,6 +19,7 @@ export class TimerManager {
 
     public initialize(): void {
         this.initialTimeUntilNextHalfHour();
+        this.initialTimeUntilNextHour();
         this.initialTimeUntilMidnight();
     }
 
@@ -39,6 +43,61 @@ export class TimerManager {
                 this.clientRef.ra.updateFeed(this.clientRef);
             }, halfHourInMS);
             this.clientRef.ra.updateFeed(this.clientRef);
+        }, remainingMS);
+    }
+
+    // TODO: Rewrite all of this mess to allow for custom timers from JSON or something
+    private initialTimeUntilNextHour(): void {
+        const date = new Date();
+        const later = new Date();
+        later.setMinutes(0);
+        later.setSeconds(0);
+        later.setMilliseconds(0);
+
+        // Check if need to round up
+        if (date.getMinutes() > 0) {
+            later.setHours(later.getHours() + 1);
+        }
+
+        const next60: number = later.getTime();
+        const now: number = date.getTime();
+        const remainingMS: number = next60 - now;
+
+        const appCamToDisc = async () => {
+            // Get cam screen
+            const driver: SeleniumWebDriver = new SeleniumWebDriver();
+            const screenString: string = await driver.getAppletonCamScreen();
+            const base64Data: string = screenString.replace(/^data:image\/png;base64,/, '');
+            const buffer: Buffer = Buffer.from(base64Data, "base64");
+
+            // Get timestamps
+            const now: Date = new Date();
+            const longDateTime: string = Timestamps.longDateTime(now);
+            const relativeTime: string = Timestamps.relative(now);
+            const outputStr: string = `${longDateTime} (${relativeTime})`;
+
+            // Send to Discord
+            try {
+                const channelId: string = channelIDs.appletonCam;
+                const channel: TextChannel = this.clientRef.channels.cache.get(channelId) as TextChannel;
+                await channel.send({
+                    content: outputStr,
+                    files: [{
+                        attachment: buffer,
+                        name: "cam.png"
+                    }]
+                });
+            } catch (error) {
+                console.log(error);
+            }
+        };
+
+        const hourInMS: number = 3600000;
+        this.raWait = setTimeout(() => {
+            this.raWait = setInterval(() => {
+                appCamToDisc();
+            }, hourInMS);
+            appCamToDisc();
         }, remainingMS);
     }
 
