@@ -7,7 +7,7 @@ import channelIDs from "../../data/channelIDs.json";
 export default new Event(
     Events.GuildAuditLogEntryCreate,
     async (entry: GuildAuditLogsEntry, guild: Guild) => {
-
+        /*
         // Account for undefined values
         const executor: User = entry.executor as User;
 
@@ -56,5 +56,6 @@ export default new Event(
         await loggingChannel.send({
             embeds: [embed],
         });
+        */
     }
 );
