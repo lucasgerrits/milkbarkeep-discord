@@ -26,6 +26,8 @@ export class OpenWeatherMapApi extends OpenWeatherMap {
         const iconId: string = data.weather[0].icon;
         const temp: number = data.main.temp;
         const feelsLike: number = data.main.feels_like;
+        const min: number = data.main.temp_min;
+        const max: number = data.main.temp_max;
         const humidity: number = data.main.humidity;
         const windSpeed: number = data.wind.speed;
         const windDir: string = Convert.degreesToCompass(data.wind.deg);
@@ -43,17 +45,18 @@ export class OpenWeatherMapApi extends OpenWeatherMap {
         const formattedTime = new Intl.DateTimeFormat('en-US', options).format(now);
         
         // Formatted embed strings
-        const tempStr: string = `${temp.toFixed(0)} °F = ${Convert.fToC(temp).toFixed(0)} °C`;
-        const feelsLikeStr: string = `${feelsLike.toFixed(0)} °F = ${Convert.fToC(feelsLike).toFixed(0)} °C`;
-        const windStr: string = `${windDir} ${windSpeed.toFixed(0)} miles/hour = ${Convert.mphToMps(windSpeed).toFixed(0)} meters/sec`;
-        const titleStr: string = `${formattedTime} - ${weatherDesc}`;
-        const descStr: string = `
-            **Your Time:** ${outputStr}\n
-            **Temp:** ${tempStr}
-            **Feels Like:** ${feelsLikeStr}
-            **Humidity:** ${humidity}
-            **Wind:** ${windStr}
-        `;
+        const tempStr: string = `${temp.toFixed(0)} °F (${Convert.fToC(temp).toFixed(0)} °C)`;
+        const feelsLikeStr: string = `${feelsLike.toFixed(0)} °F (${Convert.fToC(feelsLike).toFixed(0)} °C)`;
+        const minMaxStr: string = `${min.toFixed(0)}/${max.toFixed(0)} °F (${Convert.fToC(min).toFixed(0)}/${Convert.fToC(max).toFixed(0)} °C)`;
+        const windStr: string = `${windSpeed.toFixed(0)} mph (${Convert.mphToMps(windSpeed).toFixed(0)} m/s) ${windDir}`;
+        const titleStr: string = `${formattedTime}\n${weatherDesc}\n${temp.toFixed(0)} °F (${Convert.fToC(temp).toFixed(0)} °C)`;
+        const descStr: string =
+            `**Your Time:** ${outputStr}\n\n` +
+            `**Feels Like:** ${feelsLikeStr}\n` +
+            `**Range:** ${minMaxStr}\n` +
+            `**Humidity:** ${humidity} %\n` +
+            `**Wind:** ${windStr}`
+        ;
 
         return new EmbedBuilder()
             .setColor("#1E1F22")
