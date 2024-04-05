@@ -175,10 +175,11 @@ export class RetroAchievementsApi {
             console.error("An error occurred while fetching user recent achievements: ", error);
             if (error.response && error.response.status) {
                 console.log("Status code: ", error.response.status);
-                if (error.response.status === 522) {
+                // Server error range
+                if (error.response.status >= 500 && error.response.status < 600) {
                     const channelID: string = channelIDs.raFeed;
                     const channel: TextChannel = client.channels.cache.get(channelID) as TextChannel;
-                    await channel.send({ content: "HTTP Error: Status 522 - The RA servers appear to be down." });
+                    await channel.send({ content: `HTTP Error ${error.response.status}: The RA servers appear to be down.` });
                 }
             }
         }
