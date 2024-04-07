@@ -1,5 +1,6 @@
 import { ApplicationCommandOptionType } from "discord.js";
 import { Command } from "../../classes/Command";
+import urls from "../../../data/urls.json";
 
 export default new Command({
     name: "sfx",
@@ -15,7 +16,7 @@ export default new Command({
     run: async(args): Promise<void> => {
         await args.interaction.deferReply();
 
-        const baseURL: string = "https://www.carefreebomb.com/sfx/";
+        const baseURL: string = urls.sfxPage;
         const inputSound: string = args.options.getString("name", true).toLowerCase();
         const url: string = baseURL + "/sounds/" + inputSound + ".mp3";
 
