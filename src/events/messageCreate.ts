@@ -16,7 +16,7 @@ export default new Event(
         if (message.mentions.has(client.user as User)) {
             // API call
             const openAI = new OpenAIApi();
-            const response = await openAI.chat(message.content);
+            const response = await openAI.chat(message);
             // Reply
             await message.reply(response);
         }
