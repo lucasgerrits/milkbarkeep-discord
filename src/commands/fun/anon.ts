@@ -1,10 +1,11 @@
-import { ApplicationCommandOptionType, Channel, TextChannel } from "discord.js";
+import { ApplicationCommandOptionType, Channel, PermissionFlagsBits, TextChannel } from "discord.js";
 import { Command } from "../../classes/Command";
 import channelIDs from "../../../data/channelIDs.json";
 
 export default new Command({
     name: "anon",
     description: "Speak in the anonymous channel.",
+    defaultMemberPermissions: PermissionFlagsBits.Administrator,
     options: [
         {
             name: "message",

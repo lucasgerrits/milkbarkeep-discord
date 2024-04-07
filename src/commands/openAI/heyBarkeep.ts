@@ -1,10 +1,11 @@
-import { ApplicationCommandOptionType, ColorResolvable, EmbedBuilder } from "discord.js";
+import { ApplicationCommandOptionType, ColorResolvable, EmbedBuilder, PermissionFlagsBits } from "discord.js";
 import { Command } from "../../classes/Command";
 import { OpenAIApi } from "../../integrations/OpenAI-API";
 
 export default new Command({
     name: "heybarkeep",
     description: "Ask Barkeep a question!",
+    defaultMemberPermissions: PermissionFlagsBits.Administrator,
     options: [
         {
             name: "prompt",
