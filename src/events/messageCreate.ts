@@ -12,6 +12,7 @@ export default new Event(
             // this.messageHandler.chiliDogCheck(message);
         }
         client.messageHandler.milkCheck(message);
+        client.messageHandler.tipCheck(message);
 
         if (message.mentions.has(client.user as User)) {
             // API call
@@ -20,5 +21,7 @@ export default new Event(
             // Reply
             await message.reply(response);
         }
+
+
     }
 );

@@ -20,4 +20,13 @@ export class MessageHandler{
             message.react(melkEmote);
         }
     }
+
+    public async tipCheck(message: Message): Promise<void> {
+        const regex: RegExp = /!tip/;
+        const response: string = "<:cfbANY:1201985868319948831> ???\nhttps://streamelements.com/carefreebomb/tip";
+
+        if (regex.test(message.content)) {
+            await message.reply(response);
+        }
+    }
 }
