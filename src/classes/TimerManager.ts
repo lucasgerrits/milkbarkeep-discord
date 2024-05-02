@@ -73,8 +73,15 @@ export class TimerManager {
             const buffer: Buffer = Buffer.from(base64Data, "base64");
 
             // Get weather info
-            const owm: OpenWeatherMapApi = new OpenWeatherMapApi();
-            const weatherData: CurrentResponse = await owm.getCurrentWeatherByZipcode(54911, "US");
+            let owm: OpenWeatherMapApi;
+            let weatherData: CurrentResponse;
+            try {
+                owm = new OpenWeatherMapApi();
+                weatherData = await owm.getCurrentWeatherByZipcode(54911, "US");
+            } catch (error) {
+                console.log(error);
+                return;
+            }
 
             // Create embed
             const embed: EmbedBuilder = await owm.createEmbed(weatherData, "attachment://cam.png");
