@@ -15,11 +15,13 @@ export default new Event(
         client.messageHandler.tipCheck(message);
 
         if (message.mentions.has(client.user as User)) {
+            /** OpenAI API stopped giving free trials, disabling until a better solution is researched
             // API call
             const openAI = new OpenAIApi();
             const response = await openAI.chat(message);
             // Reply
             await message.reply(response);
+            */
         }
 
 
