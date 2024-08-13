@@ -26,7 +26,7 @@ import type { achievementData, userPoints } from "../types/RATypes";
 export class RetroAchievementsApi {
     private callDelayInMS: number = 175;
     private gmtOffsetInMS: number = 21600000;
-    private userName: string = api.username;
+    private username: string = api.username;
     private webApiKey: string = api.key;
     private users: string[] = raUsers;
     private auth: AuthObject;
@@ -36,7 +36,7 @@ export class RetroAchievementsApi {
      */
     constructor() {
         this.auth = buildAuthorization({
-            "userName": this.userName,
+            "username": this.username,
             "webApiKey": this.webApiKey,
         });
     }
@@ -80,9 +80,9 @@ export class RetroAchievementsApi {
         const allTime: Array<userPoints> = [];
         for (const user of this.users) {
             const userPoints: UserPoints = await getUserPoints(this.auth, {
-                userName: user,
+                username: user,
             });
-            allTime.push({ userName: user, points: userPoints.points });
+            allTime.push({ username: user, points: userPoints.points });
             await Util.sleep(this.callDelayInMS);
         }
         allTime.sort((a: userPoints, b: userPoints) => b.points - a.points);
@@ -100,12 +100,12 @@ export class RetroAchievementsApi {
         for (const user of this.users) {
             const userEarnedOnDay: DatedUserAchievement[] = await getAchievementsEarnedOnDay(
                 this.auth, {
-                    userName: user,
+                    username: user,
                     onDate: onDate,
             }); // onDate: new Date(new Date().toUTCString()),
             const userPoints: number = (userEarnedOnDay.length > 0) ?
                 (userEarnedOnDay.pop()?.cumulScore ?? 0) : 0;
-            daily.push({ userName: user, points: userPoints });
+            daily.push({ username: user, points: userPoints });
             await Util.sleep(this.callDelayInMS);
         }
         daily.sort((a: userPoints, b: userPoints) => b.points - a.points);
@@ -129,13 +129,13 @@ export class RetroAchievementsApi {
         fromDate.setUTCHours(0, 0, 0, 0);
         for (const user of this.users) {
             const userEarnedBetween: DatedUserAchievement[] = await getAchievementsEarnedBetween(this.auth, {
-                userName: user,
+                username: user,
                 fromDate: fromDate,
                 toDate: toDate,
             });
             const userPoints: number = (userEarnedBetween.length > 0) ?
                 (userEarnedBetween.pop()?.cumulScore ?? 0) : 0;
-            weekly.push({ userName: user, points: userPoints });
+            weekly.push({ username: user, points: userPoints });
             await Util.sleep(this.callDelayInMS);
         }
         weekly.sort((a: userPoints, b: userPoints) => b.points - a.points);
@@ -152,11 +152,11 @@ export class RetroAchievementsApi {
         try {
             for (const user of this.users) {
                 const userEarnedRecent: UserRecentAchievement[] = await getUserRecentAchievements(this.auth, {
-                    userName: user,
+                    username: user,
                     recentMinutes: minutesToLookBack,
                 });
                 for (const achievement of userEarnedRecent) {
-                    recent.push({ ...achievement, userName: user });
+                    recent.push({ ...achievement, username: user });
                 }
                 // recent.push(...userEarnedRecent);
                 await Util.sleep(this.callDelayInMS);
@@ -208,8 +208,8 @@ export class RetroAchievementsApi {
         // DATA STRING FORMATTING
         const baseURL: string = "https://www.retroachievements.org/";
         const avatarURL: string = "https://media.retroachievements.org/UserPic/" +
-            data.userName + ".png";
-        const profileURL: string = baseURL + "user/" + data.userName;
+            data.username + ".png";
+        const profileURL: string = baseURL + "user/" + data.username;
         const badgeURL: string = baseURL + data.badgeUrl;
         const gameURL: string = baseURL + "game/" + data.gameId;
         const gameString: string = `[${data.gameTitle}](${gameURL})\n${data.consoleName}`;
@@ -224,7 +224,7 @@ export class RetroAchievementsApi {
             .setTitle(achievementString)
             .setURL(achievementUrl)
             .setAuthor({
-                name: data.userName,
+                name: data.username,
                 iconURL: avatarURL,
                 url: profileURL,
             })

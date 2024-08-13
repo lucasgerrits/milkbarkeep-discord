@@ -29,8 +29,8 @@ export default new Command({
             const profileURL = "https://www.retroachievements.org/user/";
             let output = "";
             for (let i = 0; i < list.length; i++) {
-                output += `${i + 1}. [${list[i].userName}]` +
-                    `(${profileURL}${list[i].userName}): ` +
+                output += `${i + 1}. [${list[i].username}]` +
+                    `(${profileURL}${list[i].username}): ` +
                     `${list[i].points}\n`;
             }
             return output;
