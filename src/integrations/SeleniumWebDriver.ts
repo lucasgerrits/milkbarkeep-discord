@@ -1,14 +1,15 @@
 import { Builder, By, Capabilities, WebDriver, WebElement, WebElementCondition, logging, until } from "selenium-webdriver";
-import chrome from "selenium-webdriver/chrome";
+import { Options } from "selenium-webdriver/chrome";
 import { Logger } from "../util/Logger";
 import { Util } from "../util/Util";
 
 export class SeleniumWebDriver {
     private builder: Builder;
-    private chromeOptions: chrome.Options;
+    private chromeOptions: Options;
 
     constructor(headless: boolean = true) {
-        this.chromeOptions = new chrome.Options()
+        this.chromeOptions = new Options();
+        this.chromeOptions
             .addArguments("--ignore-certificate-errors")
             .addArguments("--ignore-certificate-errors-spki-list")
             .addArguments("--ignore-ssl-errors")
