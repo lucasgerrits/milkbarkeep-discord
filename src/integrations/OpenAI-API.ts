@@ -56,7 +56,7 @@ export class OpenAIApi {
         this.conversation.push(param);
     }
 
-    public async chat(message: string | Message,): Promise<string> {
+    public async chat(message: string | Message): Promise<string> {
         const prompt: string = (message instanceof Message) ? message.content : message;
         
         // Check for content that violates any moderation categories
