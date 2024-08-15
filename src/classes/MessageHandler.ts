@@ -1,7 +1,7 @@
 import { Message, User } from "discord.js";
+import { EmbedFixManager } from "./EmbedFixManager";
 import { client } from "..";
 import channelIDs from "../../data/channelIDs.json";
-
 
 export class MessageHandler{
     constructor() {}
@@ -13,6 +13,8 @@ export class MessageHandler{
         }
         this.milkCheck(message);
         this.tipCheck(message);
+
+        EmbedFixManager.check(message);
 
         if (message.mentions.has(client.user as User)) {
             /** OpenAI API stopped giving free trials, disabling until a better solution is researched
