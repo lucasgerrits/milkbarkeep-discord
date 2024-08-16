@@ -11,27 +11,28 @@ export class EmbedFixManager {
     ]);
 
     public static async check(message: Message): Promise<void> {
-        // Ignore deletion of bot posts
+        // Ignore messages from this bot user
         const author: User = message.author as User;
         if (author.displayName === client.user?.displayName) return;
-        // Check for any possible fixable domains
+        // Check for any possible fixable domains in message
         const domainToFix = await this.detectFixableDomain(message);
-        // If not found, exit, prompt user for next step
+        // If not found, exit. Else prompt user for next step
         if (domainToFix === null) return;
         this.askIfShouldFix(message);
     }
 
     private static async detectFixableDomain(message: Message): Promise<EmbedFixUrls | null> {
+        // Match all domains in map with a prefix of either https:// or https://www. (and not bracket hidden)
         const regex: RegExp = new RegExp(
-            `(https://(?:www\\.)?(${[...this.domainMap.keys()].join('|')})(/[^\\s]*)?)`,
+            `(?<!<)(https://(?:www\\.)?(${[...this.domainMap.keys()].join('|')})(/[^\\s]*)?)(?!>)(?!<[^>]*$)`,
             'i' // 'i' flag for case-insensitive matching
-        )
+        );
         const match = message.content.match(regex);
         if (match) {
             const oldUrl: string = match[0];
             const oldDomain: string = match[2];
             const newDomain: string = this.domainMap.get(oldDomain) as string;
-            const newUrl = oldUrl.replace(oldDomain, newDomain);
+            const newUrl: string = oldUrl.replace(oldDomain, newDomain);
             return { oldUrl, oldDomain, newUrl, newDomain };
         }
         return null;
@@ -58,7 +59,7 @@ export class EmbedFixManager {
             components: [ row ]
         });
 
-        // Create event handler
+        // Create event handler for buttons
         const collector = askReply.createMessageComponentCollector();
         collector.on("collect", async (newInteraction) => {
             await newInteraction.deferUpdate();
@@ -78,7 +79,7 @@ export class EmbedFixManager {
             // Delete question reply
             await newInteraction.message.delete();
 
-            // If user chose fix embed, create new reply
+            // If user chose to fix embed, and original message still exists, create new reply
             if (choice === "yes") {
                 message.suppressEmbeds();
                 const urls: EmbedFixUrls = await this.detectFixableDomain(message) as EmbedFixUrls;
