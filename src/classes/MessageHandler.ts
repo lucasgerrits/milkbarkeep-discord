@@ -1,5 +1,6 @@
 import { Message, User } from "discord.js";
 import { EmbedFixManager } from "./EmbedFixManager";
+import { GoogleGeminiApi } from "../integrations/GoogleGemini-API";
 import { client } from "..";
 import channelIDs from "../../data/channelIDs.json";
 
@@ -7,27 +8,37 @@ export class MessageHandler{
     constructor() {}
 
     public async checkMessage(message: Message): Promise<void> {
+        // ENFORCEMENT CHECKS
         if (message.channel.id === channelIDs.anonymous) return;
-        if (message.channel.id === channelIDs.chiliDog) {
-            // this.messageHandler.chiliDogCheck(message);
-        }
+        this.chiliDogCheck(message);
+
+        // REACT CHECKS
         this.milkCheck(message);
+
+        // COMMAND CHECKS
+        // Convert this to some kind of colllection for non-slash macro commands
         this.tipCheck(message);
 
+        // MISC CHECKS
         EmbedFixManager.check(message);
+        this.getAIResponse(message);
+    }
 
+    private async getAIResponse(message: Message): Promise<void> {
         if (message.mentions.has(client.user as User)) {
             /** OpenAI API stopped giving free trials, disabling until a better solution is researched
-            // API call
             const openAI = new OpenAIApi();
             const response = await openAI.chat(message);
-            // Reply
             await message.reply(response);
             */
+           const gemini = new GoogleGeminiApi();
+           const response = await gemini.chat(message);
+           await message.reply(response);
         }
     }
 
     private async chiliDogCheck(message: Message): Promise<void> {
+        if (message.channel.id !== channelIDs.chiliDog) return;
         // const regex = new RegExp("^(<:cfbOrb:950146443170164767>){1}$");
         const regex: RegExp = new RegExp("^(suckin on a chili dog){1}$");
         if (regex.test(message.content) === false) {
