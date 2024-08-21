@@ -9,7 +9,7 @@ export class MessageHandler{
 
     public async checkMessage(message: Message): Promise<void> {
         // ENFORCEMENT CHECKS
-        if (message.channel.id === channelIDs.anonymous) return;
+        if (message.channel.id === channelIDs.bombsquad.channels.anonymous) return;
         this.chiliDogCheck(message);
 
         // REACT CHECKS
@@ -38,7 +38,7 @@ export class MessageHandler{
     }
 
     private async chiliDogCheck(message: Message): Promise<void> {
-        if (message.channel.id !== channelIDs.chiliDog) return;
+        if (message.channel.id !== channelIDs.bombsquad.channels.chiliDog) return;
         // const regex = new RegExp("^(<:cfbOrb:950146443170164767>){1}$");
         const regex: RegExp = new RegExp("^(suckin on a chili dog){1}$");
         if (regex.test(message.content) === false) {

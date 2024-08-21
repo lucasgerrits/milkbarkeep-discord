@@ -7,9 +7,12 @@ export default new Event(
     Events.GuildMemberAdd,
     async (member: GuildMember) => {
         const newMemberID: string = member.id;
-        const rulesChannel:string = channelIDs.rules;
-        const genChannel: string = channelIDs.general;
+        const rulesChannel:string = channelIDs.bombsquad.channels.rules;
+        const genChannel: string = channelIDs.bombsquad.channels.general;
         const cfbWave:string = "<a:cfbWave:798474231381491782>";
+
+        const joinedGuild = member.guild.id;
+        if (joinedGuild !== channelIDs.bombsquad.id) return;
 
         const logStr: string = `New member: ${member.user.tag} (${newMemberID})`;
         Logger.log(logStr, "green");

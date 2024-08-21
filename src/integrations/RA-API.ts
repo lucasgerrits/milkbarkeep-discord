@@ -177,7 +177,7 @@ export class RetroAchievementsApi {
                 console.log("Status code: ", error.response.status);
                 // Server error range
                 if (error.response.status >= 500 && error.response.status < 600) {
-                    const channelID: string = channelIDs.raFeed;
+                    const channelID: string = channelIDs.bombsquad.channels.raFeed;
                     const channel: TextChannel = client.channels.cache.get(channelID) as TextChannel;
                     await channel.send({ content: `HTTP Error ${error.response.status}: The RA servers appear to be down.` });
                 }
@@ -238,7 +238,7 @@ export class RetroAchievementsApi {
         return embed;
     }
 
-    public async updateFeed(client: ExtendedClient, channelID: string = channelIDs.raFeed, minutesToLookBack: number = 30) {
+    public async updateFeed(client: ExtendedClient, channelID: string = channelIDs.bombsquad.channels.raFeed, minutesToLookBack: number = 30) {
         // Get array of recent achievements
         let recent: achievementData[];
         try {

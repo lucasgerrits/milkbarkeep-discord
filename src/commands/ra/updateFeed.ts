@@ -18,11 +18,11 @@ export default new Command({
         await args.interaction.deferReply({ ephemeral: true });
 
         const minutesToLookBack: number = args.options.getInteger("minutes", false) ?? 30;
-        let toPostChannelID: string = channelIDs.raFeed;
+        let toPostChannelID: string = channelIDs.bombsquad.channels.raFeed;
         const interactionChannel: TextChannel = args.interaction.channel as TextChannel;
         const interactionChannelID: string = interactionChannel.id;
-        if (interactionChannelID === channelIDs.testing) {
-            toPostChannelID = channelIDs.testing;
+        if (interactionChannelID === channelIDs.bombsquad.channels.testing) {
+            toPostChannelID = channelIDs.bombsquad.channels.testing;
         }
 
         try {

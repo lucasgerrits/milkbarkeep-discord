@@ -16,7 +16,7 @@ export default new Command({
     ],
     run: async (args): Promise<void> => {
         const content: string = args.options.getString("message", true);
-        const channelID: string = channelIDs.anonymous;
+        const channelID: string = channelIDs.bombsquad.channels.anonymous;
 
         try {
             const channel: Channel = args.client.channels.cache.get(channelID) as TextChannel;

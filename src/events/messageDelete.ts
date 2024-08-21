@@ -18,6 +18,9 @@ export default new Event(
             }
         }
 
+        const guildId: string = message?.guild?.id as string;
+        if (guildId !== channelIDs.bombsquad.id) return;
+
         // Account for undefined values
         message = message as Message;
         const author: User = message.author as User;
@@ -48,7 +51,7 @@ export default new Event(
             ]);
         
         // Send logging message to Discord channel
-        const loggingChannelId: string = channelIDs.logging;
+        const loggingChannelId: string = channelIDs.bombsquad.channels.logging;
         const loggingChannel: TextChannel = message.guild?.channels.cache.get(loggingChannelId) as TextChannel;
         await loggingChannel.send({
             embeds: [embed],

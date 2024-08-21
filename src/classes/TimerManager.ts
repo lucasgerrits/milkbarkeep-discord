@@ -8,7 +8,6 @@ import { birthdays } from "../../data/birthdays.json";
 import channelIDs from "../../data/channelIDs.json";
 import type { CurrentResponse } from "openweathermap-ts/dist/types";
 
-
 export class TimerManager {
     clientRef: ExtendedClient;
     midnightWait: NodeJS.Timeout | null = null;
@@ -88,7 +87,7 @@ export class TimerManager {
 
             // Send to Discord
             try {
-                const channelId: string = channelIDs.appletonCam;
+                const channelId: string = channelIDs.bombsquad.channels.appletonCam;
                 const channel: TextChannel = this.clientRef.channels.cache.get(channelId) as TextChannel;
                 await channel.send({
                     embeds: [ embed ],
@@ -156,7 +155,7 @@ export class TimerManager {
     }
 
     private async checkBirthdays(): Promise<void> {
-        const channelID = channelIDs.birthdays;
+        const channelID = channelIDs.bombsquad.channels.birthdays;
 
         const today: Date = new Date();
         const month: string = (today.getMonth() + 1).toString().padStart(2, "0"); // zero-indexed
