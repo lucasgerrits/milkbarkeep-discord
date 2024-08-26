@@ -30,7 +30,7 @@ A Discord chatbot written in TypeScript for Node.js using the discord.js library
 
 ## Contact
 
-[Twitter](https://twitter.com/carefreeb0mb)
+[Email](mailto:lucasjgerrits@gmail.com)
 
 [Twitch](https://www.twitch.tv/carefreebomb)
 
