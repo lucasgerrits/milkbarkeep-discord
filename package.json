@@ -15,7 +15,7 @@
         "typescript": "^5.3.3"
     },
     "dependencies": {
-        "@google/generative-ai": "^0.16.0",
+        "@google/generative-ai": "^0.17.1",
         "@retroachievements/api": "^2.1.0",
         "@types/selenium-webdriver": "^4.1.22",
         "discord.js": "^14.14.1",
