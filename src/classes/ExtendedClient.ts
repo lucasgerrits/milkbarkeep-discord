@@ -6,6 +6,7 @@ import {
     GatewayIntentBits } from "discord.js";
 import { glob } from "glob";
 import { Event } from "./Event";
+import { GuildConfigManager } from "./GuildConfigManager";
 import { Logger } from "../util/Logger";
 import { MessageHandler } from "./MessageHandler";
 import { TimerManager } from "./TimerManager";
@@ -17,8 +18,11 @@ export class ExtendedClient extends Client {
     public ra: RetroAchievementsApi;
     public timers: TimerManager;
     public messageHandler: MessageHandler;
+    public configManager: GuildConfigManager;
+
     public commands: Collection<string, CommandType> = new Collection();
     private slashCommands: ApplicationCommandDataResolvable[] = [];
+
     public shouldRegisterCommands: boolean = false;
 
     constructor(shouldRegisterCommands: boolean = false) {
@@ -42,6 +46,7 @@ export class ExtendedClient extends Client {
         this.ra = new RetroAchievementsApi();
         this.timers = new TimerManager(this);
         this.messageHandler = new MessageHandler();
+        this.configManager = new GuildConfigManager();
     }
 
     start(): void {
@@ -71,6 +76,14 @@ export class ExtendedClient extends Client {
             this.slashCommands.push(command);
         };
     }
+
+    /**
+     * Step 1: Config folder with file for each server
+     * Step 2: Run through loop of each config file
+     *    2a: Run setCommands()
+     *    2b: For each command, check if should be added to collection
+     *    2c: set() returned collection
+     */
 
     async registerCommands(): Promise<void> {
         Logger.log(`Registering ${this.slashCommands.length} slash commands...`, "red");
