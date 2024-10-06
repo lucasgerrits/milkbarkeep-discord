@@ -11,7 +11,7 @@ import { Logger } from "../util/Logger";
 import { MessageHandler } from "./MessageHandler";
 import { TimerManager } from "./TimerManager";
 import { RetroAchievementsApi } from "../integrations/RA-API";
-import { guildId, token } from "../../data/discordSecrets.json";
+import { token } from "../../data/discordSecrets.json";
 import type { CommandType } from "../types/CommandTypes";
 
 export class ExtendedClient extends Client {
@@ -77,16 +77,11 @@ export class ExtendedClient extends Client {
         };
     }
 
-    /**
-     * Step 1: Config folder with file for each server
-     * Step 2: Run through loop of each config file
-     *    2a: Run setCommands()
-     *    2b: For each command, check if should be added to collection
-     *    2c: set() returned collection
-     */
-
     async registerCommands(): Promise<void> {
-        Logger.log(`Registering ${this.slashCommands.length} slash commands...`, "red");
-        await this.guilds.cache.get(guildId)?.commands.set(this.slashCommands);
+        //Logger.log(`Registering ${this.slashCommands.length} slash commands...`, "red");
+        const configs = await this.configManager.getConfigArray();
+        for (const config of configs) {
+            await this.guilds.cache.get(config.id)?.commands.set(this.slashCommands);
+        }
     }
 }
