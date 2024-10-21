@@ -68,7 +68,7 @@ export class GoogleGeminiApi {
             await this.checkDiscordMessageReference(referencedMessage);
         }
         // Then add this message as the next in the message chain array
-        const role: "assistant" | "user" = (message.author.displayName === client.user?.displayName) ? "assistant" : "user";
+        const role: "model" | "user" = (message.author.displayName === client.user?.displayName) ? "model" : "user";
         const param = { role: role, parts: [{ text: message.content }] };
         this.conversation.push(param);
     }
