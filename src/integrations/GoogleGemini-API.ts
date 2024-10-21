@@ -1,6 +1,7 @@
-import { EnhancedGenerateContentResponse, GenerateContentResult, GenerativeModel, GoogleGenerativeAI, HarmBlockThreshold, HarmCategory, SafetySetting } from "@google/generative-ai";
+import { Content, EnhancedGenerateContentResponse, GenerateContentResult, GenerativeModel, GoogleGenerativeAI, HarmBlockThreshold, HarmCategory, SafetySetting } from "@google/generative-ai";
 import { googleGemini as apiKey } from "../../data/apiKeys.json";
-import { Message } from "discord.js";
+import { Message, MessageResolvable } from "discord.js";
+import { client } from "..";
 
 export class GoogleGeminiApi {
     public readonly modelName: string = "gemini-1.5-flash";
@@ -24,6 +25,7 @@ export class GoogleGeminiApi {
         }
     ];
 
+    private conversation: Array<Content>;
     private maxChars: number = 500;
 
     private rpLore: string = `
@@ -33,32 +35,66 @@ export class GoogleGeminiApi {
     `;
     
     constructor() {
+        // Initialize Gemini object
         this.key = apiKey;
         const genAI = new GoogleGenerativeAI(this.key);
         this.model = genAI.getGenerativeModel({ 
             model: this.modelName, 
             safetySettings: this.safetySettings,
         });
+        // Reset conversation and set Barkeep character
+        this.conversation = [];
+        const param: Content = { role: "user", parts: [{ text: this.rpLore}] };
+        this.conversation.push(param);
+    }
+
+    private async checkContentSafety(contentToModerate: string): Promise<string | undefined> {
+        const result: GenerateContentResult = await this.model.generateContent(contentToModerate);
+        const response: EnhancedGenerateContentResponse = result.response;
+        if (response.promptFeedback !== undefined && response.promptFeedback.blockReasonMessage !== undefined) {
+            const modStatement: string = `
+                Can you rephrase the following block reason message or write something similar in your own words (based on your previously stated character): ${response.promptFeedback.blockReasonMessage}
+            `;
+            return modStatement;
+        } else {
+            return undefined;
+        }
+    }
+
+    private async checkDiscordMessageReference(message: Message): Promise<void> {
+        // Recursively call until first message in reply chain
+        if (message.reference !== null) {
+            const referencedMessage: Message = await message.channel.messages.fetch(message.reference.messageId as MessageResolvable);
+            await this.checkDiscordMessageReference(referencedMessage);
+        }
+        // Then add this message as the next in the message chain array
+        const role: "assistant" | "user" = (message.author.displayName === client.user?.displayName) ? "assistant" : "user";
+        const param = { role: role, parts: [{ text: message.content }] };
+        this.conversation.push(param);
     }
 
     public async chat(message: string | Message): Promise<string> {
         const prompt: string = (message instanceof Message) ? message.content : message;
 
-        // const result: GenerateContentResult = await this.model.generateContent(prompt);
+        // Check for content that violates any of the service's moderation harm categories
+        const modStatement: string | undefined = await this.checkContentSafety(prompt);
+        if (typeof modStatement === 'string') {
+            const param: Content = { role: 'user', parts: [{ text: modStatement}] };
+            this.conversation.push(param);
+        } else {
+            if (message instanceof Message) {
+                await this.checkDiscordMessageReference(message);
+            } else {
+                const param: Content = { role: "user", parts: [{ text: prompt }] };
+                this.conversation.push(param);
+            }
+        }
+
+        // Generate result using bot lore and either mod statement or reply chain
         const result: GenerateContentResult = await this.model.generateContent({
-            contents: [
-                {
-                    role: 'user',
-                    parts: [{
-                        text: prompt,
-                    }],
-                }
-            ],
+            contents: this.conversation,
         });
         const response: EnhancedGenerateContentResponse = result.response;
-        if (response.promptFeedback !== undefined) {
-            
-        }
         const responseText: string = response.text();
         return responseText;
     }
