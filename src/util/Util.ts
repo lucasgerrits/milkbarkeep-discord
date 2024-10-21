@@ -34,6 +34,10 @@ export class Util {
         return hoursStr + ":" + minutesStr + ":" + secondsStr + "." + milliseconds;
     }
 
+    static replaceDoubleSpaces(input: string): string {
+        return input.replace(/\s\s+/g, ' ');
+    }
+
     static readJsonSync(fileName: string): unknown | null {
         try {
             const data: string = fs.readFileSync(fileName, "utf8");
