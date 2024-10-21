@@ -1,8 +1,10 @@
 import { Message, User } from "discord.js";
 import { EmbedFixManager } from "./EmbedFixManager";
 import { GoogleGeminiApi } from "../integrations/GoogleGemini-API";
+import { Logger } from "../util/Logger";
 import { client } from "..";
 import channelIDs from "../../data/channelIDs.json";
+
 
 export class MessageHandler{
     constructor() {}
@@ -26,13 +28,9 @@ export class MessageHandler{
 
     private async getAIResponse(message: Message): Promise<void> {
         if (message.mentions.has(client.user as User)) {
-            /** OpenAI API stopped giving free trials, disabling until a better solution is researched
-            const openAI = new OpenAIApi();
-            const response = await openAI.chat(message);
-            await message.reply(response);
-            */
            const gemini = new GoogleGeminiApi();
            const response = await gemini.chat(message);
+           Logger.log(response);
            await message.reply(response);
         }
     }
@@ -48,7 +46,7 @@ export class MessageHandler{
 
     private async milkCheck(message: Message): Promise<void> {
         const melkEmote: string = "melk:616025879830855681";
-        const milkStrings: string[] = ["milk", "melk", "malk", "mork"];
+        const milkStrings: string[] = ["milk", "melk", "malk", "mork", "milch"];
         const milkRegex: RegExp = new RegExp(milkStrings.join("|"), "i");
 
         if (milkRegex.test(message.content)) {
