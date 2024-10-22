@@ -1,10 +1,10 @@
-import { Message, User } from "discord.js";
+import { Message, MessageResolvable, User } from "discord.js";
 import { EmbedFixManager } from "./EmbedFixManager";
 import { GoogleGeminiApi } from "../integrations/GoogleGemini-API";
 import { Logger } from "../util/Logger";
+import { Util } from "../util/Util";
 import { client } from "..";
 import channelIDs from "../../data/channelIDs.json";
-
 
 export class MessageHandler{
     constructor() {}
@@ -27,11 +27,23 @@ export class MessageHandler{
     }
 
     private async getAIResponse(message: Message): Promise<void> {
+        // Check if bot user has been tagged
         if (message.mentions.has(client.user as User)) {
-           const gemini = new GoogleGeminiApi();
-           const response = await gemini.chat(message);
-           Logger.log(response);
-           await message.reply(response);
+
+            // If replying to an existing bot message, check for special exit char
+            if (message.reference !== null) {
+                const referencedMessage: Message = await message.channel.messages.fetch(message.reference.messageId as MessageResolvable);
+                // If braille pattern blank detected, ignore reply (for embed fixes, welcome msg, etc)
+                if (Util.hasBrailleBlank(referencedMessage.content)) {
+                    return;
+                }
+            }
+
+            // Otherwise, newly tagged or repliable bot message, so generate AI response
+            const gemini = new GoogleGeminiApi();
+            const response = await gemini.chat(message);
+            Logger.log(response);
+            await message.reply(response);
         }
     }
 

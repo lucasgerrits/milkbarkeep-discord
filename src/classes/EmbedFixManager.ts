@@ -1,4 +1,5 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Message, MessageActionRowComponentBuilder, User } from "discord.js";
+import { Util } from "../util/Util";
 import { client } from "..";
 import type { EmbedFixUrls } from "../types/EmbedFixTypes";
 
@@ -83,7 +84,7 @@ export class EmbedFixManager {
             if (choice === "yes") {
                 message.suppressEmbeds();
                 const urls: EmbedFixUrls = await this.detectFixableDomain(message) as EmbedFixUrls;
-                const msgStr: string = `via [${urls.newDomain}](${urls.newUrl}):`;
+                const msgStr: string = Util.addBrailleBlank(`via [${urls.newDomain}](${urls.newUrl}):`);
                 await message.reply(msgStr);
             }
         });

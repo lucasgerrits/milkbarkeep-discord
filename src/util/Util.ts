@@ -38,6 +38,14 @@ export class Util {
         return input.replace(/\s\s+/g, ' ');
     }
 
+    static addBrailleBlank(input: string): string {
+        return input + "⠀";
+    }
+
+    static hasBrailleBlank(input: string): boolean {
+        return input.includes("⠀");
+    }
+
     static readJsonSync(fileName: string): unknown | null {
         try {
             const data: string = fs.readFileSync(fileName, "utf8");
