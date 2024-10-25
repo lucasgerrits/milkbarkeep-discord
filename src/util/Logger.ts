@@ -1,6 +1,11 @@
+import { TextChannel } from "discord.js";
+import channelIDs from "../../data/channelIDs.json";
+import { client } from "..";
+
 export class Logger {
-    private static DEBUG: boolean = true;
-    private static colors: {
+    private static readonly DEBUG: boolean = true;
+    private static readonly DISCORD_OUTPUT: boolean = true;
+    private static readonly colors: {
         foreground: {
             [key: string]: number;
         },
@@ -47,41 +52,53 @@ export class Logger {
             "brightWhite": 107,
         },
     };
-    public static bar: string = "========================================================================";
+    public static readonly bar: string = "========================================================================";
+
+    private static getDateTimeStr(): string {
+        const today: Date = new Date();
+        const ms: string = today.getMilliseconds().toString().padStart(3, "0");
+        const time: string = today.toLocaleTimeString("en-us", { hour: "2-digit", minute: "2-digit" });
+        const timeStr: string = time.substring(0, time.length - 3) + "." + ms + time.substring(time.length - 3);
+        const dateStr: string = today.toLocaleDateString("en-CA");
+        return `${dateStr} ${timeStr}`;
+    }
 
     // https://en.m.wikipedia.org/wiki/ANSI_escape_code#Colors
-    static log(strIn: string, color: string = "default", background: string = "default") {
+    public static log(strIn: string, color: string = "default", background: string = "default") {
         if (Logger.DEBUG === true) {
-            // Get current local time and append to input string
-            const today: Date = new Date();
-            const ms: string = today.getMilliseconds().toString().padStart(3, "0");
-            const time: string = today.toLocaleTimeString("en-us", { hour: "2-digit", minute: "2-digit" });
-            const timeStr: string = time.substring(0, time.length - 3) + "." + ms + time.substring(time.length - 3);
-            const dateStr: string = today.toLocaleDateString("en-CA");
+            // Get current local time
+            const dateTimeStr = Logger.getDateTimeStr();
 
-            // Build string
-            const dateTimeStrColorized: string = Logger.colorize(`[${dateStr} ${timeStr}]:`, "brightBlack");
+            // Output to Discord
+            if (Logger.DISCORD_OUTPUT === true) {
+                try {
+                    const channelID: string = channelIDs.barkeep.channels.console;
+                    const channel: TextChannel = client.channels.cache.get(channelID) as TextChannel;
+                    channel.send({ content: `\`\`\`\n[${dateTimeStr}]: ${strIn}\n\`\`\`` });
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+            
+            // Build string and output to console
+            const dateTimeStrColorized: string = Logger.colorize(`[${dateTimeStr}]:`, "brightBlack");
             const strInColorized: string = Logger.colorize(strIn, color, background);
             const logStr: string = `${dateTimeStrColorized} ${strInColorized}`;
             console.log(logStr);
         }
     }
 
-    static logWithoutTime(strIn: string, color: string = "red", background: string = "default") {
+    public static logWithoutTime(strIn: string, color: string = "red", background: string = "default") {
         const strColorized = Logger.colorize(strIn, color, background);
         console.log(strColorized);
     }
 
-    static colorize(strIn: string, color: string = "default", background: string = "default") {
+    public static colorize(strIn: string, color: string = "default", background: string = "default") {
         const esc = "\x1b[";
         const resetAll = "0m";
         const fg = Logger.colors.foreground[color];
         const bg = Logger.colors.background[background];
         const logStr = `${esc}${fg};${bg}m${strIn}${esc}${resetAll}`;
         return logStr;
-    }
-
-    static red(str: string) {
-        Logger.log(str, "red");
     }
 }

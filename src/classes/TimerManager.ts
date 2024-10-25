@@ -126,7 +126,7 @@ export class TimerManager {
 
         const remainingTime: string = Util.msToTime(remainingMS);
         const remainingConsoleStr: string = remainingTime + " remaining until daily event checks at midnight.";
-        Logger.red(remainingConsoleStr);
+        Logger.log(remainingConsoleStr, "red");
 
         const oneDayInMS: number = 86400000;
         this.midnightWait = setTimeout(() => {
