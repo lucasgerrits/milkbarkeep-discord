@@ -1,5 +1,3 @@
-*.bat
-
 data/
 node_modules/
 prod/
