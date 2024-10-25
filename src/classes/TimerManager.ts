@@ -149,7 +149,8 @@ export class TimerManager {
             month: "long",
             day: "numeric",
         };
-        Logger.logWithoutTime(day.toLocaleDateString("en-US", options), "red");
+        Logger.logWithoutTime(Logger.bar, "red");
+        Logger.log(day.toLocaleDateString("en-US", options), "red");
 
         this.checkBirthdays();
     }

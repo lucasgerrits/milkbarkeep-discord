@@ -15,8 +15,7 @@ export default new Event(
         "\\_|  |_/\\___/\\_____/\\_| \\_/\\____/\\_| |_/\\_| \\_\\_| \\_/\\____/\\____/\\_|";
         console.log(Logger.colorize(asciiText, "red"));
 
-        const bar: string = "========================================================================";
-        console.log(Logger.colorize(bar, "red"));
+        console.log(Logger.colorize(Logger.bar, "red"));
 
         if (client.shouldRegisterCommands) {
             client.registerCommands();

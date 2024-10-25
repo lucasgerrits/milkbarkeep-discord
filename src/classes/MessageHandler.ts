@@ -42,7 +42,6 @@ export class MessageHandler{
             // Otherwise, newly tagged or repliable bot message, so generate AI response
             const gemini = new GoogleGeminiApi();
             const response = await gemini.chat(message);
-            Logger.log(response);
             await message.reply(response);
         }
     }

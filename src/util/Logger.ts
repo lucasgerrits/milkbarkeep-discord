@@ -47,6 +47,7 @@ export class Logger {
             "brightWhite": 107,
         },
     };
+    public static bar: string = "========================================================================";
 
     // https://en.m.wikipedia.org/wiki/ANSI_escape_code#Colors
     static log(strIn: string, color: string = "default", background: string = "default") {

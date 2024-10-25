@@ -142,6 +142,7 @@ export class GoogleGeminiApi {
         const response: EnhancedGenerateContentResponse = result.response;
         const responseText: string = response.text();
         const responseFormatted: string = Util.replaceDoubleSpaces(responseText);
+        Logger.log(`[Gemini]: ${responseFormatted}`, "brightCyan");
         return responseFormatted;
     }
 }
