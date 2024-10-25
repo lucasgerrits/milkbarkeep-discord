@@ -1,6 +1,20 @@
-import { Content, EnhancedGenerateContentResponse, GenerateContentResult, GenerativeModel, GoogleGenerativeAI, HarmBlockThreshold, HarmCategory, SafetySetting } from "@google/generative-ai";
+import { 
+    Content, 
+    EnhancedGenerateContentResponse, 
+    GenerateContentRequest, 
+    GenerateContentResult, 
+    GenerativeModel, 
+    GoogleGenerativeAI, 
+    GoogleGenerativeAIFetchError, 
+    GoogleGenerativeAIResponseError, 
+    HarmBlockThreshold, 
+    HarmCategory, 
+    Part, 
+    SafetySetting, 
+    SingleRequestOptions } from "@google/generative-ai";
 import { googleGemini as apiKey } from "../../data/apiKeys.json";
 import { Message, MessageResolvable } from "discord.js";
+import { Logger } from "../util/Logger";
 import { Util } from "../util/Util";
 import { client } from "..";
 
@@ -55,7 +69,7 @@ export class GoogleGeminiApi {
         this.key = apiKey;
         const genAI = new GoogleGenerativeAI(this.key);
         this.model = genAI.getGenerativeModel({ 
-            model: this.modelName, 
+            model: this.modelName,
             safetySettings: this.safetySettings,
         });
         // Reset conversation and set Barkeep character
@@ -64,8 +78,23 @@ export class GoogleGeminiApi {
         this.conversation.push(param);
     }
 
+    private async generateContent(request: GenerateContentRequest | string | Array<string | Part>, requestOptions?: SingleRequestOptions): Promise<GenerateContentResult | undefined> {
+        try {
+            return this.model.generateContent(request, requestOptions);
+        } catch (error) {
+            if (error instanceof GoogleGenerativeAIFetchError) {
+                // Possible service overloaded or other fetch errors
+                Logger.log(`${error.status}: ${error.statusText}`);
+            } else if (error instanceof GoogleGenerativeAIResponseError) {
+                // Safety, parsing, or other content errors
+                Logger.log(error.message);
+                return error.response;
+            }
+        }
+    }
+
     private async checkContentSafety(contentToModerate: string): Promise<string | undefined> {
-        const result: GenerateContentResult = await this.model.generateContent(contentToModerate);
+        const result: GenerateContentResult = await this.generateContent(contentToModerate) as GenerateContentResult;
         const response: EnhancedGenerateContentResponse = result.response;
         if (response.promptFeedback !== undefined && response.promptFeedback.blockReasonMessage !== undefined) {
             const modStatement: string = `
@@ -107,9 +136,9 @@ export class GoogleGeminiApi {
         }
 
         // Generate result using bot lore and either mod statement or reply chain
-        const result: GenerateContentResult = await this.model.generateContent({
+        const result: GenerateContentResult = await this.generateContent({
             contents: this.conversation,
-        });
+        }) as GenerateContentResult;
         const response: EnhancedGenerateContentResponse = result.response;
         const responseText: string = response.text();
         const responseFormatted: string = Util.replaceDoubleSpaces(responseText);
