@@ -1,6 +1,7 @@
 import { TextChannel } from "discord.js";
-import channelIDs from "../../data/channelIDs.json";
+import { Util } from "./Util";
 import { client } from "..";
+import channelIDs from "../../data/channelIDs.json";
 
 export class Logger {
     private static readonly DEBUG: boolean = true;
@@ -74,7 +75,8 @@ export class Logger {
                 try {
                     const channelID: string = channelIDs.barkeep.channels.console;
                     const channel: TextChannel = client.channels.cache.get(channelID) as TextChannel;
-                    channel.send({ content: `\`\`\`\n[${dateTimeStr}]: ${strIn}\n\`\`\`` });
+                    const discLogStr: string = `\`\`\`\n[${dateTimeStr}]: ${Util.addBrailleBlank(strIn)}\n\`\`\``;
+                    channel.send({ content: discLogStr });
                 } catch (error) {
                     console.log(error);
                 }
