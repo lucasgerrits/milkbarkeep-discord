@@ -8,7 +8,7 @@ export default new Event(
     async (member: GuildMember) => {
         const newMemberID: string = member.id;
         const rulesChannel:string = channelIDs.bombsquad.channels.rules;
-        const genChannel: string = channelIDs.bombsquad.channels.general;
+        const welcomeChannel: string = channelIDs.bombsquad.channels.welcome;
         const cfbWave:string = "<a:cfbWave:798474231381491782>";
 
         const joinedGuild = member.guild.id;
@@ -19,7 +19,7 @@ export default new Event(
 
         const welcomeMessage: string = `Hey everyone, let's welcome <@${newMemberID}> to The Bombsquad ! Hello there 🎉👋 ! Please make note of <#${rulesChannel}> and have a good Tim. ${cfbWave}`;
 
-        const channelToWelcomeIn: TextChannel = member.guild.channels.cache.get(genChannel) as TextChannel;
+        const channelToWelcomeIn: TextChannel = member.guild.channels.cache.get(welcomeChannel) as TextChannel;
         await channelToWelcomeIn.send({
             "content": welcomeMessage,
             "allowedMentions": { "users": [ newMemberID ] },
