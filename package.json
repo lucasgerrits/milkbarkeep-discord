@@ -15,6 +15,7 @@
         "typescript": "^5.3.3"
     },
     "dependencies": {
+        "@atproto/api": "^0.13.35",
         "@breejs/later": "^4.2.0",
         "@google/generative-ai": "^0.21.0",
         "@retroachievements/api": "^2.1.0",
