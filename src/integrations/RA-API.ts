@@ -238,7 +238,7 @@ export class RetroAchievementsApi {
         return embed;
     }
 
-    public async updateFeed(client: ExtendedClient, channelID: string = channelIDs.bombsquad.channels.raFeed, minutesToLookBack: number = 30) {
+    public async updateFeed(client: ExtendedClient, channelID: string = channelIDs.bombsquad.channels.raFeed, minutesToLookBack: number = 15) {
         // Get array of recent achievements
         let recent: achievementData[];
         try {

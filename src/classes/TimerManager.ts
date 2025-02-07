@@ -29,20 +29,23 @@ export class TimerManager {
     private initialTimeUntilNextHalfHour(): void {
         // Get nearest 00/30/60 minutes
         const later: Date = new Date();
-        later.setMinutes(Math.ceil(later.getMinutes() / 30) * 30);
-        const next30: number = later.getTime();
+        //later.setMinutes(Math.ceil(later.getMinutes() / 30) * 30);
+        later.setMinutes(Math.ceil(later.getMinutes() / 15) * 15);
+        const nextInterval: number = later.getTime();
 
         // Get current timestamp
         const now: number = new Date().getTime();
 
         // Subtract to get remaining time
-        const remainingMS: number = next30 - now;
+        const remainingMS: number = nextInterval - now;
 
         const halfHourInMS: number = 1800000;
+        const fifteenMinInMS: number = 900000;
+        const durationInMS: number = fifteenMinInMS;
         this.raWait = setTimeout(() => {
             this.raWait = setInterval(() => {
                 this.clientRef.ra.updateFeed(this.clientRef);
-            }, halfHourInMS);
+            }, durationInMS);
             this.clientRef.ra.updateFeed(this.clientRef);
         }, remainingMS);
     }
