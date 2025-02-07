@@ -6,7 +6,7 @@ export class BlueskyApi {
 
     constructor() {
         this.agent = new AtpAgent({
-            service: "http://bsky.social"
+            service: "https://bsky.social"
         });
         this.login();
     }
@@ -18,10 +18,12 @@ export class BlueskyApi {
         });
     }
 
-    public async post(inputText: string): Promise<void> {
+    public async post(inputText: string): Promise<{uri: string, cid: string}> {
         const postResult = await this.agent.post({
             text: inputText,
             createdAt: new Date().toISOString()
         });
+
+        return postResult;
     }
 }
