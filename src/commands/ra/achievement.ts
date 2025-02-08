@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType, ColorResolvable, EmbedBuilder, PermissionFlagsBits } from "discord.js";
+import { ApplicationCommandOptionType, ColorResolvable, EmbedBuilder, MessageFlags, PermissionFlagsBits } from "discord.js";
 import { Command } from "../../classes/Command";
 import { AchievementUnlocksMetadata, GameExtended } from "@retroachievements/api";
 import { Util } from "../../util/Util";
@@ -58,7 +58,7 @@ export default new Command({
             });
         } catch (error) {
             console.log(error);
-            await args.interaction.reply({ content: "Something went wrong with sending the message.", ephemeral: true });
+            await args.interaction.reply({ content: "Something went wrong with sending the message.", flags: MessageFlags.Ephemeral });
         }
     }
 });

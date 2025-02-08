@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType, PermissionFlagsBits, TextChannel } from "discord.js";
+import { ApplicationCommandOptionType, MessageFlags, PermissionFlagsBits, TextChannel } from "discord.js";
 import { Command } from "../../classes/Command";
 import channelIDs from "../../../data/channelIDs.json";
 
@@ -15,7 +15,7 @@ export default new Command({
         }
     ],
     run: async (args): Promise<void> => {
-        await args.interaction.deferReply({ ephemeral: true });
+        await args.interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
         const minutesToLookBack: number = args.options.getInteger("minutes", false) ?? 30;
         let toPostChannelID: string = channelIDs.bombsquad.channels.raFeed;
@@ -32,7 +32,7 @@ export default new Command({
             });
         } catch (error) {
             console.log(error);
-            await args.interaction.reply({ content: "Something went wrong with sending the message.", ephemeral: true });
+            await args.interaction.reply({ content: "Something went wrong with sending the message.", flags: MessageFlags.Ephemeral });
         }
     }
 });

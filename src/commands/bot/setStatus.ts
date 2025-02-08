@@ -1,4 +1,4 @@
-import { ActivityType, ApplicationCommandOptionType, ClientUser, PermissionFlagsBits } from "discord.js";
+import { ActivityType, ApplicationCommandOptionType, ClientUser, MessageFlags, PermissionFlagsBits } from "discord.js";
 import { Command } from "../../classes/Command";
 
 export default new Command({
@@ -26,10 +26,10 @@ export default new Command({
                     }
                 ]
             }); // 
-            await args.interaction.reply({ content: "Status set successfully.", ephemeral: true });
+            await args.interaction.reply({ content: "Status set successfully.", flags: MessageFlags.Ephemeral });
         } catch (error) {
             console.log(error);
-            await args.interaction.reply({ content: "Something went wrong with setting the status.", ephemeral: true });
+            await args.interaction.reply({ content: "Something went wrong with setting the status.", flags: MessageFlags.Ephemeral });
         }
     }
 });

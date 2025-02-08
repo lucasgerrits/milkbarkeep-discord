@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType, Channel, ChannelType, PermissionFlagsBits, TextChannel } from "discord.js";
+import { ApplicationCommandOptionType, Channel, ChannelType, MessageFlags, PermissionFlagsBits, TextChannel } from "discord.js";
 import { Command } from "../../classes/Command";
 
 export default new Command({
@@ -26,10 +26,10 @@ export default new Command({
         try {
             const channel: Channel = args.client.channels.cache.get(channelID) as TextChannel;
             await channel.send(content);
-            await args.interaction.reply({ content: "Message success.", ephemeral: true });
+            await args.interaction.reply({ content: "Message success.", flags: MessageFlags.Ephemeral });
         } catch (error) {
             console.log(error);
-            await args.interaction.reply({ content: "Something went wrong with sending the message.", ephemeral: true });
+            await args.interaction.reply({ content: "Something went wrong with sending the message.", flags: MessageFlags.Ephemeral });
         }
     }
 });
