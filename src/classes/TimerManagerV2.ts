@@ -15,6 +15,8 @@ export class TimerManagerV2 {
     // https://en.wikipedia.org/wiki/Cron
     // "cron: minute hour dayofmonth month dayofweek"
     public initialize(): void {
+        later.date.localTime();
+
         const raSchedule = later.parse.cron("*/15 * * * * ");
         const raInterval = later.setInterval(() => { this.clientRef.ra.updateFeed(this.clientRef); }, raSchedule);
 
