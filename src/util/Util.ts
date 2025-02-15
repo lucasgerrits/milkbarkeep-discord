@@ -68,9 +68,18 @@ export class Util {
     }
 
     static isMP3(buffer: ArrayBuffer): boolean {
-        // Get first 3 bytes of the header and check for ID3 tag
-        // Not foolproof, but should work for most cases
-        const header: Uint8Array = new Uint8Array(buffer, 0, 3);
-        return header[0] === 0x49 && header[1] === 0x33;
+        const bytes = new Uint8Array(buffer);
+
+        // Check for ID3 header
+        if (bytes.length >= 3 && bytes[0] === 0x49 && bytes[1] === 0x44 && bytes[2] === 0x33) {
+            return true; // ID3v2 header found
+        }
+
+        // Check for MPEG frame sync bits (0xFF followed by 0xE0 to 0xFF)
+        if (bytes.length >= 2 && bytes[0] === 0xFF && (bytes[1] & 0xE0) === 0xE0) {
+            return true; // Possible MP3 frame header found
+        }
+
+        return false;
     }
 }
