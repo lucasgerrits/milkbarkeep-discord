@@ -1,5 +1,6 @@
 import { ApplicationCommandOptionType } from "discord.js";
 import { Command } from "../../classes/Command";
+import { Util } from "../../util/Util";
 import urls from "../../../data/urls.json";
 
 export default new Command({
@@ -27,6 +28,10 @@ export default new Command({
         if (buffer === null) {
             await args.interaction.editReply({
                 content: "I'm sorry, but I can't locate a sound by that name: \n`" + inputSound + "`",
+            });
+        } else if (!Util.isMP3(buffer)) {
+            await args.interaction.editReply({
+                content: "I'm sorry, but the file or path may be currently unreachable."
             });
         } else {
             const bytes: number = buffer.byteLength;

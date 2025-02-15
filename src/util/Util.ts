@@ -66,4 +66,11 @@ export class Util {
     static sleepInSeconds(seconds: number): Promise<void> {
         return new Promise(resolve => setTimeout(resolve, seconds * 1000));
     }
+
+    static isMP3(buffer: ArrayBuffer): boolean {
+        // Get first 3 bytes of the header and check for ID3 tag
+        // Not foolproof, but should work for most cases
+        const header: Uint8Array = new Uint8Array(buffer, 0, 3);
+        return header[0] === 0x49 && header[1] === 0x33;
+    }
 }
