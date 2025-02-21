@@ -1,9 +1,13 @@
 import { 
     ApplicationCommandDataResolvable, 
+    Channel, 
     Client, 
     ClientEvents, 
     Collection, 
-    GatewayIntentBits } from "discord.js";
+    GatewayIntentBits, 
+    MessageCreateOptions,
+    MessagePayload,
+    TextChannel} from "discord.js";
 import { glob } from "glob";
 import { Event } from "./Event";
 import { GuildConfigManager } from "./GuildConfigManager";
@@ -85,6 +89,15 @@ export class ExtendedClient extends Client {
         const configs = await this.configManager.getConfigArray();
         for (const config of configs) {
             await this.guilds.cache.get(config.id)?.commands.set(this.slashCommands);
+        }
+    }
+
+    public async send(channelID: string, options: string | MessagePayload | MessageCreateOptions): Promise<void> {
+        try {
+            const channel: Channel = this.channels.cache.get(channelID) as TextChannel;
+            await channel.send(options);
+        } catch(err) {
+            Logger.log(err as string);
         }
     }
 }
