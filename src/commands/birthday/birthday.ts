@@ -1,6 +1,7 @@
 import { ApplicationCommandOptionType } from "discord.js";
+import { Birthdays } from "../../classes/Birthdays";
+import { BirthdaysJson } from "../../types/GuildTypes";
 import { Command } from "../../classes/Command";
-import { birthdays } from "../../../data/birthdays.json";
 
 export default new Command({
     name: "birthday",
@@ -17,19 +18,23 @@ export default new Command({
         await args.interaction.deferReply();
 
         // Get specified name, else command user
-        const userID: string = args.options.getUser("user", false)?.id ?? args.interaction.user.id;
-        // const userName = interaction.options.getUser("user", false)?.displayName ?? interaction.user.displayName;
+        const userId: string = args.options.getUser("user", false)?.id ?? args.interaction.user.id;
+
+        if (!args.interaction.guildId) {
+            throw new Error("Required guild id is null.");
+        }
+        const guildId: string = args.interaction.guildId;
 
         // Filter json for possible result
-        const results: Array<{ date: string; user: string; userID: string; }> = birthdays.filter(obj => obj.userID === userID);
+        const results: Array<BirthdaysJson> = await Birthdays.getUserBirthday(args.client, args.interaction.guildId, userId);
 
         // Create output string
         let outputStr: string = "";
         if (results.length > 0) {
             const birthday: string = results[0].date;
-            outputStr = `<@${userID}>'s set birthday: ${birthday}`;
+            outputStr = `<@${userId}>'s set birthday: ${birthday}`;
         } else {
-            outputStr = `<@${userID}'s birthday is not set.`;
+            outputStr = `<@${userId}'s birthday is not set.`;
         }
 
         // Send

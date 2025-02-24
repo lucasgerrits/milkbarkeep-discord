@@ -38,6 +38,14 @@ export class Birthdays {
             return [];
         }
     }
+
+    public static async getUserBirthday(clientRef: ExtendedClient, guildId: string, userId: string): Promise<Array<BirthdaysJson>> {
+        if (!this.isEnabledForGuild(clientRef, guildId)) {
+            throw new Error(`Command used for feature not enabled in guild: ${guildId}`);
+        }
+        const birthdays: Array<BirthdaysJson> = await this.getBirthdaysJsonArray(guildId);
+        return birthdays.filter(obj => obj.userId === userId);
+    }
     
     public static async check(clientRef: ExtendedClient): Promise<void> {
         const guilds: Array<string> = await clientRef.settingsManager.getGuildIds();
