@@ -71,10 +71,13 @@ export class Logger {
 
             // Output to Discord
             if (consoleOutput.enabled === true) {
-                const discLogStr: string = `\`\`\`\n[${dateTimeStr}]: ${Util.addBrailleBlank(strIn)}\n\`\`\``;
-                client.send(consoleOutput.channelId, {
-                    content: discLogStr
-                });
+                try {
+                    const channel: TextChannel = client.channels.cache.get(consoleOutput.channelId) as TextChannel;
+                    const discLogStr: string = `\`\`\`\n[${dateTimeStr}]: ${Util.addBrailleBlank(strIn)}\n\`\`\``;
+                    channel.send({ content: discLogStr });
+                } catch (error) {
+                    console.log(error);
+                }
             }
             
             // Build string and output to console
