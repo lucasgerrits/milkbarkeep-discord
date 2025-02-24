@@ -1,0 +1,8 @@
+{
+    "discordAppToken": "",
+    "consoleOutput": {
+        "enabled": false,
+        "guildId": "987654321987654321",
+        "channelId": "987654321987654321"
+    }
+}

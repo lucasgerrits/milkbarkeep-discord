@@ -9,22 +9,23 @@ import {
     MessagePayload,
     TextChannel} from "discord.js";
 import { glob } from "glob";
+import { BlueskyApi } from "../integrations/Bluesky-API";
 import { Event } from "./Event";
-import { GuildConfigManager } from "./GuildConfigManager";
+import { GuildSettingsManager } from "./GuildSettingsManager";
 import { Logger } from "../util/Logger";
 import { MessageHandler } from "./MessageHandler";
-import { TimerManagerV2 } from "./TimerManagerV2";
 import { RetroAchievementsApi } from "../integrations/RA-API";
-import { token } from "../../data/discordSecrets.json";
+import { TimerManagerV2 } from "./TimerManagerV2";
+import { discordAppToken } from "../../data/config.json";
 import type { CommandType } from "../types/CommandTypes";
-import { BlueskyApi } from "../integrations/Bluesky-API";
+
 
 export class ExtendedClient extends Client {
     public bluesky: BlueskyApi;
     public ra: RetroAchievementsApi;
     public timers: TimerManagerV2;
     public messageHandler: MessageHandler;
-    public configManager: GuildConfigManager;
+    public settingsManager: GuildSettingsManager;
 
     public commands: Collection<string, CommandType> = new Collection();
     private slashCommands: ApplicationCommandDataResolvable[] = [];
@@ -53,13 +54,13 @@ export class ExtendedClient extends Client {
         this.bluesky = new BlueskyApi();
         this.timers = new TimerManagerV2(this);
         this.messageHandler = new MessageHandler();
-        this.configManager = new GuildConfigManager();
+        this.settingsManager = new GuildSettingsManager();
     }
 
     start(): void {
         this.setEvents();
         this.setCommands();
-        this.login(token);
+        this.login(discordAppToken);
     }
 
     async importFile(filePath: string): Promise<any> {
@@ -86,9 +87,9 @@ export class ExtendedClient extends Client {
 
     async registerCommands(): Promise<void> {
         //Logger.log(`Registering ${this.slashCommands.length} slash commands...`, "red");
-        const configs = await this.configManager.getConfigArray();
-        for (const config of configs) {
-            await this.guilds.cache.get(config.id)?.commands.set(this.slashCommands);
+        const guildIds: Array<string> = await this.settingsManager.getGuildIds();
+        for (const guildId of guildIds) {
+            await this.guilds.cache.get(guildId)?.commands.set(this.slashCommands);
         }
     }
 

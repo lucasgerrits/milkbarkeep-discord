@@ -1,11 +1,10 @@
 import { TextChannel } from "discord.js";
 import { Util } from "./Util";
 import { client } from "..";
-import channelIDs from "../../data/channelIDs.json";
+import { consoleOutput } from "../../data/config.json";
 
 export class Logger {
     private static readonly DEBUG: boolean = true;
-    private static readonly DISCORD_OUTPUT: boolean = true;
     private static readonly colors: {
         foreground: {
             [key: string]: number;
@@ -71,15 +70,11 @@ export class Logger {
             const dateTimeStr = Logger.getDateTimeStr();
 
             // Output to Discord
-            if (Logger.DISCORD_OUTPUT === true) {
-                try {
-                    const channelID: string = channelIDs.barkeep.channels.console;
-                    const channel: TextChannel = client.channels.cache.get(channelID) as TextChannel;
-                    const discLogStr: string = `\`\`\`\n[${dateTimeStr}]: ${Util.addBrailleBlank(strIn)}\n\`\`\``;
-                    channel.send({ content: discLogStr });
-                } catch (error) {
-                    console.log(error);
-                }
+            if (consoleOutput.enabled === true) {
+                const discLogStr: string = `\`\`\`\n[${dateTimeStr}]: ${Util.addBrailleBlank(strIn)}\n\`\`\``;
+                client.send(consoleOutput.channelId, {
+                    content: discLogStr
+                });
             }
             
             // Build string and output to console

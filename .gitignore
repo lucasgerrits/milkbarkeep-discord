@@ -1,3 +1,13 @@
-data/
+# Ignore bot specific configs, minus examples
+data/*.json
+data/*.js
+!data/*.example.json
+!data/*.example.js
+
+# Ignore guild specific configs, minus examples
+data/guilds/*
+!data/guilds/example
+
+# Ignore misc project dirs
 node_modules/
 prod/
