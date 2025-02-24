@@ -4,7 +4,7 @@ import { ExtendedClient } from "./ExtendedClient";
 import { Logger } from "../util/Logger";
 import later from "@breejs/later";
 
-export class TimerManagerV2 {
+export class TimerManager {
     clientRef: ExtendedClient;
 
     constructor(client: ExtendedClient) {
