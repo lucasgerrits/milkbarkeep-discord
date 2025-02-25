@@ -1,5 +1,5 @@
 import { ApplicationCommandOptionType, ColorResolvable, EmbedBuilder, MessageFlags, PermissionFlagsBits } from "discord.js";
-import { Command } from "../../classes/Command";
+import { Command } from "../../core/Command";
 import { AchievementUnlocksMetadata, GameExtended } from "@retroachievements/api";
 import { Util } from "../../util/Util";
 

@@ -1,5 +1,5 @@
 import { EmbedBuilder } from "discord.js";
-import { Command } from "../../classes/Command";
+import { Command } from "../../core/Command";
 
 export default new Command({
     name: "ra-point-colors",

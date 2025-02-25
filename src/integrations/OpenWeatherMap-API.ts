@@ -1,7 +1,7 @@
 import OpenWeatherMap from "openweathermap-ts";
 import { EmbedBuilder } from "discord.js";
 import { Convert } from "../util/Convert";
-import { Timestamps } from "../classes/Timestamps";
+import { Timestamps } from "../core/Timestamps";
 import { openWeatherMap as apiKey } from "../../data/apiKeys.json";
 import type { CurrentResponse } from "openweathermap-ts/dist/types";
 

@@ -1,6 +1,6 @@
 import { APIEmbedField, EmbedBuilder, User, userMention } from "discord.js";
-import { Command } from "../../classes/Command";
-import { Oddball } from "../../classes/Oddball";
+import { Command } from "../../core/Command";
+import { Oddball } from "../../core/Oddball";
 
 export default new Command({
     name: "oddball",

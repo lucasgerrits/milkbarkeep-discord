@@ -1,5 +1,5 @@
 import { ApplicationCommandOptionType } from "discord.js";
-import { Command } from "../../classes/Command";
+import { Command } from "../../core/Command";
 import { Util } from "../../util/Util";
 import urls from "../../../data/urls.json";
 

@@ -1,5 +1,5 @@
 import { ApplicationCommandOptionType, PermissionFlagsBits } from "discord.js";
-import { Command } from "../../classes/Command";
+import { Command } from "../../core/Command";
 import { Jimp } from "jimp";
 const DiscordScreenshot = require("discord-screenshot");
 

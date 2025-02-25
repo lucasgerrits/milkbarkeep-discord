@@ -1,6 +1,6 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, MessageActionRowComponentBuilder, User, userMention } from "discord.js";
-import { Command } from "../../classes/Command";
-import { Oddball } from "../../classes/Oddball";
+import { Command } from "../../core/Command";
+import { Oddball } from "../../core/Oddball";
 import { Util } from "../../util/Util";
 
 export default new Command({

@@ -1,5 +1,5 @@
 import { ApplicationCommandOptionType, CommandInteraction, EmbedBuilder } from "discord.js";
-import { Command } from "../../classes/Command";
+import { Command } from "../../core/Command";
 import type { userPoints } from "../../types/RATypes";
 
 export default new Command({

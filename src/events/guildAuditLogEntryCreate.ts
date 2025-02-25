@@ -1,6 +1,6 @@
 import { AuditLogEvent, EmbedBuilder, Events, Guild, GuildAuditLogsEntry, TextChannel, User, channelMention, roleMention, userMention } from "discord.js";
-import { Event } from "../classes/Event";
-import { Timestamps } from "../classes/Timestamps";
+import { Event } from "../core/Event";
+import { Timestamps } from "../core/Timestamps";
 import { client } from "..";
 import channelIDs from "../../data/channelIDs.json";
 

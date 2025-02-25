@@ -1,5 +1,5 @@
 import { EmbedBuilder, PermissionFlagsBits } from "discord.js";
-import { Command } from "../../classes/Command";
+import { Command } from "../../core/Command";
 import { Convert } from "../../util/Convert";
 import { SeleniumWebDriver } from "../../integrations/SeleniumWebDriver";
 import { OpenWeatherMapApi } from "../../integrations/OpenWeatherMap-API";

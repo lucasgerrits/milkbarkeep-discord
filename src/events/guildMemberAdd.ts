@@ -1,5 +1,5 @@
 import { Events, GuildMember, TextChannel } from "discord.js";
-import { Event } from "../classes/Event";
+import { Event } from "../core/Event";
 import { Logger } from "../util/Logger";
 import channelIDs from "../../data/channelIDs.json";
 

@@ -1,4 +1,4 @@
-import { ExtendedClient } from "./classes/ExtendedClient";
+import { ExtendedClient } from "./core/ExtendedClient";
 
 // Remove first two which are 'node' and the file
 const args = process.argv.slice(2);

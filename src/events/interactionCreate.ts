@@ -1,5 +1,5 @@
 import { Channel, CommandInteractionOptionResolver, Events, Interaction, TextChannel } from "discord.js";
-import { Event } from "../classes/Event";
+import { Event } from "../core/Event";
 import { Logger } from "../util/Logger";
 import { client } from "..";
 import type { ExtendedInteraction } from "../types/CommandTypes";

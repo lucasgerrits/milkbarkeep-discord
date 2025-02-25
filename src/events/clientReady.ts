@@ -1,5 +1,5 @@
 import { Events } from "discord.js";
-import { Event } from "../classes/Event";
+import { Event } from "../core/Event";
 import { Logger } from "../util/Logger";
 import { client } from "..";
 

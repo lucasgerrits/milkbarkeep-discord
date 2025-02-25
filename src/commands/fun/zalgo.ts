@@ -1,5 +1,5 @@
 import { ApplicationCommandOptionType } from "discord.js";
-import { Command } from "../../classes/Command";
+import { Command } from "../../core/Command";
 import zalgo, { ZalgoOptions } from 'zalgo-js';
 
 export default new Command({

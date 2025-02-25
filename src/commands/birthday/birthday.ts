@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType } from "discord.js";
-import { Birthdays } from "../../classes/Birthdays";
+import { Birthdays } from "../../core/Birthdays";
 import { BirthdaysJson } from "../../types/GuildTypes";
-import { Command } from "../../classes/Command";
+import { Command } from "../../core/Command";
 
 export default new Command({
     name: "birthday",

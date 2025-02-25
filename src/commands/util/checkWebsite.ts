@@ -1,5 +1,5 @@
 import { ApplicationCommandOptionType, Channel, EmbedBuilder, PermissionFlagsBits, TextChannel } from "discord.js";
-import { Command } from "../../classes/Command";
+import { Command } from "../../core/Command";
 import { SeleniumWebDriver } from "../../integrations/SeleniumWebDriver";
 import { Logger } from "../../util/Logger";
 

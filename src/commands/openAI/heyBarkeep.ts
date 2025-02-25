@@ -1,5 +1,5 @@
 import { ApplicationCommandOptionType, ColorResolvable, EmbedBuilder, PermissionFlagsBits } from "discord.js";
-import { Command } from "../../classes/Command";
+import { Command } from "../../core/Command";
 import { OpenAIApi } from "../../integrations/OpenAI-API";
 
 export default new Command({

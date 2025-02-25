@@ -14,9 +14,9 @@ import {
     getUserRecentAchievements
 } from "@retroachievements/api";
 import { ColorResolvable, EmbedBuilder, TextChannel } from "discord.js";
-import { ExtendedClient } from "../classes/ExtendedClient";
+import { ExtendedClient } from "../core/ExtendedClient";
 import { Logger } from "../util/Logger";
-import { Timestamps } from "../classes/Timestamps";
+import { Timestamps } from "../core/Timestamps";
 import { Util } from "../util/Util";
 import { retroAchievements as api } from "../../data/apiKeys.json";
 import { users as raUsers } from "../../data/raUsers.json";

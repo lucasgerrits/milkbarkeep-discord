@@ -1,6 +1,6 @@
 import { ApplicationCommandOptionType, EmbedBuilder } from "discord.js";
-import { Command } from "../../classes/Command";
-import { Timestamps } from "../../classes/Timestamps";
+import { Command } from "../../core/Command";
+import { Timestamps } from "../../core/Timestamps";
 import urls from "../../../data/urls.json";
 
 export default new Command({

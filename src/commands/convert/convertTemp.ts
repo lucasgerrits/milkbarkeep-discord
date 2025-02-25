@@ -1,5 +1,5 @@
 import { ApplicationCommandOptionType, EmbedBuilder } from "discord.js";
-import { Command } from "../../classes/Command";
+import { Command } from "../../core/Command";
 import { Convert } from "../../util/Convert";
 
 export default new Command({

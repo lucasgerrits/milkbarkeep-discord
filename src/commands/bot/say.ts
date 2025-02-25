@@ -1,5 +1,5 @@
 import { ApplicationCommandOptionType, Channel, ChannelType, MessageFlags, PermissionFlagsBits, TextChannel } from "discord.js";
-import { Command } from "../../classes/Command";
+import { Command } from "../../core/Command";
 
 export default new Command({
     name: "say",
