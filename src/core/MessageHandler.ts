@@ -4,16 +4,11 @@ import { GoogleGeminiApi } from "../integrations/GoogleGemini-API";
 import { Logger } from "../util/Logger";
 import { Util } from "../util/Util";
 import { client } from "..";
-import channelIDs from "../../data/channelIDs.json";
 
 export class MessageHandler{
     constructor() {}
 
     public async checkMessage(message: Message): Promise<void> {
-        // ENFORCEMENT CHECKS
-        if (message.channel.id === channelIDs.bombsquad.channels.anonymous) return;
-        this.chiliDogCheck(message);
-
         // REACT CHECKS
         this.milkCheck(message);
 
@@ -50,6 +45,7 @@ export class MessageHandler{
         }
     }
 
+    /*
     private async chiliDogCheck(message: Message): Promise<void> {
         if (message.channel.id !== channelIDs.bombsquad.channels.chiliDog) return;
         // const regex = new RegExp("^(<:cfbOrb:950146443170164767>){1}$");
@@ -58,6 +54,7 @@ export class MessageHandler{
             message.delete();
         }
     }
+    */
 
     private async milkCheck(message: Message): Promise<void> {
         const melkEmote: string = "melk:616025879830855681";
