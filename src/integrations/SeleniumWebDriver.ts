@@ -48,27 +48,6 @@ export class SeleniumWebDriver {
         }
     }
 
-    public async getIsItDown(urlToCheck: string): Promise<string> {
-        const regex = /^(https?:\/\/)/;
-        if (regex.test(urlToCheck)) {
-            urlToCheck = urlToCheck.replace(regex, '');
-        }
-        const url: string = `https://www.isitdownrightnow.com/${urlToCheck}.html`;
-        let output = "There was an issue with scraping the data.";
-        const driver: WebDriver = await this.builder.build();
-        try {
-            await driver.get(url);
-            const condition: WebElementCondition = until.elementLocated(By.className("statusdown"));
-            const locatedElement: WebElement = await driver.wait(condition, 20000);
-            output = await locatedElement.getText();
-        } catch (err) {
-            console.error(err);
-        } finally {
-            await driver.quit();
-            return output;
-        }
-    }
-
     public async getAppletonCamScreen(): Promise<string> {
         const width: number = 1920;
         const height: number = 1080;
