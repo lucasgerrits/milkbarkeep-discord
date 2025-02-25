@@ -1,28 +1,50 @@
-import { Events, GuildMember, TextChannel } from "discord.js";
+import { Events, Guild, GuildMember, TextChannel } from "discord.js";
 import { Event } from "../core/Event";
 import { Logger } from "../util/Logger";
+import { client } from "..";
 import channelIDs from "../../data/channelIDs.json";
 
 export default new Event(
     Events.GuildMemberAdd,
     async (member: GuildMember) => {
-        const newMemberID: string = member.id;
-        const rulesChannel:string = channelIDs.bombsquad.channels.rules;
-        const welcomeChannel: string = channelIDs.bombsquad.channels.welcome;
-        const cfbWave:string = "<a:cfbWave:798474231381491782>";
+        // Strucutre event details
+        const joinedGuildId = member.guild.id;
+        const joinedGuild: Guild = await client.guilds.fetch(joinedGuildId).catch(() => null) as Guild;
+        const joinedGuildName: string = joinedGuild.name;
+        const newMemberId: string = member.id;
+        const newMemberTag: string = member.user.tag;
 
-        const joinedGuild = member.guild.id;
-        if (joinedGuild !== channelIDs.bombsquad.id) return;
-
-        const logStr: string = `New member: ${member.user.tag} (${newMemberID})`;
+        // Log event to console
+        const logStr: string = `New member in guild ${joinedGuildName} (${joinedGuildId}): ${newMemberTag} (${newMemberId})`;
         Logger.log(logStr, "green");
 
-        const welcomeMessage: string = `Hey everyone, let's welcome <@${newMemberID}> to The Bombsquad ! Hello there 🎉👋 ! Please make note of <#${rulesChannel}> and have a good Tim. ${cfbWave}`;
+        // Determine if welcome message should be sent in the joined guild
+        if (!await client.settingsManager.isFeatureEnabled(joinedGuildId, "welcome")) {
+            return;
+        }
 
+        // Check for channel property
+        const welcomeChannel: string = await client.settingsManager.getChannelId(joinedGuildId, "welcome");
+        console.log(welcomeChannel);
+        if (welcomeChannel === undefined || welcomeChannel === null) {
+            Logger.log(`Error: Welcome messages enabled for guild ${joinedGuildId} but no channel set.`);
+            return;
+        }
+
+        // Determine appropriate welcome message
+        const defaultWelcomeMessage: string = `Hey everyone, let's welcome <@${newMemberId}> to the server! Hello there! 🎉👋 Please make note of the rules and have a good Tim.`;
+        let welcomeMessage: string = await client.settingsManager.getWelcomeMessage(joinedGuildId);
+        if (welcomeMessage === "") {
+            welcomeMessage = defaultWelcomeMessage;
+        } else {
+            welcomeMessage = welcomeMessage.replace("{newMember}", `<@${newMemberId}>`);
+        }
+
+        // Get id of channel to welcome in and send off the message
         const channelToWelcomeIn: TextChannel = member.guild.channels.cache.get(welcomeChannel) as TextChannel;
         await channelToWelcomeIn.send({
             "content": welcomeMessage,
-            "allowedMentions": { "users": [ newMemberID ] },
+            "allowedMentions": { "users": [ newMemberId ] },
         });
     }
 );

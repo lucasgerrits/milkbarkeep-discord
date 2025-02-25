@@ -3,6 +3,7 @@ import type { ChannelName, FeatureName, GuildSettingsJson } from "../types/Guild
 export class GuildSettings {
     public id: string;
     public commands: Array<string>;
+    public welcomeMessage: string;
     public channels: {
         [key in ChannelName]: string;
     }
@@ -12,8 +13,9 @@ export class GuildSettings {
 
     constructor(json: GuildSettingsJson) {
         this.id = json.id;
-        this.commands = json.commands;
-        this.channels = json.channels;
-        this.features = json.features;
+        this.commands = json.commands ?? [];
+        this.channels = json.channels ?? {};
+        this.features = json.features ?? {};
+        this.welcomeMessage = json.welcomeMessage || "";
     }
 }

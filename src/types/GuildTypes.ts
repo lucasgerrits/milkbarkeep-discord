@@ -4,6 +4,7 @@ export type GuildSettingsJson = {
     channels: { [key in ChannelName]: string };
     features: { [key in FeatureName]: boolean };
     commands: string[];
+    welcomeMessage: string;
 }
 
 export type BirthdaysJson = {
@@ -14,10 +15,10 @@ export type BirthdaysJson = {
 export type FeatureName = 
     "birthdays" |
     "oddball" |
-    "ra";
+    "ra" |
+    "welcome";
 
 export type ChannelName =
-    "anonymous" |
     "appletonCam" |
     "birthdays" |
     "chiliDog" |
