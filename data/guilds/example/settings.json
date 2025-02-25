@@ -2,10 +2,14 @@
     "memo": "Human Readable Server Name",
     "id": "987654321987654321",
     "features": {
-        "birthdays": false
+        "birthdays": false,
+        "raFeed": false,
+        "welcome": false
     },
     "channels": {
-
+        "birthdays": "",
+        "raFeed": "",
+        "welcome": ""
     },
     "commands": [
 

@@ -26,7 +26,7 @@ export default new Event(
         // Check for channel property
         const welcomeChannel: string = await client.settingsManager.getChannelId(joinedGuildId, "welcome");
         console.log(welcomeChannel);
-        if (welcomeChannel === undefined || welcomeChannel === null) {
+        if (!welcomeChannel) {
             Logger.log(`Error: Welcome messages enabled for guild ${joinedGuildId} but no channel set.`);
             return;
         }
