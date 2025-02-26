@@ -17,7 +17,7 @@ export class GuildSettingsManager {
     public async getGuildIds(): Promise<Array<string>> {
         // Get list of all subdirectories in guilds, filter example, and retain only basenames
         let guildDirs: Array<string> = await glob(`${this.guildsParentDir}/*/`);
-        guildDirs = guildDirs.filter(dir => !dir.endsWith("/example/"));
+        guildDirs = guildDirs.filter(dir => !dir.endsWith("\\example"));
         const guildIds: Array<string> = guildDirs.map(dir => path.basename(dir));
         return guildIds;
     }
