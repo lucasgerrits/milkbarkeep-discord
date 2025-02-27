@@ -1,8 +1,8 @@
 import { EmbedBuilder, PermissionFlagsBits } from "discord.js";
+import { AppletonCam } from "../../core/AppletonCam";
 import { Command } from "../../core/Command";
-import { Convert } from "../../util/Convert";
-import { SeleniumWebDriver } from "../../integrations/SeleniumWebDriver";
 import { OpenWeatherMapApi } from "../../integrations/OpenWeatherMap-API";
+import { SeleniumWebDriver } from "../../integrations/SeleniumWebDriver";
 import type { CurrentResponse } from "openweathermap-ts/dist/types";
 
 export default new Command({
@@ -12,18 +12,8 @@ export default new Command({
     run: async (args): Promise<void> => {
         await args.interaction.deferReply();
 
-        // Get screenshot data
-        const driver: SeleniumWebDriver = new SeleniumWebDriver();
-        const screenString: string = await driver.getAppletonCamScreen();
-        const base64Data: string = screenString.replace(/^data:image\/png;base64,/, '');
-        const buffer: Buffer = Buffer.from(base64Data, "base64");
-
-        // Get weather info
-        const owm: OpenWeatherMapApi = new OpenWeatherMapApi();
-        const weatherData: CurrentResponse = await owm.getCurrentWeatherByZipcode(54911, "US");
-
-        // Create embed
-        const embed: EmbedBuilder = await owm.createEmbed(weatherData, "attachment://cam.png");
+        const buffer: Buffer = await AppletonCam.createBuffer();
+        const embed = await AppletonCam.createEmbed();
 
         // Send Discord message
         try {
