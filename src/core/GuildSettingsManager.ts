@@ -61,22 +61,22 @@ export class GuildSettingsManager {
     // #region Get Specific Settings
 
     public async getChannelId(guildId: string, channelName: FeatureName): Promise<string> {
-        const guildSettings: GuildSettings = await this.getSettings(guildId);
-        return guildSettings.features[channelName].channelId;
+        return this.getSettings(guildId).then(settings => settings.features[channelName].channelId);
     }
 
     public async getCommands(guildId: string): Promise<Array<string>> {
-        const settings: GuildSettings = await this.getSettings(guildId);
-        return settings.commands;
+        return this.getSettings(guildId).then(settings => settings.commands);
+    }
+
+    public async getUnloggedChannelIds(guildId: string): Promise<Array<string>> {
+        return this.getSettings(guildId).then(settings => settings.channelsNotToLog);
     }
 
     public async getWelcomeMessage(guildId: string): Promise<string | undefined> {
-        const guildSettings: GuildSettings = await this.getSettings(guildId);
-        return guildSettings.features["welcome"].output;
+        return this.getSettings(guildId).then(settings => settings.features["welcome"].output);
     }
 
     public async isFeatureEnabled(guildId: string, featureName: FeatureName): Promise<boolean> {
-        const guildSettings: GuildSettings = await this.getSettings(guildId);
-        return guildSettings.features[featureName].enabled;
+        return this.getSettings(guildId).then(settings => settings.features[featureName].enabled);
     }
 }
