@@ -1,5 +1,6 @@
 {
     "discordAppToken": "",
+    "devTestChannelId": "",
     "consoleOutput": {
         "enabled": false,
         "guildId": "987654321987654321",

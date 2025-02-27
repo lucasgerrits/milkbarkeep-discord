@@ -1,6 +1,6 @@
-import { ApplicationCommandOptionType, MessageFlags, PermissionFlagsBits, TextChannel } from "discord.js";
+import { ApplicationCommandOptionType, MessageFlags, PermissionFlagsBits } from "discord.js";
 import { Command } from "../../core/Command";
-import channelIDs from "../../../data/channelIDs.json";
+import { devTestChannelId } from "../../../data/config.json";
 
 export default new Command({
     name: "ra-update-feed",
@@ -17,16 +17,26 @@ export default new Command({
     run: async (args): Promise<void> => {
         await args.interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
+        // Determine if feature enabled for interaction's guild
+        if (!args.interaction.guildId) {
+            throw new Error("Required guild id is null.");
+        }
+        const guildId: string = args.interaction.guildId;
+        const interactionChannelId: string = args.interaction.channelId;
+        const isDevTestChannel: boolean = interactionChannelId === devTestChannelId;
+        const isFeedEnabled: boolean = await args.client.settingsManager.isFeatureEnabled(guildId, "raFeed");
+        if (!isDevTestChannel && !isFeedEnabled) { return; }
+
+        // Determine where to post
         const minutesToLookBack: number = args.options.getInteger("minutes", false) ?? 30;
-        let toPostChannelID: string = channelIDs.bombsquad.channels.raFeed;
-        const interactionChannel: TextChannel = args.interaction.channel as TextChannel;
-        const interactionChannelID: string = interactionChannel.id;
-        if (interactionChannelID === channelIDs.bombsquad.channels.testing) {
-            toPostChannelID = channelIDs.bombsquad.channels.testing;
+        let toPostChannelId: string = devTestChannelId;
+        if (!isDevTestChannel) {
+            toPostChannelId = await args.client.settingsManager.getChannelId(guildId, "raFeed");
         }
 
+        // Begin the feed update, report success
         try {
-            await args.client.ra.updateFeed(args.client, toPostChannelID, minutesToLookBack);
+            await args.client.ra.updateFeed(args.client, toPostChannelId, minutesToLookBack);
             await args.interaction.editReply({
                 content: "Update successful."
             });
