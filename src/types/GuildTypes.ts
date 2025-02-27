@@ -17,7 +17,7 @@ export type Feature = {
 export type FeatureName =
     "appletonCam" |
     "birthdays" |
-    "logging" |
+    "modLog" |
     "oddball" |
     "raFeed" |
     "testing" |

@@ -10,7 +10,7 @@
             "enabled": false,
             "channelID": ""
         },
-        "logging": {
+        "modLog": {
             "enabled": false,
             "channelId": ""
         },

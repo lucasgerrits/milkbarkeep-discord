@@ -18,15 +18,17 @@ export default new Event(
             }
         }
 
-        const guildId: string = message?.guild?.id as string;
-        if (guildId !== channelIDs.bombsquad.id) return;
-
         // Account for undefined values
         message = message as Message;
         const author: User = message.author as User;
-        
-        // Ignore deletion of bot posts
-        if (author.displayName === client.user?.displayName) { return; }
+
+        const guildId: string = message?.guild?.id as string;
+
+        // Determine if deletion should be logged at all due to settings, ignored channels, or bot message
+        const modLoggingEnabled: boolean = await client.settingsManager.isFeatureEnabled(guildId, "modLog");
+        const channelShouldBeIgnored: boolean = (await client.settingsManager.getUnloggedChannelIds(guildId)).includes(message.channelId);
+        const authorIsBot: boolean = author.displayName === client.user?.displayName;
+        if (!modLoggingEnabled || channelShouldBeIgnored || authorIsBot) { return; }
 
         // Get message and event details
         const content: string = (message.content.length >= 1) ? message.content : " ";
