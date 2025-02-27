@@ -2,7 +2,6 @@ import { EmbedBuilder, TextChannel } from "discord.js";
 import { ExtendedClient } from "./ExtendedClient";
 import { OpenWeatherMapApi } from "../integrations/OpenWeatherMap-API";
 import { SeleniumWebDriver } from "../integrations/SeleniumWebDriver";
-import channelIDs from "../../data/channelIDs.json";
 import type { CurrentResponse } from "openweathermap-ts/dist/types";
 
 export class AppletonCam {
@@ -27,19 +26,29 @@ export class AppletonCam {
         // Create embed
         const embed: EmbedBuilder = await owm.createEmbed(weatherData, "attachment://cam.png");
 
-        // Send to Discord
-        try {
-            const channelId: string = channelIDs.bombsquad.channels.appletonCam;
-            const channel: TextChannel = clientRef.channels.cache.get(channelId) as TextChannel;
-            await channel.send({
-                embeds: [ embed ],
-                files: [{
-                    attachment: buffer,
-                    name: "cam.png"
-                }]
-            });
-        } catch (error) {
-            console.log(error);
+        // Send to feature enabled Discords
+        const guilds: Array<string> = await clientRef.settingsManager.getGuildIds();
+
+        for (const guildId of guilds) {
+            // Check if birthday announcements enabled for each guild
+            if (!clientRef.settingsManager.isFeatureEnabled(guildId, "appletonCam")) {
+                return;
+            }
+
+            // Send to Discord
+            try {
+                const channelId: string = await clientRef.settingsManager.getChannelId(guildId, "appletonCam");
+                const channel: TextChannel = clientRef.channels.cache.get(channelId) as TextChannel;
+                await channel.send({
+                    embeds: [ embed ],
+                    files: [{
+                        attachment: buffer,
+                        name: "cam.png"
+                    }]
+                });
+            } catch (error) {
+                console.log(error);
+            }
         }
     };
 }
