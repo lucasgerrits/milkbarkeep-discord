@@ -3,7 +3,7 @@ import * as path from "path";
 import { glob } from "glob";
 import { GuildSettings } from "./GuildSettings";
 import { Logger } from "../util/Logger";
-import type { ChannelName, FeatureName, GuildSettingsJson } from "../types/GuildTypes";
+import type { FeatureName, GuildSettingsJson } from "../types/GuildTypes";
 
 export class GuildSettingsManager {
     private map: Map<string, GuildSettings>
@@ -60,9 +60,9 @@ export class GuildSettingsManager {
 
     // #region Get Specific Settings
 
-    public async getChannelId(guildId: string, channelName: ChannelName): Promise<string> {
+    public async getChannelId(guildId: string, channelName: FeatureName): Promise<string> {
         const guildSettings: GuildSettings = await this.getSettings(guildId);
-        return guildSettings.channels[channelName];
+        return guildSettings.features[channelName].channelId;
     }
 
     public async getCommands(guildId: string): Promise<Array<string>> {
@@ -70,13 +70,13 @@ export class GuildSettingsManager {
         return settings.commands;
     }
 
-    public async getWelcomeMessage(guildId: string): Promise<string> {
+    public async getWelcomeMessage(guildId: string): Promise<string | undefined> {
         const guildSettings: GuildSettings = await this.getSettings(guildId);
-        return guildSettings.welcomeMessage;
+        return guildSettings.features["welcome"].output;
     }
 
     public async isFeatureEnabled(guildId: string, featureName: FeatureName): Promise<boolean> {
         const guildSettings: GuildSettings = await this.getSettings(guildId);
-        return guildSettings.features[featureName];
+        return guildSettings.features[featureName].enabled;
     }
 }

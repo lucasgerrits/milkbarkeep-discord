@@ -1,33 +1,29 @@
 export type GuildSettingsJson = {
     id: string;
-    memo: string;
-    channels: { [key in ChannelName]: string };
-    features: { [key in FeatureName]: boolean };
+    memo?: string;
+    features: Features;
+    channelsNotToLog: string[];
     commands: string[];
-    welcomeMessage: string;
 }
+
+export type Features = { [key in FeatureName]: Feature; };
+
+export type Feature = {
+    enabled: boolean;
+    channelId: string;
+    output?: string;
+};
+
+export type FeatureName =
+    "appletonCam" |
+    "birthdays" |
+    "logging" |
+    "oddball" |
+    "raFeed" |
+    "testing" |
+    "welcome";
 
 export type BirthdaysJson = {
     userId: string;
     date: string;
 }
-
-export type FeatureName = 
-    "birthdays" |
-    "oddball" |
-    "ra" |
-    "welcome";
-
-export type ChannelName =
-    "appletonCam" |
-    "birthdays" |
-    "chiliDog" |
-    "general" |
-    "logging" |
-    "oddball" |
-    "ponder" |
-    "raFeed" |
-    "rules" |
-    "testing" |
-    "tree" |
-    "welcome";

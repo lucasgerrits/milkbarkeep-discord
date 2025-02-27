@@ -33,8 +33,8 @@ export default new Event(
 
         // Determine appropriate welcome message
         const defaultWelcomeMessage: string = `Hey everyone, let's welcome <@${newMemberId}> to the server! Hello there! 🎉👋 Please make note of the rules and have a good Tim.`;
-        let welcomeMessage: string = await client.settingsManager.getWelcomeMessage(joinedGuildId);
-        if (welcomeMessage === "") {
+        let welcomeMessage: string | undefined = await client.settingsManager.getWelcomeMessage(joinedGuildId);
+        if (!welcomeMessage) {
             welcomeMessage = defaultWelcomeMessage;
         } else {
             welcomeMessage = welcomeMessage.replace("{newMember}", `<@${newMemberId}>`);

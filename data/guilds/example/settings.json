@@ -2,15 +2,35 @@
     "memo": "Human Readable Server Name",
     "id": "987654321987654321",
     "features": {
-        "birthdays": false,
-        "raFeed": false,
-        "welcome": false
+        "appletonCam": {
+            "enabled": false,
+            "channelId": ""
+        },
+        "birthdays": {
+            "enabled": false,
+            "channelID": ""
+        },
+        "logging": {
+            "enabled": false,
+            "channelId": ""
+        },
+        "oddball": {
+            "enabled": false,
+            "channelId": ""
+        },
+        "raFeed": {
+            "enabled": false,
+            "channelId": ""
+        },
+        "welcome": {
+            "enabled": false,
+            "channelId": "",
+            "output": "Hey everyone, let's welcome {newMember} ! Hello there 🎉👋 ! Please make note of the rules, and have a good Tim."
+        }
     },
-    "channels": {
-        "birthdays": "",
-        "raFeed": "",
-        "welcome": ""
-    },
+    "channelsNotToLog": [
+        ""
+    ],
     "commands": [
 
     ]
