@@ -2,7 +2,6 @@ import { Events, Guild, GuildMember, TextChannel } from "discord.js";
 import { Event } from "../core/Event";
 import { Logger } from "../util/Logger";
 import { client } from "..";
-import channelIDs from "../../data/channelIDs.json";
 
 export default new Event(
     Events.GuildMemberAdd,

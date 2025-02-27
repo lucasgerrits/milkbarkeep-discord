@@ -2,7 +2,6 @@ import { AuditLogEvent, EmbedBuilder, Events, Guild, GuildAuditLogsEntry, TextCh
 import { Event } from "../core/Event";
 import { Timestamps } from "../core/Timestamps";
 import { client } from "..";
-import channelIDs from "../../data/channelIDs.json";
 
 export default new Event(
     Events.GuildAuditLogEntryCreate,
