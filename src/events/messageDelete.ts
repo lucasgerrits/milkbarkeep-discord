@@ -2,7 +2,6 @@ import { EmbedBuilder, Events, Message, PartialMessage, TextChannel, User, chann
 import { Event } from "../core/Event";
 import { Timestamps } from "../core/Timestamps";
 import { client } from "..";
-import channelIDs from "../../data/channelIDs.json";
 
 export default new Event(
     Events.MessageDelete,
@@ -53,7 +52,7 @@ export default new Event(
             ]);
         
         // Send logging message to Discord channel
-        const loggingChannelId: string = channelIDs.bombsquad.channels.logging;
+        const loggingChannelId: string = await client.settingsManager.getChannelId(guildId, "modLog");
         const loggingChannel: TextChannel = message.guild?.channels.cache.get(loggingChannelId) as TextChannel;
         await loggingChannel.send({
             embeds: [embed],
