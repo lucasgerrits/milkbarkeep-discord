@@ -20,10 +20,10 @@ import { Timestamps } from "../core/Timestamps";
 import { Util } from "../util/Util";
 import { retroAchievements as api } from "../../data/apiKeys.json";
 import { users as raUsers } from "../../data/raUsers.json";
-import channelIDs from "../../data/channelIDs.json";
 import type { achievementData, userPoints } from "../types/RATypes";
 
 export class RetroAchievementsApi {
+    private defaultMinToLookBack: number = 15;
     private callDelayInMS: number = 175;
     private gmtOffsetInMS: number = 21600000;
     private username: string = api.username;
@@ -146,7 +146,7 @@ export class RetroAchievementsApi {
      * Docs: https://api-docs.retroachievements.org/v1/get-user-recent-achievements.html
      * Repo: https://github.com/RetroAchievements/api-js/blob/main/src/user/getUserRecentAchievements.ts
      */
-    public async getRecentList(client: ExtendedClient, minutesToLookBack: number = 30): Promise<Array<achievementData>> {
+    public async getRecentList(client: ExtendedClient, channelId: string, minutesToLookBack: number = this.defaultMinToLookBack): Promise<Array<achievementData>> {
         // Request normally defaults to 60
         const recent: achievementData[] = [];
         try {
@@ -177,8 +177,7 @@ export class RetroAchievementsApi {
                 console.log("Status code: ", error.response.status);
                 // Server error range
                 if (error.response.status >= 500 && error.response.status < 600) {
-                    const channelID: string = channelIDs.bombsquad.channels.raFeed;
-                    const channel: TextChannel = client.channels.cache.get(channelID) as TextChannel;
+                    const channel: TextChannel = client.channels.cache.get(channelId) as TextChannel;
                     await channel.send({ content: `HTTP Error ${error.response.status}: The RA servers appear to be down.` });
                 }
             }
@@ -238,11 +237,11 @@ export class RetroAchievementsApi {
         return embed;
     }
 
-    public async updateFeed(client: ExtendedClient, channelID: string = channelIDs.bombsquad.channels.raFeed, minutesToLookBack: number = 15) {
+    public async updateFeed(client: ExtendedClient, channelId: string, minutesToLookBack: number = this.defaultMinToLookBack) {
         // Get array of recent achievements
         let recent: achievementData[];
         try {
-            recent = await this.getRecentList(client, minutesToLookBack);
+            recent = await this.getRecentList(client, channelId, minutesToLookBack);
             if (recent.length === 0) {
                 this.log("No new achievements found.");
                 return;
@@ -264,7 +263,7 @@ export class RetroAchievementsApi {
 
         // Send all embeds in one message to chat
         try {
-            const channel: TextChannel = client.channels.cache.get(channelID) as TextChannel;
+            const channel: TextChannel = client.channels.cache.get(channelId) as TextChannel;
             for (const chunk of chunkedEmbeds) {
                 await channel.send({
                     embeds: chunk,
@@ -272,6 +271,19 @@ export class RetroAchievementsApi {
             }
         } catch (error) {
             console.log(error);
+        }
+    }
+
+    public async updateAllFeeds(clientRef: ExtendedClient, minutesToLookBack: number = this.defaultMinToLookBack) {
+        const guilds: Array<string> = await clientRef.settingsManager.getGuildIds();
+
+        for (const guildId of guilds) {
+            // Check if RA feed enabled for each guild
+            if (!await clientRef.settingsManager.isFeatureEnabled(guildId, "raFeed")) {
+                return;
+            }
+            const channelId: string = await clientRef.settingsManager.getChannelId(guildId, "raFeed");
+            this.updateFeed(clientRef, channelId, minutesToLookBack);
         }
     }
 

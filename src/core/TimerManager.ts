@@ -18,10 +18,10 @@ export class TimerManager {
         later.date.localTime();
 
         const raSchedule = later.parse.cron("*/15 * * * * ");
-        const raInterval = later.setInterval(() => { this.clientRef.ra.updateFeed(this.clientRef); }, raSchedule);
+        const raInterval = later.setInterval(() => { this.clientRef.ra.updateAllFeeds(this.clientRef); }, raSchedule);
 
         const appletonCamSchedule = later.parse.cron("0 * * * *");
-        const appletonCamInterval = later.setInterval(() => { AppletonCam.postToDisc(this.clientRef); }, appletonCamSchedule);
+        const appletonCamInterval = later.setInterval(() => { AppletonCam.sendToAll(this.clientRef); }, appletonCamSchedule);
 
         const birthdaySchedule = later.parse.cron("0 0 * * *");
         const birthdayInterval = later.setInterval(() => { Birthdays.check(this.clientRef); }, birthdaySchedule);

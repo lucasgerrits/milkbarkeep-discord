@@ -5,7 +5,7 @@ import { SeleniumWebDriver } from "../integrations/SeleniumWebDriver";
 import type { CurrentResponse } from "openweathermap-ts/dist/types";
 
 export class AppletonCam {
-    public static async postToDisc(clientRef: ExtendedClient): Promise<void> {
+    public static async send(clientRef: ExtendedClient, channelId: string): Promise<void> {
         // Get screenshot data
         const driver: SeleniumWebDriver = new SeleniumWebDriver();
         const screenString: string = await driver.getAppletonCamScreen();
@@ -37,7 +37,6 @@ export class AppletonCam {
 
             // Send to Discord
             try {
-                const channelId: string = await clientRef.settingsManager.getChannelId(guildId, "appletonCam");
                 const channel: TextChannel = clientRef.channels.cache.get(channelId) as TextChannel;
                 await channel.send({
                     embeds: [ embed ],
@@ -51,4 +50,17 @@ export class AppletonCam {
             }
         }
     };
+
+    public static async sendToAll(clientRef: ExtendedClient): Promise<void> {
+        const guilds: Array<string> = await clientRef.settingsManager.getGuildIds();
+
+        for (const guildId of guilds) {
+            // Check if RA feed enabled for each guild
+            if (!await clientRef.settingsManager.isFeatureEnabled(guildId, "appletonCam")) {
+                return;
+            }
+            const channelId: string = await clientRef.settingsManager.getChannelId(guildId, "appletonCam");
+            this.send(clientRef, channelId);
+        }
+    }
 }
