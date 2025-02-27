@@ -1,9 +1,6 @@
-import { EmbedBuilder, PermissionFlagsBits } from "discord.js";
+import { PermissionFlagsBits } from "discord.js";
 import { AppletonCam } from "../../core/AppletonCam";
 import { Command } from "../../core/Command";
-import { OpenWeatherMapApi } from "../../integrations/OpenWeatherMap-API";
-import { SeleniumWebDriver } from "../../integrations/SeleniumWebDriver";
-import type { CurrentResponse } from "openweathermap-ts/dist/types";
 
 export default new Command({
     name: "appleton-cam",

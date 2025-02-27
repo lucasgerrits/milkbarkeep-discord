@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType, Channel, MessageFlags, PermissionFlagsBits, TextChannel } from "discord.js";
+import { ApplicationCommandOptionType, MessageFlags, PermissionFlagsBits } from "discord.js";
 import { Command } from "../../core/Command";
 
 export default new Command({
