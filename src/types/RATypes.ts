@@ -8,3 +8,8 @@ export type userPoints = {
 export interface achievementData extends UserRecentAchievement {
     username: string,
 }
+
+export type RARankingType = 
+    "all-time" |
+    "daily" |
+    "weekly";
