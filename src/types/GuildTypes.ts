@@ -20,6 +20,7 @@ export type FeatureName =
     "modLog" |
     "oddball" |
     "raFeed" |
+    "raWeekly" |
     "testing" |
     "welcome";
 

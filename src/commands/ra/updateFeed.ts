@@ -17,6 +17,9 @@ export default new Command({
     run: async (args): Promise<void> => {
         await args.interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
+        // Process options
+        const minutesToLookBack: number = args.options.getInteger("minutes", false) ?? 30;
+
         // Determine if feature enabled for interaction's guild
         if (!args.interaction.guildId) {
             throw new Error("Required guild id is null.");
@@ -28,7 +31,6 @@ export default new Command({
         if (!isDevTestChannel && !isFeedEnabled) { return; }
 
         // Determine where to post
-        const minutesToLookBack: number = args.options.getInteger("minutes", false) ?? 30;
         let toPostChannelId: string = devTestChannelId;
         if (!isDevTestChannel) {
             toPostChannelId = await args.client.settingsManager.getChannelId(guildId, "raFeed");
@@ -36,7 +38,7 @@ export default new Command({
 
         // Begin the feed update, report success
         try {
-            await args.client.ra.updateFeed(args.client, toPostChannelId, minutesToLookBack);
+            await args.client.ra.updateFeed(toPostChannelId, minutesToLookBack);
             await args.interaction.editReply({
                 content: "Update successful."
             });

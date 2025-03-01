@@ -17,8 +17,11 @@ export class TimerManager {
     public initialize(): void {
         later.date.localTime();
 
-        const raSchedule = later.parse.cron("*/15 * * * * ");
-        const raInterval = later.setInterval(() => { this.clientRef.ra.updateAllFeeds(this.clientRef); }, raSchedule);
+        const raFeedSchedule = later.parse.cron("*/15 * * * * ");
+        const raFeedInterval = later.setInterval(() => { this.clientRef.ra.updateAllFeeds(); }, raFeedSchedule);
+
+        const raWeeklySchedule = later.parse.cron("58 17 * * 0");
+        const raWeeklyInteral = later.setInterval(() => { this.clientRef.ra.weeklyReport(); }, raWeeklySchedule);
 
         const appletonCamSchedule = later.parse.cron("0 * * * *");
         const appletonCamInterval = later.setInterval(() => { AppletonCam.sendToAll(this.clientRef); }, appletonCamSchedule);

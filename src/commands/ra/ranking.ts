@@ -1,6 +1,6 @@
-import { ApplicationCommandOptionType, CommandInteraction, EmbedBuilder } from "discord.js";
+import { ApplicationCommandOptionType, CommandInteraction } from "discord.js";
 import { Command } from "../../core/Command";
-import { RADiscordEmbeds } from "../../integrations/RADiscordEmbeds";
+import { Logger } from "../../util/Logger";
 import type { RARankingType } from "../../types/RATypes";
 
 export default new Command({
@@ -23,18 +23,14 @@ export default new Command({
     ],
     run: async (args): Promise<void> => {
         await args.interaction.deferReply();
-        
+
         try {
             const listType: RARankingType = args.options.getSubcommand() as RARankingType;
-            const embed: EmbedBuilder = await RADiscordEmbeds.createRankingEmbed(args.client, listType);
 
             try {
-                await args.interaction.editReply({
-                    content: "Bombsquad RA Users Ranking",
-                    embeds: [ embed ],
-                });
-            } catch (error) {
-                console.log(error);
+                await args.client.ra.sendRankingsList(listType, args.interaction);
+            } catch (error: any) {
+                Logger.log(error as string);
                 await (args.interaction as CommandInteraction).editReply({
                     content: "Something went wrong with your request.",
                 });

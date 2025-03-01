@@ -22,6 +22,10 @@
             "enabled": false,
             "channelId": ""
         },
+        "raWeekly": {
+            "enabled": false,
+            "channelId": ""
+        },
         "welcome": {
             "enabled": false,
             "channelId": "",

@@ -14,7 +14,7 @@ import { Event } from "./Event";
 import { GuildSettingsManager } from "./GuildSettingsManager";
 import { Logger } from "../util/Logger";
 import { MessageHandler } from "./MessageHandler";
-import { RetroAchievementsApi } from "../integrations/RA-API";
+import { RetroAchievementsManager } from "../integrations/RetroAchievementsManager";
 import { TimerManager } from "./TimerManager";
 import { discordAppToken } from "../../data/config.json";
 import type { CommandType } from "../types/CommandTypes";
@@ -22,7 +22,7 @@ import type { CommandType } from "../types/CommandTypes";
 
 export class ExtendedClient extends Client {
     public bluesky: BlueskyApi;
-    public ra: RetroAchievementsApi;
+    public ra: RetroAchievementsManager;
     public timers: TimerManager;
     public messageHandler: MessageHandler;
     public settingsManager: GuildSettingsManager;
@@ -50,7 +50,7 @@ export class ExtendedClient extends Client {
 
         this.shouldRegisterCommands = shouldRegisterCommands;
         this.start();
-        this.ra = new RetroAchievementsApi();
+        this.ra = new RetroAchievementsManager(this);
         this.bluesky = new BlueskyApi();
         this.timers = new TimerManager(this);
         this.messageHandler = new MessageHandler();
