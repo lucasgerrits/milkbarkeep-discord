@@ -56,10 +56,10 @@ export default new Command({
                 embedString = await createString(await args.client.ra.getAllTimeList());
             } else if (args.options.getSubcommand() === "daily") {
                 label = "Daily";
-                embedString = await createString(await args.client.ra.getDailyList());
+                embedString = await createString(await args.client.ra.getDailyList(true));
             } else if (args.options.getSubcommand() === "weekly") {
                 label = "Weekly";
-                embedString = await createString(await args.client.ra.getWeeklyList());
+                embedString = await createString(await args.client.ra.getWeeklyList(true));
             }
         } catch (error) {
             const errorStr: string = "My apologies, but there may currently be an issue with the RA services. " +

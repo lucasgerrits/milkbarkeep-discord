@@ -93,7 +93,7 @@ export class RetroAchievementsApi {
      * Docs: https://api-docs.retroachievements.org/v1/get-achievements-earned-on-day.html
      * Repo: https://github.com/RetroAchievements/api-js/blob/main/src/user/getAchievementsEarnedOnDay.ts
      */
-    public async getDailyList(): Promise<Array<userPoints>> {
+    public async getDailyList(filterZero: boolean = false): Promise<Array<userPoints>> {
         const daily: Array<userPoints> = [];
         const nowGMT: number = Date.now() + this.gmtOffsetInMS;
         const onDate: Date = new Date(nowGMT);
@@ -105,7 +105,9 @@ export class RetroAchievementsApi {
             }); // onDate: new Date(new Date().toUTCString()),
             const userPoints: number = (userEarnedOnDay.length > 0) ?
                 (userEarnedOnDay.pop()?.cumulScore ?? 0) : 0;
-            daily.push({ username: user, points: userPoints });
+            if (!(filterZero === true && userPoints === 0)) {
+                daily.push({ username: user, points: userPoints });
+            }
             await Util.sleep(this.callDelayInMS);
         }
         daily.sort((a: userPoints, b: userPoints) => b.points - a.points);
@@ -116,7 +118,7 @@ export class RetroAchievementsApi {
      * Docs: https://api-docs.retroachievements.org/v1/get-achievements-earned-between.html
      * Repo: https://github.com/RetroAchievements/api-js/blob/main/src/user/getAchievementsEarnedBetween.ts
      */
-    public async getWeeklyList(): Promise<Array<userPoints>> {
+    public async getWeeklyList(filterZero: boolean = false): Promise<Array<userPoints>> {
         const weekly: Array<userPoints> = [];
         const nowGMT: number = Date.now() + this.gmtOffsetInMS;
         const toDate: Date = new Date(nowGMT);
@@ -135,7 +137,9 @@ export class RetroAchievementsApi {
             });
             const userPoints: number = (userEarnedBetween.length > 0) ?
                 (userEarnedBetween.pop()?.cumulScore ?? 0) : 0;
-            weekly.push({ username: user, points: userPoints });
+            if (!(filterZero === true && userPoints === 0)) {
+                weekly.push({ username: user, points: userPoints });
+            }
             await Util.sleep(this.callDelayInMS);
         }
         weekly.sort((a: userPoints, b: userPoints) => b.points - a.points);
