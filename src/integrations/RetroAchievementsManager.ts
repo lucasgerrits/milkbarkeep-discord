@@ -152,13 +152,14 @@ export class RetroAchievementsManager {
         const guilds: Array<string> = await this.clientRef.settingsManager.getGuildIds();
 
         for (const guildId of guilds) {
-            // Check if RA feed enabled for each guild
+            // Check if RA weekly recap enabled for each guild
             if (!await this.clientRef.settingsManager.isFeatureEnabled(guildId, "raWeekly")) {
                 return;
             }
             const userPointsList: Array<userPoints> = await RetroAchievementsApi.getWeeklyList(this.auth, this.users, true);
             const embed: EmbedBuilder = RetroAchievementsEmbeds.createRankingEmbed(userPointsList, "weekly");
             const channelId: string = await this.clientRef.settingsManager.getChannelId(guildId, "raWeekly");
+            await this.sendRankingsList("weekly", channelId);
         }
     }
 }
