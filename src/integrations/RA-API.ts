@@ -49,6 +49,7 @@ export class RetroAchievementsApi {
 
     /**
      * Docs: https://api-docs.retroachievements.org/v1/get-achievement-unlocks.html
+     * 
      * Repo: https://github.com/RetroAchievements/api-js/blob/main/src/achievement/getAchievementUnlocks.ts
      */
     public async getAchievementUnlocks(id: number, count: number = 0, offset: number = 50): Promise<AchievementUnlocksMetadata> {
@@ -62,6 +63,7 @@ export class RetroAchievementsApi {
 
     /**
      * Docs: https://api-docs.retroachievements.org/v1/get-game-extended.html
+     * 
      * Repo: https://github.com/RetroAchievements/api-js/blob/main/src/game/getGameExtended.ts
      */
     public async getGameExtended(id: number, unofficialSet: boolean = false): Promise<GameExtended> {
@@ -74,6 +76,7 @@ export class RetroAchievementsApi {
 
     /**
      * Docs: https://api-docs.retroachievements.org/v1/get-user-points.html
+     * 
      * Repo: https://github.com/RetroAchievements/api-js/blob/main/src/user/getUserPoints.ts
      */
     public async getAllTimeList(): Promise<Array<userPoints>> {
@@ -91,10 +94,11 @@ export class RetroAchievementsApi {
 
     /**
      * Docs: https://api-docs.retroachievements.org/v1/get-achievements-earned-on-day.html
+     * 
      * Repo: https://github.com/RetroAchievements/api-js/blob/main/src/user/getAchievementsEarnedOnDay.ts
      */
     public async getDailyList(filterZero: boolean = false): Promise<Array<userPoints>> {
-        const daily: Array<userPoints> = [];
+        const dailyList: Array<userPoints> = [];
         const nowGMT: number = Date.now() + this.gmtOffsetInMS;
         const onDate: Date = new Date(nowGMT);
         for (const user of this.users) {
@@ -106,28 +110,29 @@ export class RetroAchievementsApi {
             const userPoints: number = (userEarnedOnDay.length > 0) ?
                 (userEarnedOnDay.pop()?.cumulScore ?? 0) : 0;
             if (!(filterZero === true && userPoints === 0)) {
-                daily.push({ username: user, points: userPoints });
+                dailyList.push({ username: user, points: userPoints });
             }
             await Util.sleep(this.callDelayInMS);
         }
-        daily.sort((a: userPoints, b: userPoints) => b.points - a.points);
-        return daily;
+        dailyList.sort((a: userPoints, b: userPoints) => b.points - a.points);
+        return dailyList;
     }
 
     /**
      * Docs: https://api-docs.retroachievements.org/v1/get-achievements-earned-between.html
+     * 
      * Repo: https://github.com/RetroAchievements/api-js/blob/main/src/user/getAchievementsEarnedBetween.ts
      */
     public async getWeeklyList(filterZero: boolean = false): Promise<Array<userPoints>> {
-        const weekly: Array<userPoints> = [];
-        const nowGMT: number = Date.now() + this.gmtOffsetInMS;
-        const toDate: Date = new Date(nowGMT);
-        const getLastSunday = (dateIn: Date): Date => {
-            const dateOut: Date = new Date(dateIn);
-            dateOut.setDate(dateOut.getDate() - dateOut.getDay());
+        const getLastMonday = (dateIn: Date): Date => {
+            const dateOut = new Date(dateIn);
+            dateOut.setDate(dateOut.getDate() - (dateOut.getDay() || 7) + 1);
             return dateOut;
         };
-        const fromDate: Date = new Date(getLastSunday(toDate).toUTCString());
+        const weeklyList: Array<userPoints> = [];
+        const nowGMT: number = Date.now() + this.gmtOffsetInMS;
+        const toDate: Date = new Date(nowGMT);
+        const fromDate: Date = new Date(getLastMonday(toDate).toUTCString());
         fromDate.setUTCHours(0, 0, 0, 0);
         for (const user of this.users) {
             const userEarnedBetween: DatedUserAchievement[] = await getAchievementsEarnedBetween(this.auth, {
@@ -138,16 +143,17 @@ export class RetroAchievementsApi {
             const userPoints: number = (userEarnedBetween.length > 0) ?
                 (userEarnedBetween.pop()?.cumulScore ?? 0) : 0;
             if (!(filterZero === true && userPoints === 0)) {
-                weekly.push({ username: user, points: userPoints });
+                weeklyList.push({ username: user, points: userPoints });
             }
             await Util.sleep(this.callDelayInMS);
         }
-        weekly.sort((a: userPoints, b: userPoints) => b.points - a.points);
-        return weekly;
+        weeklyList.sort((a: userPoints, b: userPoints) => b.points - a.points);
+        return weeklyList;
     }
 
     /**
      * Docs: https://api-docs.retroachievements.org/v1/get-user-recent-achievements.html
+     * 
      * Repo: https://github.com/RetroAchievements/api-js/blob/main/src/user/getUserRecentAchievements.ts
      */
     public async getRecentList(client: ExtendedClient, channelId: string, minutesToLookBack: number = this.defaultMinToLookBack): Promise<Array<achievementData>> {
