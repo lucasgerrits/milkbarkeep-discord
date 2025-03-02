@@ -15,9 +15,9 @@
         "typescript": "^5.3.3"
     },
     "dependencies": {
-        "@atproto/api": "^0.13.35",
+        "@atproto/api": "^0.14.7",
         "@breejs/later": "^4.2.0",
-        "@google/generative-ai": "^0.21.0",
+        "@google/generative-ai": "^0.22.0",
         "@retroachievements/api": "^2.1.0",
         "@types/selenium-webdriver": "^4.1.22",
         "discord-screenshot": "github:mrTomatolegit/discord-screenshot",
