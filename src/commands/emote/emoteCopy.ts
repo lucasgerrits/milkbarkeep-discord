@@ -3,7 +3,7 @@ import { Command } from "../../core/Command";
 import { Logger } from "../../util/Logger";
 
 export default new Command({
-    name: "copy-emote",
+    name: "emote-copy",
     description: "Upload an emote from another Discord server.",
     defaultMemberPermissions: PermissionFlagsBits.Administrator,
     options: [
