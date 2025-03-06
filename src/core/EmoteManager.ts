@@ -1,10 +1,11 @@
 import { Base64Resolvable, BufferResolvable, DiscordAPIError, Guild, GuildEmoji } from "discord.js";
 import { ExtendedClient } from "./ExtendedClient";
 import { Logger } from "../util/Logger";
-import type { EmoteOperation } from "../types/GuildTypes";
+import type { EmoteInfo, EmoteOperation } from "../types/GuildTypes";
 
 export class EmoteManager {
     private clientRef: ExtendedClient;
+    private readonly regex: RegExp = /<(a?):(\w+):(\d+)>/;
     private readonly errors = {
         limit: 30008,
         size: 50035,
@@ -13,6 +14,25 @@ export class EmoteManager {
 
     constructor(clientRef: ExtendedClient) {
         this.clientRef = clientRef;
+    }
+
+    public isEmote(str: string): boolean {
+        str = str.replace(/\+/g, ""); // strip space
+        return this.regex.test(str);
+    }
+
+    public emoteInfoFromString(content: string, rename?: string): EmoteInfo {
+        const baseUrl: string = "https://cdn.discordapp.com/emojis/";
+        const match: RegExpMatchArray = content.match(this.regex) as RegExpMatchArray;
+        const isAnimated: boolean = match[1] === "a";
+        const extension: string = isAnimated ? ".gif" : ".png";
+        const info: EmoteInfo = {
+            id: match[3],
+            name: rename ?? match[2],
+            cdnUrl: `${baseUrl}${match[3]}${extension}`,
+            isAnimated: isAnimated
+        }
+        return info;
     }
 
     public async upload(guildId: string, emoteName: string, attachment: BufferResolvable | Base64Resolvable): Promise<EmoteOperation> {

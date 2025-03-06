@@ -21,6 +21,12 @@ export class MessageHandler{
         this.getAIResponse(message);
     }
 
+    public isPossibleMessageId(possibleId: string): boolean {
+        const snowflakeRegex: RegExp = /^\d{17,20}$/;
+        possibleId = possibleId.replace(/\+/g, ""); // strip space
+        return snowflakeRegex.test(possibleId);
+    }
+
     public async getMessage(guildId: string, possibleMessageId: string, startingChannelId?: string): Promise<Message | undefined> {
         const guild: Guild = client.guilds.cache.get(guildId) as Guild;
         // If initial channel provided

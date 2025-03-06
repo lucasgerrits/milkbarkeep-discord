@@ -35,3 +35,10 @@ export type EmoteOperation = {
     success: boolean;
     response: string;
 }
+
+export type EmoteInfo = {
+    name: string;
+    cdnUrl: string;
+    id?: string;
+    isAnimated?: boolean;
+}

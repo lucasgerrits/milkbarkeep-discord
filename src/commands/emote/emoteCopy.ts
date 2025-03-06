@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType, Collection, EmbedBuilder, Guild, Message, PermissionFlagsBits, TextChannel } from "discord.js";
 import { Command } from "../../core/Command";
 import { Logger } from "../../util/Logger";
-import type { EmoteOperation } from "../../types/GuildTypes";
+import type { EmoteInfo, EmoteOperation } from "../../types/GuildTypes";
 
 export default new Command({
     name: "emote-copy",
@@ -23,21 +23,18 @@ export default new Command({
     run: async (args): Promise<void> => {
         await args.interaction.deferReply();
 
-        const guildId: string = args.interaction.guildId as string;
-        const guild: Guild = args.client.guilds.cache.get(guildId) as Guild;
-
-        // Check input
+        // Check inputs
         const sourceArg: string = args.options.getString("source", true);
         const renameArg: string | null = args.options.getString("rename", false);
-        const sourceTrimmed: string = sourceArg.replace(/\+/g, "");
-        const snowflakeRegex: RegExp = /^\d{17,20}$/;
-        const isPossibleMessage: boolean = snowflakeRegex.test(sourceTrimmed);
-        const emoteRegex: RegExp = /<(a?):(\w+):(\d+)>/;
-        const isEmote: boolean = emoteRegex.test(sourceTrimmed);
+        const guildId: string = args.interaction.guildId as string;
+        const isPossibleMessage: boolean = args.client.messageHandler.isPossibleMessageId(sourceArg);
+        const isEmote: boolean = args.client.emotes.isEmote(sourceArg);
 
-        // If messageId, determine if message exists in guild
+        // Process next step based on results
         let content: string = "";
-        if (isPossibleMessage) {
+        if (isEmote) {
+            content = sourceArg.replace(/\+/g, "");
+        } else if (isPossibleMessage) {
             const message: Message | undefined = await args.client.messageHandler.getMessage(guildId, sourceArg, args.interaction.channel?.id);
             if (message === undefined) {
                 await args.interaction.editReply({ content: "Please use a valid emote or message Id." });
@@ -45,26 +42,18 @@ export default new Command({
             } else {
                 content = message.content;
             }
-        } else if (isEmote) {
-            content = sourceTrimmed;
         } else {
             await args.interaction.editReply({ content: "Please use a valid emote or message Id." });
             return;
         }
 
         // Extract emote id and whether it is animated from the string
-        const cdnUrl: string = "https://cdn.discordapp.com/emojis/";
-        const match: RegExpMatchArray = content.match(emoteRegex) as RegExpMatchArray;
-        const emoteId: string = match[3];
-        const emoteName: string = renameArg ?? match[2];
-        const isAnimated: boolean = match[1] === "a";
-        const extension: string = isAnimated ? ".gif" : ".png";
-        const fullUrl: string = `${cdnUrl}${emoteId}${extension}`;
+        const emote: EmoteInfo = args.client.emotes.emoteInfoFromString(content, renameArg ?? undefined);
 
         // Get the image file as a buffer
         let buffer: Buffer;
         try {
-            const response: Response = await fetch(fullUrl);
+            const response: Response = await fetch(emote.cdnUrl);
             if (!response.ok) { throw new Error(`Failed to fetch emoji: ${response.statusText}`); }
             buffer = Buffer.from(await response.arrayBuffer());
         } catch(error: any) {
@@ -74,15 +63,15 @@ export default new Command({
         }
 
         // Upload image to the guild
-        const op: EmoteOperation = await args.client.emotes.upload(guildId, emoteName, buffer);
+        const op: EmoteOperation = await args.client.emotes.upload(guildId, emote.name, buffer);
         
         if (!op.success) {
             args.interaction.editReply({ content: op.response });
         } else {
             const embed: EmbedBuilder = new EmbedBuilder()
                 .setColor("#000000")
-                .setTitle(`:${emoteName}:`)
-                .setThumbnail(fullUrl)
+                .setTitle(`:${emote.name}:`)
+                .setThumbnail(emote.cdnUrl)
                 .setDescription("Emote successfully copied to server.");
             args.interaction.editReply({ embeds: [ embed ] })
         }
