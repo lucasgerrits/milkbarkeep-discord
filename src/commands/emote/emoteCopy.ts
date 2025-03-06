@@ -38,30 +38,12 @@ export default new Command({
         // If messageId, determine if message exists in guild
         let content: string = "";
         if (isPossibleMessage) {
-            try {
-                // First try the channel of the interaction
-                try {
-                    const message: Message = await args.interaction.channel?.messages.fetch(sourceTrimmed) as Message;
-                    content = message.content;
-                } catch (error: any) { }
-
-                // Then try all other text based channels in guild
-                if (!content) {
-                    const textChannels: Collection<string, TextChannel> = guild.channels.cache.filter(channel => channel.isTextBased()) as Collection<string, TextChannel>;
-                    for (const channel of textChannels.values()) {
-                        try {
-                            const message: Message = await channel.messages.fetch(sourceTrimmed);
-                            content = message.content;
-                        } catch(error: any) {
-                            // Logger.log(`Message not found in channel ${channel.name}`)
-                            continue;
-                        }
-                    }
-                }
-            } catch (error: any) {
-                Logger.log(`Failed to locate messageId: ${sourceTrimmed}`);
+            const message: Message | undefined = await args.client.messageHandler.getMessage(guildId, sourceArg, args.interaction.channel?.id);
+            if (message === undefined) {
                 await args.interaction.editReply({ content: "Please use a valid emote or message Id." });
                 return;
+            } else {
+                content = message.content;
             }
         } else if (isEmote) {
             content = sourceTrimmed;

@@ -1,4 +1,4 @@
-import { Message, MessageResolvable, User } from "discord.js";
+import { Channel, Collection, Guild, Message, MessageResolvable, TextChannel, User } from "discord.js";
 import { EmbedFixManager } from "./EmbedFixManager";
 import { GoogleGeminiApi } from "../integrations/GoogleGemini-API";
 import { Logger } from "../util/Logger";
@@ -19,6 +19,28 @@ export class MessageHandler{
         // MISC CHECKS
         EmbedFixManager.check(message);
         this.getAIResponse(message);
+    }
+
+    public async getMessage(guildId: string, possibleMessageId: string, startingChannelId?: string): Promise<Message | undefined> {
+        const guild: Guild = client.guilds.cache.get(guildId) as Guild;
+        // If initial channel provided
+        if (startingChannelId) {
+            try {
+                const channel: Channel = client.channels.cache.get(startingChannelId) as TextChannel;
+                const message: Message = await channel?.messages.fetch(possibleMessageId) as Message;
+                return message;
+            } catch (error: any) { }
+        }
+        // Else try the rest belonging to this guild
+        const textChannels: Collection<string, TextChannel> = guild.channels.cache.filter(channel => channel.isTextBased()) as Collection<string, TextChannel>;
+        for (const channel of textChannels.values()) {
+            try {
+                const message: Message = await channel.messages.fetch(possibleMessageId);
+                return message;
+            } catch(error: any) { continue; }
+        }
+        Logger.log(`Failed to locate message in guild ${guild.name} (${guildId}) with id: ${possibleMessageId}`);
+        return undefined;
     }
 
     private async getAIResponse(message: Message): Promise<void> {
