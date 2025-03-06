@@ -28,3 +28,10 @@ export type BirthdaysJson = {
     userId: string;
     date: string;
 }
+
+export type EmoteOperation = {
+    emoteId?: string;
+    emoteName: string;
+    success: boolean;
+    response: string;
+}

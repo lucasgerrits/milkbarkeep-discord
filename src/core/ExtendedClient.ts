@@ -18,6 +18,7 @@ import { RetroAchievementsManager } from "../integrations/RetroAchievementsManag
 import { TimerManager } from "./TimerManager";
 import { discordAppToken } from "../../data/config.json";
 import type { CommandType } from "../types/CommandTypes";
+import { EmoteManager } from "./EmoteManager";
 
 
 export class ExtendedClient extends Client {
@@ -26,6 +27,7 @@ export class ExtendedClient extends Client {
     public timers: TimerManager;
     public messageHandler: MessageHandler;
     public settingsManager: GuildSettingsManager;
+    public emotes: EmoteManager;
 
     public commands: Collection<string, CommandType> = new Collection();
     private slashCommands: ApplicationCommandDataResolvable[] = [];
@@ -55,6 +57,7 @@ export class ExtendedClient extends Client {
         this.timers = new TimerManager(this);
         this.messageHandler = new MessageHandler();
         this.settingsManager = new GuildSettingsManager();
+        this.emotes = new EmoteManager(this);
     }
 
     start(): void {
@@ -72,7 +75,7 @@ export class ExtendedClient extends Client {
         eventFiles.forEach(async (filePath) => {
             const event: Event<keyof ClientEvents> = await this.importFile(`${__dirname}/../${filePath}`);
             this.on(event.event, event.run);
-        })
+        });
     }
 
     private async setCommands(): Promise<void> {
