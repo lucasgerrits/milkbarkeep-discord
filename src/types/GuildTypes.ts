@@ -30,15 +30,16 @@ export type BirthdaysJson = {
 }
 
 export type EmoteOperation = {
-    emoteId?: string;
-    emoteName: string;
     success: boolean;
     response: string;
-}
+} & (
+    | { emoteId?: string; emoteName: string }
+    | { emoteId: string; emoteName?: string }
+);
 
 export type EmoteInfo = {
     name: string;
     cdnUrl: string;
-    id?: string;
+    id: string;
     isAnimated?: boolean;
 }

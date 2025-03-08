@@ -1,6 +1,7 @@
 import { Base64Resolvable, BufferResolvable, DiscordAPIError, Guild, GuildEmoji } from "discord.js";
 import { ExtendedClient } from "./ExtendedClient";
 import { Logger } from "../util/Logger";
+import { Util } from "../util/Util";
 import type { EmoteInfo, EmoteOperation } from "../types/GuildTypes";
 
 export class EmoteManager {
@@ -8,8 +9,9 @@ export class EmoteManager {
     private readonly regex: RegExp = /<(a?):(\w+):(\d+)>/;
     private readonly errors = {
         limit: 30008,
-        size: 50035,
-        permission: 50013
+        permission: 50013,
+        rate: 429,
+        size: 50035
     }
 
     constructor(clientRef: ExtendedClient) {
@@ -47,20 +49,59 @@ export class EmoteManager {
         }
     }
 
-    private getSlotsString(guildId: string) {
+    private async getSlotsString(guildId: string): Promise<string> {
         const guild: Guild = this.clientRef.guilds.cache.get(guildId) as Guild;
+        try {
+            guild.emojis.cache.clear();
+            await guild.emojis.fetch(); // Ensure newest data
+        } catch (error: any) {
+            throw new Error("An error occurred while fetching emote data.");
+        }
         const slots: number = this.getSlotsTotal(guild.premiumTier);
         const staticUsed: number = guild.emojis.cache.filter(e => !e.animated).size;
         const animatedUsed: number = guild.emojis.cache.filter(e => e.animated).size;
         const staticRemaining: number = slots - staticUsed;
         const animatedRemaining: number = slots - animatedUsed;
 
-        return `Static: ${staticUsed} / ${slots} (${staticRemaining} free)
-            Animated: ${animatedUsed} / ${slots} (${animatedRemaining} free)
-            Server Boost Level ${guild.premiumTier}`;
+        return `Static: ${staticUsed} / ${slots} (${staticRemaining} free)\n` +
+            `Animated: ${animatedUsed} / ${slots} (${animatedRemaining} free)`;
     }
 
     // #region Operations
+
+    public async delete(guildId: string, emoteId: string): Promise<EmoteOperation> {
+        const guild: Guild = this.clientRef.guilds.cache.get(guildId) as Guild;
+        const operation: EmoteOperation = {
+            emoteId: emoteId,
+            success: false,
+            response: ""
+        }
+        try {
+            const emote: GuildEmoji | undefined = guild.emojis.cache.get(emoteId);
+            if (!emote) {
+                operation.response = "Emoji not found in this server.";
+            } else {
+                await emote.delete();
+                operation.success = true;
+                operation.response = await this.getSlotsString(guildId);
+                Logger.log(`Successfully deleted emote :${emote.name}: (${emoteId}) from guild ${guild.name} (${guildId})`);
+            }
+        } catch (error: any) {
+            Logger.log(`Failed to delete emote (${emoteId}) from guild ${guild.name} (${guildId}) : ${error as string}`);
+            if (error instanceof DiscordAPIError) {
+                if (error.code === this.errors.permission) {
+                    operation.response = "I lack the proper permission to delete this emote.";
+                } else if (error.code = this.errors.rate) {
+                    operation.response = "I am currently being rate-limited. Please try again later.";
+                } else {
+                    operation.response = "The deletion failed due to an unexpected error.";
+                }
+            } else {
+                operation.response = "There was an unexpected problem deleting the emote.";
+            }
+        }
+        return operation;
+    }
 
     public async upload(guildId: string, emoteName: string, attachment: BufferResolvable | Base64Resolvable): Promise<EmoteOperation> {
         const guild: Guild = this.clientRef.guilds.cache.get(guildId) as Guild;
@@ -76,7 +117,7 @@ export class EmoteManager {
             });
             operation.emoteId = newEmote.id;
             operation.success = true;
-            operation.response = `Emote successfully uploaded. \n\n${this.getSlotsString(guildId)}`
+            operation.response = await this.getSlotsString(guildId);
             Logger.log(`Successfully uploaded emote :${emoteName}: (${newEmote.id}) to guild ${guild.name} (${guildId})`);
         } catch (error: any) {
             Logger.log(`Failed to upload emote :${emoteName}: to guild ${guild.name} (${guildId}) : ${error as string}`);

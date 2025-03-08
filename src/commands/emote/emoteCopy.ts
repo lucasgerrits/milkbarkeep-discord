@@ -1,16 +1,16 @@
-import { ApplicationCommandOptionType, Collection, EmbedBuilder, Guild, Message, PermissionFlagsBits, TextChannel } from "discord.js";
+import { ApplicationCommandOptionType, EmbedBuilder, Message, PermissionFlagsBits } from "discord.js";
 import { Command } from "../../core/Command";
 import { Logger } from "../../util/Logger";
 import type { EmoteInfo, EmoteOperation } from "../../types/GuildTypes";
 
 export default new Command({
     name: "emote-copy",
-    description: "Upload an emote from another Discord server.",
+    description: "Copy an emote from another server.",
     defaultMemberPermissions: PermissionFlagsBits.Administrator,
     options: [
         {
             name: "source",
-            description: "The Discord emoji or Id of message containing one.",
+            description: "The Discord emote or Id of message containing one.",
             type: ApplicationCommandOptionType.String,
             required: true
         }, {
@@ -65,12 +65,13 @@ export default new Command({
         // Upload image to the guild
         const op: EmoteOperation = await args.client.emotes.upload(guildId, emote.name, buffer);
         
+        // Send results
         if (!op.success) {
             args.interaction.editReply({ content: op.response });
         } else {
             const embed: EmbedBuilder = new EmbedBuilder()
                 .setColor("#000000")
-                .setTitle(`:${emote.name}:`)
+                .setTitle(`Copied :${emote.name}:`)
                 .setThumbnail(emote.cdnUrl)
                 .setDescription(op.response);
             args.interaction.editReply({ embeds: [ embed ] })
