@@ -72,7 +72,7 @@ export default new Command({
                 .setColor("#000000")
                 .setTitle(`:${emote.name}:`)
                 .setThumbnail(emote.cdnUrl)
-                .setDescription("Emote successfully copied to server.");
+                .setDescription(op.response);
             args.interaction.editReply({ embeds: [ embed ] })
         }
     }

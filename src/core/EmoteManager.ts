@@ -16,6 +16,8 @@ export class EmoteManager {
         this.clientRef = clientRef;
     }
 
+    // #region Helpers
+
     public isEmote(str: string): boolean {
         str = str.replace(/\+/g, ""); // strip space
         return this.regex.test(str);
@@ -35,6 +37,31 @@ export class EmoteManager {
         return info;
     }
 
+    private getSlotsTotal(boostLevel: number): number {
+        switch (boostLevel) {
+            case 0: return 50;
+            case 1: return 100;
+            case 2: return 150;
+            case 3: return 250;
+            default: return 50;
+        }
+    }
+
+    private getSlotsString(guildId: string) {
+        const guild: Guild = this.clientRef.guilds.cache.get(guildId) as Guild;
+        const slots: number = this.getSlotsTotal(guild.premiumTier);
+        const staticUsed: number = guild.emojis.cache.filter(e => !e.animated).size;
+        const animatedUsed: number = guild.emojis.cache.filter(e => e.animated).size;
+        const staticRemaining: number = slots - staticUsed;
+        const animatedRemaining: number = slots - animatedUsed;
+
+        return `Static: ${staticUsed} / ${slots} (${staticRemaining} free)
+            Animated: ${animatedUsed} / ${slots} (${animatedRemaining} free)
+            Server Boost Level ${guild.premiumTier}`;
+    }
+
+    // #region Operations
+
     public async upload(guildId: string, emoteName: string, attachment: BufferResolvable | Base64Resolvable): Promise<EmoteOperation> {
         const guild: Guild = this.clientRef.guilds.cache.get(guildId) as Guild;
         const operation: EmoteOperation = {
@@ -49,13 +76,13 @@ export class EmoteManager {
             });
             operation.emoteId = newEmote.id;
             operation.success = true;
-            operation.response = "Emote successfully uploaded to server."
+            operation.response = `Emote successfully uploaded. \n\n${this.getSlotsString(guildId)}`
             Logger.log(`Successfully uploaded emote :${emoteName}: (${newEmote.id}) to guild ${guild.name} (${guildId})`);
         } catch (error: any) {
             Logger.log(`Failed to upload emote :${emoteName}: to guild ${guild.name} (${guildId}) : ${error as string}`);
             if (error instanceof DiscordAPIError) {
                 if (error.code === this.errors.limit) {
-                    operation.response = "The server has reached it's emoji limit.";
+                    operation.response = `This server is over emote capacity. \n\n ${this.getSlotsString(guildId)}`;
                 } else if (error.code === this.errors.size) {
                     operation.response = "The image is too large or has invalid dimensions.";
                 } else if (error.code === this.errors.permission) {

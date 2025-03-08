@@ -39,7 +39,7 @@ export default new Command({
                 .setColor("#000000")
                 .setTitle(`:${emoteName}:`)
                 .setThumbnail(attachment.url)
-                .setDescription("Emote successfully uploaded to server.");
+                .setDescription(op.response);
             args.interaction.editReply({ embeds: [ embed ] })
         }
     }
