@@ -130,7 +130,7 @@ export class EmoteManager {
                 });
                 operation.success = true;
                 operation.response = `Previously :${oldName}:\n\n${await this.getSlotsString(guildId)}`;
-                Logger.log(`Successfully renamed emote :${oldName}: to :${emote.name}: (${emoteId}) in guild ${guild.name} (${guildId})`);
+                Logger.log(`Successfully renamed emote :${oldName}: to :${rename}: (${emoteId}) in guild ${guild.name} (${guildId})`);
             }
         } catch (error: any) {
             Logger.log(`Failed to rename emote (${emoteId}) in guild ${guild.name} (${guildId}) : ${error as string}`);
