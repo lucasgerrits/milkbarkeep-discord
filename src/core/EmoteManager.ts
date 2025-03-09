@@ -8,6 +8,7 @@ export class EmoteManager {
     private readonly regex: RegExp = /<(a?):(\w+):(\d+)>/;
     private readonly errors = {
         limit: 30008,
+        managed: 50045,
         permission: 50013,
         rate: 429,
         size: 50035
@@ -22,6 +23,11 @@ export class EmoteManager {
     public isEmote(str: string): boolean {
         str = str.replace(/\+/g, ""); // strip space
         return this.regex.test(str);
+    }
+
+    public isValidName(str: string): boolean {
+        const emoteRegex: RegExp = /^[a-zA-Z0-9_]{2,32}$/;
+        return emoteRegex.test(str);
     }
 
     public emoteInfoFromString(content: string, rename?: string): EmoteInfo {
@@ -92,6 +98,8 @@ export class EmoteManager {
                     operation.response = "I lack the proper permission to delete this emote.";
                 } else if (error.code = this.errors.rate) {
                     operation.response = "I am currently being rate-limited. Please try again later.";
+                } else if (error.code = this.errors.managed) {
+                    operation.response = "This emote cannot by deleted because it is managed by a third-party integration."
                 } else {
                     operation.response = "The deletion failed due to an unexpected error.";
                 }
@@ -126,6 +134,19 @@ export class EmoteManager {
             }
         } catch (error: any) {
             Logger.log(`Failed to rename emote (${emoteId}) in guild ${guild.name} (${guildId}) : ${error as string}`);
+            if (error instanceof DiscordAPIError) {
+                if (error.code === this.errors.permission) {
+                    operation.response = "I lack the proper permission to rename this emote.";
+                } else if (error.code = this.errors.rate) {
+                    operation.response = "I am currently being rate-limited. Please try again later.";
+                } else if (error.code = this.errors.managed) {
+                    operation.response = "This emote cannot by renamed because it is managed by a third-party integration."
+                } else {
+                    operation.response = "The rename failed due to an unexpected error.";
+                }
+            } else {
+                operation.response = "There was an unexpected problem renaming the emote.";
+            }
         }
         return operation;
     }

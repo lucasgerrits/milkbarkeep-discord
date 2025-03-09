@@ -22,8 +22,15 @@ export default new Command({
     run: async (args): Promise<void> => {
         await args.interaction.deferReply();
 
-        // Check input
+        // Check rename input
         const rename: string = args.options.getString("rename", true);
+        const isValidName: boolean = args.client.emotes.isValidName(rename);
+        if (!isValidName) {
+            await args.interaction.editReply({ content: "Emote names must be 2-32 characters, no spaces, only letters, numbers, and underscores." });
+            return;
+        }
+
+        // Check emote input
         const emoteString: string = args.options.getString("emote", true).replace(/\+/g, "");
         const guildId: string = args.interaction.guildId as string;
         const isEmote: boolean = args.client.emotes.isEmote(emoteString);
