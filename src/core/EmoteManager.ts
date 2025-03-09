@@ -1,7 +1,6 @@
 import { Base64Resolvable, BufferResolvable, DiscordAPIError, Guild, GuildEmoji } from "discord.js";
 import { ExtendedClient } from "./ExtendedClient";
 import { Logger } from "../util/Logger";
-import { Util } from "../util/Util";
 import type { EmoteInfo, EmoteOperation } from "../types/GuildTypes";
 
 export class EmoteManager {
@@ -67,7 +66,7 @@ export class EmoteManager {
             `Animated: ${animatedUsed} / ${slots} (${animatedRemaining} free)`;
     }
 
-    // #region Operations
+    // #region Delete
 
     public async delete(guildId: string, emoteId: string): Promise<EmoteOperation> {
         const guild: Guild = this.clientRef.guilds.cache.get(guildId) as Guild;
@@ -102,6 +101,36 @@ export class EmoteManager {
         }
         return operation;
     }
+
+    // #region Rename
+
+    public async rename(guildId: string, emoteId: string, rename: string): Promise<EmoteOperation> {
+        const guild: Guild = this.clientRef.guilds.cache.get(guildId) as Guild;
+        const operation: EmoteOperation = {
+            emoteId: emoteId,
+            success: false,
+            response: ""
+        }
+        try {
+            const emote: GuildEmoji | undefined = guild.emojis.cache.get(emoteId);
+            if (!emote) {
+                operation.response = "Emoji not found in this server.";
+            } else {
+                const oldName: string = emote.name as string;
+                await emote.edit({
+                    name: rename
+                });
+                operation.success = true;
+                operation.response = `Previously :${oldName}:\n\n${await this.getSlotsString(guildId)}`;
+                Logger.log(`Successfully renamed emote :${oldName}: to :${emote.name}: (${emoteId}) in guild ${guild.name} (${guildId})`);
+            }
+        } catch (error: any) {
+            Logger.log(`Failed to rename emote (${emoteId}) in guild ${guild.name} (${guildId}) : ${error as string}`);
+        }
+        return operation;
+    }
+
+    // #region Upload
 
     public async upload(guildId: string, emoteName: string, attachment: BufferResolvable | Base64Resolvable): Promise<EmoteOperation> {
         const guild: Guild = this.clientRef.guilds.cache.get(guildId) as Guild;
