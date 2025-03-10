@@ -3,6 +3,7 @@ import * as path from "path";
 import { ExtendedClient } from "./ExtendedClient";
 import { Logger } from "../util/Logger";
 import type { BirthdaysJson } from "../types/GuildTypes";
+import { Guild } from "discord.js";
 
 export class Birthdays {
     private static async isEnabledForGuild(clientRef: ExtendedClient, guildId: string): Promise<boolean> {
@@ -56,6 +57,9 @@ export class Birthdays {
                 return;
             }
 
+            const guild: Guild = clientRef.guilds.cache.get(guildId) as Guild;
+            Logger.log(`Checking birthdays for guild: ${guild.name} (${guildId})`);
+
             // Get birthday data for guild then check for matches today
             const birthdays: Array<BirthdaysJson> = await this.getBirthdaysJsonArray(guildId);
             const todayInMMDD: string = this.getTodayInMMDD();
@@ -68,9 +72,9 @@ export class Birthdays {
                 const lf: Intl.ListFormat = new Intl.ListFormat("en");
                 const botStr: string = "Today it's " + lf.format(resultTags) + "'s birthday! POGGGG";
                 clientRef.send(channelId, {
-                        "content": botStr,
-                        "allowedMentions": { "users": [ ...resultIDs ] },
-                })
+                    "content": botStr,
+                    "allowedMentions": { "users": [ ...resultIDs ] },
+                });
             }
         }
     }
