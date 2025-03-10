@@ -42,6 +42,7 @@ export class ExtendedClient extends Client {
                 GatewayIntentBits.GuildMessages,
                 GatewayIntentBits.GuildModeration,
                 GatewayIntentBits.GuildPresences,
+                GatewayIntentBits.GuildVoiceStates,
                 GatewayIntentBits.MessageContent,
             ],
             allowedMentions: {
