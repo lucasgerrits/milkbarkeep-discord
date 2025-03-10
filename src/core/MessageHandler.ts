@@ -50,26 +50,26 @@ export class MessageHandler{
     }
 
     private async getAIResponse(message: Message): Promise<void> {
-        // Check if bot user has been tagged
-        if (message.mentions.has(client.user as User)) {
+        // Check if bot user has been tagged specifically, not roles
+        const botId: string = (client.user as User).id;
+        if (!message.mentions.users.has(botId)) return;
 
-            // If replying to an existing bot message, check for special exit char
-            if (message.reference !== null) {
-                const referencedMessage: Message = await message.channel.messages.fetch(message.reference.messageId as MessageResolvable);
-                // If braille pattern blank detected, ignore reply (for embed fixes, welcome msg, etc)
-                if (Util.hasBrailleBlank(referencedMessage.content)) {
-                    return;
-                }
+        // If replying to an existing bot message, check for special exit char
+        if (message.reference !== null) {
+            const referencedMessage: Message = await message.channel.messages.fetch(message.reference.messageId as MessageResolvable);
+            // If braille pattern blank detected, ignore reply (for embed fixes, welcome msg, etc)
+            if (Util.hasBrailleBlank(referencedMessage.content)) {
+                return;
             }
+        }
 
-            // Otherwise, newly tagged or repliable bot message, so generate AI response
-            try {
-                const gemini = new GoogleGeminiApi();
-                const response = await gemini.chat(message);
-                await message.reply(response);
-            } catch(error) {
-                Logger.log(error as string);
-            }
+        // Otherwise, newly tagged or repliable bot message, so generate AI response
+        try {
+            const gemini = new GoogleGeminiApi();
+            const response = await gemini.chat(message);
+            await message.reply(response);
+        } catch(error) {
+            Logger.log(error as string);
         }
     }
 
