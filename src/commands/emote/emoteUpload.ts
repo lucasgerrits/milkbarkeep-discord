@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType, Attachment, EmbedBuilder, PermissionFlagsBits } from "discord.js";
+import { ApplicationCommandOptionType, Attachment, EmbedBuilder, MessageFlags, PermissionFlagsBits } from "discord.js";
 import { Command } from "../../core/Command";
 import { EmoteOperation } from "../../types/GuildTypes";
 
@@ -20,7 +20,14 @@ export default new Command({
         }
     ],
     run: async (args): Promise<void> => {
-        await args.interaction.deferReply();
+        // Ensure there won't be a double posting of the embeds in the feed channel
+        const guildId: string = args.interaction.guildId as string;
+        const feedChannelId: string = await args.client.settingsManager.getChannelId(guildId, "emoteFeed");
+        if (args.interaction.channelId === feedChannelId) {
+            await args.interaction.deferReply({ flags: MessageFlags.Ephemeral });
+        } else {
+            await args.interaction.deferReply();
+        }
 
         // Check inputs
         const emoteName: string = args.options.getString("name", true) as string;
@@ -31,7 +38,6 @@ export default new Command({
         }
 
         // Upload emote to guild
-        const guildId: string = args.interaction.guildId as string;
         const op: EmoteOperation = await args.client.emotes.upload(guildId, emoteName, attachment.url);
 
         // Send results

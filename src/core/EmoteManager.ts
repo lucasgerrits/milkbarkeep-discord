@@ -54,14 +54,8 @@ export class EmoteManager {
         }
     }
 
-    private async getSlotsString(guildId: string): Promise<string> {
+    public async getSlotsString(guildId: string): Promise<string> {
         const guild: Guild = this.clientRef.guilds.cache.get(guildId) as Guild;
-        try {
-            guild.emojis.cache.clear();
-            await guild.emojis.fetch(); // Ensure newest data
-        } catch (error: any) {
-            throw new Error("An error occurred while fetching emote data.");
-        }
         const slots: number = this.getSlotsTotal(guild.premiumTier);
         const staticUsed: number = guild.emojis.cache.filter(e => !e.animated).size;
         const animatedUsed: number = guild.emojis.cache.filter(e => e.animated).size;
@@ -88,6 +82,14 @@ export class EmoteManager {
             } else {
                 await emote.delete();
                 operation.success = true;
+                /*
+                try {
+                    guild.emojis.cache.clear();
+                    await guild.emojis.fetch(); // Ensure newest data
+                } catch (error: any) {
+                    throw new Error("An error occurred while fetching emote data.");
+                }
+                */
                 operation.response = await this.getSlotsString(guildId);
                 Logger.log(`Successfully deleted emote :${emote.name}: (${emoteId}) from guild ${guild.name} (${guildId})`);
             }

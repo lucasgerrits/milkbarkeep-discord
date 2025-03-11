@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType, EmbedBuilder, Message, PermissionFlagsBits } from "discord.js";
+import { ApplicationCommandOptionType, EmbedBuilder, Message, MessageFlags, PermissionFlagsBits } from "discord.js";
 import { Command } from "../../core/Command";
 import { Logger } from "../../util/Logger";
 import type { EmoteInfo, EmoteOperation } from "../../types/GuildTypes";
@@ -21,12 +21,18 @@ export default new Command({
         }
     ],
     run: async (args): Promise<void> => {
-        await args.interaction.deferReply();
+        // Ensure there won't be a double posting of the embeds in the feed channel
+        const guildId: string = args.interaction.guildId as string;
+        const feedChannelId: string = await args.client.settingsManager.getChannelId(guildId, "emoteFeed");
+        if (args.interaction.channelId === feedChannelId) {
+            await args.interaction.deferReply({ flags: MessageFlags.Ephemeral });
+        } else {
+            await args.interaction.deferReply();
+        }
 
         // Check inputs
         const sourceArg: string = args.options.getString("source", true);
         const renameArg: string | null = args.options.getString("rename", false);
-        const guildId: string = args.interaction.guildId as string;
         const isPossibleMessage: boolean = args.client.messageHandler.isPossibleMessageId(sourceArg);
         const isEmote: boolean = args.client.emotes.isEmote(sourceArg);
 

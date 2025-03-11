@@ -10,6 +10,10 @@
             "enabled": false,
             "channelID": ""
         },
+        "emoteFeed": {
+            "enabled": false,
+            "channelId": ""
+        },
         "modLog": {
             "enabled": false,
             "channelId": ""
