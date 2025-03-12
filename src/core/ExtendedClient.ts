@@ -1,4 +1,5 @@
 import { 
+    ActivityType,
     ApplicationCommandDataResolvable, 
     Channel, 
     Client, 
@@ -16,9 +17,10 @@ import { Logger } from "../util/Logger";
 import { MessageHandler } from "./MessageHandler";
 import { RetroAchievementsManager } from "../integrations/RetroAchievementsManager";
 import { TimerManager } from "./TimerManager";
+import { EmoteManager } from "./EmoteManager";
 import { discordAppToken } from "../../data/config.json";
 import type { CommandType } from "../types/CommandTypes";
-import { EmoteManager } from "./EmoteManager";
+import type { GlobalVar } from "../types/GuildTypes";
 
 
 export class ExtendedClient extends Client {
@@ -105,5 +107,11 @@ export class ExtendedClient extends Client {
         } catch(err) {
             Logger.log(err as string);
         }
+    }
+
+    public async setMilkStatus(): Promise<void> {
+        const milkCount: GlobalVar = await this.settings.getGlobalVar("milks");
+        const milkString: string = `${milkCount} milks served fresh.`
+        this.user?.setActivity(milkString, { type: ActivityType.Custom });
     }
 }

@@ -87,7 +87,7 @@ export class GuildSettingsManager {
         const varsFile: string = path.resolve(this.dataDir, "vars.json");
         if (fs.existsSync(varsFile)) {
             const vars = JSON.parse(fs.readFileSync(varsFile, "utf8"));
-            if (vars.hasProperty(varName)) {
+            if (vars.hasOwnProperty(varName)) {
                 return vars[varName];
             } else {
                 throw new Error(`Global var not located: ${varName}`);
@@ -112,5 +112,10 @@ export class GuildSettingsManager {
             Logger.log(errorString);
         }
         return false;
+    }
+
+    public async incrementGlobalVar(varName: string): Promise<void> {
+        const oldValue: number = await this.getGlobalVar(varName) as number;
+        await this.setGlobalVar(varName, oldValue + 1);
     }
 }

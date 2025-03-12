@@ -91,6 +91,8 @@ export class MessageHandler{
 
         if (milkRegex.test(message.content)) {
             message.react(melkEmote);
+            client.settings.incrementGlobalVar("milks");
+            client.setMilkStatus();
         }
     }
 

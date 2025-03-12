@@ -24,7 +24,7 @@ export default new Event(
         const readyStr: string = `${client.user?.tag} logged in and ready to serve!`;
         Logger.log(readyStr, "red");
 
-        // client.user.setActivity("gorpin", { type: ActivityType.Custom });
+        client.setMilkStatus();
 
         client.timers.initialize();
     }
