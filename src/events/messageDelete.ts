@@ -24,8 +24,8 @@ export default new Event(
         const guildId: string = message?.guild?.id as string;
 
         // Determine if deletion should be logged at all due to settings, ignored channels, or bot message
-        const modLoggingEnabled: boolean = await client.settingsManager.isFeatureEnabled(guildId, "modLog");
-        const channelShouldBeIgnored: boolean = (await client.settingsManager.getUnloggedChannelIds(guildId)).includes(message.channelId);
+        const modLoggingEnabled: boolean = await client.settings.isFeatureEnabled(guildId, "modLog");
+        const channelShouldBeIgnored: boolean = (await client.settings.getUnloggedChannelIds(guildId)).includes(message.channelId);
         const authorIsBot: boolean = author.displayName === client.user?.displayName;
         if (!modLoggingEnabled || channelShouldBeIgnored || authorIsBot) { return; }
 
@@ -52,7 +52,7 @@ export default new Event(
             ]);
         
         // Send logging message to Discord channel
-        const loggingChannelId: string = await client.settingsManager.getChannelId(guildId, "modLog");
+        const loggingChannelId: string = await client.settings.getChannelId(guildId, "modLog");
         const loggingChannel: TextChannel = message.guild?.channels.cache.get(loggingChannelId) as TextChannel;
         await loggingChannel.send({
             embeds: [embed],

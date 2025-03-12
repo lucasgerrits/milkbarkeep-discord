@@ -87,15 +87,15 @@ export class RetroAchievementsManager {
     }
 
     public async updateAllFeeds(minutesToLookBack: number = this.defaultMinToLookBack) {
-        const guilds: Array<string> = await this.clientRef.settingsManager.getGuildIds();
+        const guilds: Array<string> = await this.clientRef.settings.getGuildIds();
 
         for (const guildId of guilds) {
             // Check if RA feed enabled for each guild
-            if (!await this.clientRef.settingsManager.isFeatureEnabled(guildId, "raFeed")) {
+            if (!await this.clientRef.settings.isFeatureEnabled(guildId, "raFeed")) {
                 return;
             }
             // If so, get appropriate channel and create embeds
-            const channelId: string = await this.clientRef.settingsManager.getChannelId(guildId, "raFeed");
+            const channelId: string = await this.clientRef.settings.getChannelId(guildId, "raFeed");
             this.updateFeed(channelId, minutesToLookBack);
         }
     }
@@ -149,16 +149,16 @@ export class RetroAchievementsManager {
     // #region Weekly Report
 
     public async weeklyReport(): Promise<void> {
-        const guilds: Array<string> = await this.clientRef.settingsManager.getGuildIds();
+        const guilds: Array<string> = await this.clientRef.settings.getGuildIds();
 
         for (const guildId of guilds) {
             // Check if RA weekly recap enabled for each guild
-            if (!await this.clientRef.settingsManager.isFeatureEnabled(guildId, "raWeekly")) {
+            if (!await this.clientRef.settings.isFeatureEnabled(guildId, "raWeekly")) {
                 return;
             }
             const userPointsList: Array<userPoints> = await RetroAchievementsApi.getWeeklyList(this.auth, this.users, true);
             const embed: EmbedBuilder = RetroAchievementsEmbeds.createRankingEmbed(userPointsList, "weekly");
-            const channelId: string = await this.clientRef.settingsManager.getChannelId(guildId, "raWeekly");
+            const channelId: string = await this.clientRef.settings.getChannelId(guildId, "raWeekly");
             await this.sendRankingsList("weekly", channelId);
         }
     }

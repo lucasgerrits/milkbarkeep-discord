@@ -7,7 +7,7 @@ export default new Event(
     async (oldEmote: GuildEmoji, newEmote: GuildEmoji) => {
         // Determine if emote logs are enabled in guild
         const guildId: string = newEmote.guild.id;
-        const isFeedEnabled: boolean = await client.settingsManager.isFeatureEnabled(guildId, "emoteFeed");
+        const isFeedEnabled: boolean = await client.settings.isFeatureEnabled(guildId, "emoteFeed");
         if (!isFeedEnabled) return;
 
         // Create embed
@@ -19,7 +19,7 @@ export default new Event(
             .setDescription(`Previously :${oldEmote.name}:\n\n${slotsString}`);
 
         // Send message to relevant channel
-        const channelId: string = await client.settingsManager.getChannelId(guildId, "emoteFeed");
+        const channelId: string = await client.settings.getChannelId(guildId, "emoteFeed");
         const channel: TextChannel = client.channels.cache.get(channelId) as TextChannel;
         await channel.send({ embeds: [ embed ] });
     }

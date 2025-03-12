@@ -7,11 +7,11 @@ import { Guild } from "discord.js";
 
 export class Birthdays {
     private static async isEnabledForGuild(clientRef: ExtendedClient, guildId: string): Promise<boolean> {
-        return clientRef.settingsManager.isFeatureEnabled(guildId, "birthdays");
+        return clientRef.settings.isFeatureEnabled(guildId, "birthdays");
     }
 
     private static async getBirthdayMessageChannel(clientRef: ExtendedClient, guildId: string): Promise<string> {
-        return clientRef.settingsManager.getChannelId(guildId, "birthdays");
+        return clientRef.settings.getChannelId(guildId, "birthdays");
     }
 
     private static getTodayInMMDD(): string {
@@ -49,7 +49,7 @@ export class Birthdays {
     }
     
     public static async check(clientRef: ExtendedClient): Promise<void> {
-        const guilds: Array<string> = await clientRef.settingsManager.getGuildIds();
+        const guilds: Array<string> = await clientRef.settings.getGuildIds();
 
         for (const guildId of guilds) {
             // Check if birthday announcements enabled for each guild

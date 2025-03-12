@@ -27,13 +27,13 @@ export default new Command({
         const guildId: string = args.interaction.guildId;
         const interactionChannelId: string = args.interaction.channelId;
         const isDevTestChannel: boolean = interactionChannelId === devTestChannelId;
-        const isFeedEnabled: boolean = await args.client.settingsManager.isFeatureEnabled(guildId, "raFeed");
+        const isFeedEnabled: boolean = await args.client.settings.isFeatureEnabled(guildId, "raFeed");
         if (!isDevTestChannel && !isFeedEnabled) { return; }
 
         // Determine where to post
         let toPostChannelId: string = devTestChannelId;
         if (!isDevTestChannel) {
-            toPostChannelId = await args.client.settingsManager.getChannelId(guildId, "raFeed");
+            toPostChannelId = await args.client.settings.getChannelId(guildId, "raFeed");
         }
 
         // Begin the feed update, report success

@@ -26,7 +26,7 @@ export class ExtendedClient extends Client {
     public ra: RetroAchievementsManager;
     public timers: TimerManager;
     public messageHandler: MessageHandler;
-    public settingsManager: GuildSettingsManager;
+    public settings: GuildSettingsManager;
     public emotes: EmoteManager;
 
     public commands: Collection<string, CommandType> = new Collection();
@@ -58,7 +58,7 @@ export class ExtendedClient extends Client {
         this.bluesky = new BlueskyApi();
         this.timers = new TimerManager(this);
         this.messageHandler = new MessageHandler();
-        this.settingsManager = new GuildSettingsManager();
+        this.settings = new GuildSettingsManager();
         this.emotes = new EmoteManager(this);
     }
 
@@ -92,7 +92,7 @@ export class ExtendedClient extends Client {
 
     async registerCommands(): Promise<void> {
         //Logger.log(`Registering ${this.slashCommands.length} slash commands...`, "red");
-        const guildIds: Array<string> = await this.settingsManager.getGuildIds();
+        const guildIds: Array<string> = await this.settings.getGuildIds();
         for (const guildId of guildIds) {
             await this.guilds.cache.get(guildId)?.commands.set(this.slashCommands);
         }

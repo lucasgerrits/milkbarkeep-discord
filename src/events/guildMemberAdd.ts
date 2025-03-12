@@ -18,12 +18,12 @@ export default new Event(
         Logger.log(logStr, "green");
 
         // Determine if welcome message should be sent in the joined guild
-        if (!await client.settingsManager.isFeatureEnabled(joinedGuildId, "welcome")) {
+        if (!await client.settings.isFeatureEnabled(joinedGuildId, "welcome")) {
             return;
         }
 
         // Check for channel property
-        const welcomeChannel: string = await client.settingsManager.getChannelId(joinedGuildId, "welcome");
+        const welcomeChannel: string = await client.settings.getChannelId(joinedGuildId, "welcome");
         console.log(welcomeChannel);
         if (!welcomeChannel) {
             Logger.log(`Error: Welcome messages enabled for guild ${joinedGuildId} but no channel set.`);
@@ -32,7 +32,7 @@ export default new Event(
 
         // Determine appropriate welcome message
         const defaultWelcomeMessage: string = `Hey everyone, let's welcome <@${newMemberId}> to the server! Hello there! 🎉👋 Please make note of the rules and have a good Tim.`;
-        let welcomeMessage: string | undefined = await client.settingsManager.getWelcomeMessage(joinedGuildId);
+        let welcomeMessage: string | undefined = await client.settings.getWelcomeMessage(joinedGuildId);
         if (!welcomeMessage) {
             welcomeMessage = defaultWelcomeMessage;
         } else {

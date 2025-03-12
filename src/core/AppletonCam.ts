@@ -48,14 +48,14 @@ export class AppletonCam {
         const buffer: Buffer = await this.createBuffer();
         const embed = await this.createEmbed();
 
-        const guilds: Array<string> = await clientRef.settingsManager.getGuildIds();
+        const guilds: Array<string> = await clientRef.settings.getGuildIds();
 
         for (const guildId of guilds) {
             // Check if RA feed enabled for each guild
-            if (!await clientRef.settingsManager.isFeatureEnabled(guildId, "appletonCam")) {
+            if (!await clientRef.settings.isFeatureEnabled(guildId, "appletonCam")) {
                 return;
             }
-            const channelId: string = await clientRef.settingsManager.getChannelId(guildId, "appletonCam");
+            const channelId: string = await clientRef.settings.getChannelId(guildId, "appletonCam");
             this.send(clientRef, channelId, buffer, embed);
         }
     }

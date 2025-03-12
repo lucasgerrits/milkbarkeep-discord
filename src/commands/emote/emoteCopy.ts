@@ -23,7 +23,7 @@ export default new Command({
     run: async (args): Promise<void> => {
         // Ensure there won't be a double posting of the embeds in the feed channel
         const guildId: string = args.interaction.guildId as string;
-        const feedChannelId: string = await args.client.settingsManager.getChannelId(guildId, "emoteFeed");
+        const feedChannelId: string = await args.client.settings.getChannelId(guildId, "emoteFeed");
         if (args.interaction.channelId === feedChannelId) {
             await args.interaction.deferReply({ flags: MessageFlags.Ephemeral });
         } else {
