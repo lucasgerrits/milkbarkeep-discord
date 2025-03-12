@@ -3,11 +3,12 @@ import * as path from "path";
 import { glob } from "glob";
 import { GuildSettings } from "./GuildSettings";
 import { Logger } from "../util/Logger";
-import type { FeatureName, GuildSettingsJson } from "../types/GuildTypes";
+import type { FeatureName, GlobalVar, GuildSettingsJson } from "../types/GuildTypes";
 
 export class GuildSettingsManager {
     private map: Map<string, GuildSettings>
-    private guildsParentDir: string = path.resolve(__dirname, './../../data/guilds');
+    private dataDir: string = path.resolve(__dirname, './../../data');
+    private guildsParentDir: string = path.resolve(this.dataDir, '/guilds');
 
     constructor() {
         this.map = new Map<string, GuildSettings>();
@@ -16,9 +17,9 @@ export class GuildSettingsManager {
 
     public async getGuildIds(): Promise<Array<string>> {
         // Get list of all subdirectories in guilds, filter example, and retain only basenames
-        let guildDirs: Array<string> = await glob(`${this.guildsParentDir}/*/`);
-        guildDirs = guildDirs.filter(dir => !dir.endsWith("\\example"));
-        const guildIds: Array<string> = guildDirs.map(dir => path.basename(dir));
+        let guildDirsArr: Array<string> = await glob(`${this.guildsParentDir}/*/`);
+        guildDirsArr = guildDirsArr.filter(dir => !dir.endsWith("\\example"));
+        const guildIds: Array<string> = guildDirsArr.map(dir => path.basename(dir));
         return guildIds;
     }
 
@@ -37,7 +38,7 @@ export class GuildSettingsManager {
     private async importGuildSettings(guildId: string) {
         // Get path informationg given the guildId
         const guildDir: string = path.resolve(this.guildsParentDir, guildId);
-        const settingsFile = path.resolve(guildDir, "settings.json");
+        const settingsFile: string = path.resolve(guildDir, "settings.json");
 
         // If settings.json exists at path, update map
         if (fs.existsSync(settingsFile)) {
@@ -78,5 +79,38 @@ export class GuildSettingsManager {
 
     public async isFeatureEnabled(guildId: string, featureName: FeatureName): Promise<boolean> {
         return this.getSettings(guildId).then(settings => settings.features[featureName].enabled);
+    }
+
+    // #region Get Global Vars
+
+    public async getGlobalVar(varName: string): Promise<GlobalVar> {
+        const varsFile: string = path.resolve(this.dataDir, "vars.json");
+        if (fs.existsSync(varsFile)) {
+            const vars = JSON.parse(fs.readFileSync(varsFile, "utf8"));
+            if (vars.hasProperty(varName)) {
+                return vars[varName];
+            } else {
+                throw new Error(`Global var not located: ${varName}`);
+            }
+        } else {
+            const errorString: string = "vars.json not located";
+            Logger.log(errorString);
+            throw new Error(errorString);
+        }
+    }
+
+    public async setGlobalVar(varName: string, newValue: GlobalVar): Promise<boolean> {
+        const varsFile: string = path.resolve(this.dataDir, "vars.json");
+        if (fs.existsSync(varsFile)) {
+            const vars = JSON.parse(fs.readFileSync(varsFile, 'utf8'));
+            vars[varName] = newValue;
+            const jsonString = JSON.stringify(vars, null, 4);
+            fs.writeFileSync(varsFile, jsonString, "utf-8");
+            return true;
+        } else {
+            const errorString: string = "vars.json not located";
+            Logger.log(errorString);
+        }
+        return false;
     }
 }

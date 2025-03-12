@@ -44,3 +44,5 @@ export type EmoteInfo = {
     id: string;
     isAnimated?: boolean;
 }
+
+export type GlobalVar = boolean | number | string;
