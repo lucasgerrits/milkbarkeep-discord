@@ -1,0 +1,110 @@
+import { Content, ContentListUnion, GenerateContentResponse, GoogleGenAI, Part } from "@google/genai";
+import { Message, MessageResolvable } from "discord.js";
+import { Logger } from "../util/Logger";
+import { Util } from "../util/Util";
+import { googleGemini as apiKey } from "../../data/apiKeys.json";
+import type { GenAIResponse } from "../types/GenAITypes";
+import { client } from "..";
+
+export class GoogleGenAIApi {
+    public readonly modelName: string = "gemini-2.0-flash-exp";
+    private ai: GoogleGenAI;
+    private key: string;
+
+    private conversation: Array<Content>;
+    private maxChars: number = 300;
+
+    constructor() {
+        // Initialize GenAI
+        this.key = apiKey;
+        this.ai = new GoogleGenAI({
+            apiKey: this.key
+        });
+        // Reset conversation and set Barkeep character
+        this.conversation = [];
+        const rpLore: string = require("../../data/rpLore.js");
+        const rpLoreParsed: string = rpLore.replace(/\[maxCharacters\]/g, this.maxChars.toString());
+        const param: Content = { role: "user", parts: [{ text: rpLoreParsed}] };
+        this.conversation.push(param);
+    }
+
+    private async generateContent(contents: ContentListUnion | string | Array<string | Part>): Promise<GenerateContentResponse> {
+        try {
+            // maxOutputTokens: this.maxChars,
+            return this.ai.models.generateContent({
+                model: this.modelName,
+                contents: contents,
+                config: {
+                    responseModalities: [
+                        "Text",
+                        "Image"
+                    ]
+                }
+            });
+        } catch (error: any) {
+            Logger.log(error.message);
+            return error.response;
+        }
+    }
+
+    private async checkContentSafety(contentToModerate: string): Promise<string | undefined> {
+        const response: GenerateContentResponse = await this.generateContent(contentToModerate);
+        if (response.promptFeedback !== undefined && response.promptFeedback.blockReasonMessage !== undefined) {
+            const modStatement: string = `
+                Can you rephrase the following block reason message or write something similar in your own words (based on your previously stated character): ${response.promptFeedback.blockReasonMessage}
+            `;
+            return modStatement;
+        } else {
+            return undefined;
+        }
+    }
+
+    private async checkDiscordMessageReference(message: Message): Promise<void> {
+        // Recursively call until first message in reply chain
+        if (message.reference !== null) {
+            const referencedMessage: Message = await message.channel.messages.fetch(message.reference.messageId as MessageResolvable);
+            await this.checkDiscordMessageReference(referencedMessage);
+        }
+        // Then add this message as the next in the message chain array
+        const role: "model" | "user" = (message.author.displayName === client.user?.displayName) ? "model" : "user";
+        const param = { role: role, parts: [{ text: message.content }] };
+        this.conversation.push(param);
+    }
+
+    public async chat(message: string | Message): Promise<GenAIResponse> {
+        const prompt: string = (message instanceof Message) ? message.content : message;
+
+        // Check for content that violates any of the service's moderation harm categories
+        const modStatement: string | undefined = await this.checkContentSafety(prompt);
+        if (typeof modStatement === "string") {
+            const param: Content = { role: 'user', parts: [{ text: modStatement}] };
+            this.conversation.push(param);
+        } else {
+            if (message instanceof Message) {
+                await this.checkDiscordMessageReference(message);
+            } else {
+                const param: Content = { role: "user", parts: [{ text: prompt }] };
+                this.conversation.push(param);
+            }
+        }
+
+        // Generate result using bot lore and either mod statement or reply chain
+        const response: GenerateContentResponse = await this.generateContent(this.conversation);
+        
+        // Format object to return for Discord messages
+        const chatResponse: GenAIResponse = {};
+        const responseText: string | undefined = response?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+        if (responseText) {
+            const responseFormatted: string = Util.replaceDoubleSpaces(responseText);
+            chatResponse.text = responseFormatted;
+            Logger.log(`[Gemini]: ${responseFormatted}`, "brightCyan");
+        }
+        console.log(response?.candidates?.[0]?.content?.parts?.[0]?.inlineData?.mimeType);
+        const inlineData: string | undefined = response?.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+        if (inlineData) {
+            chatResponse.imageBuffer = Buffer.from(inlineData, "binary");
+            //console.log(chatResponse.imageBuffer);
+        }
+        return chatResponse;
+    }
+}

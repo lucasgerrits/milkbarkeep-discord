@@ -1,6 +1,7 @@
-import { Channel, Collection, Guild, Message, MessageResolvable, TextChannel, User } from "discord.js";
+import { Channel, Collection, Guild, Message, MessagePayload, MessageReplyOptions, MessageResolvable, TextChannel, User } from "discord.js";
 import { EmbedFixManager } from "./EmbedFixManager";
 import { GoogleGeminiApi } from "../integrations/GoogleGemini-API";
+import { GoogleGenAIApi } from "../integrations/GoogleGenAI-API";
 import { Logger } from "../util/Logger";
 import { Util } from "../util/Util";
 import { client } from "..";
@@ -65,9 +66,17 @@ export class MessageHandler{
 
         // Otherwise, newly tagged or repliable bot message, so generate AI response
         try {
-            const gemini = new GoogleGeminiApi();
+            const gemini = new GoogleGenAIApi();
             const response = await gemini.chat(message);
-            await message.reply(response);
+            const options: MessageReplyOptions = {};
+            if (response.text) {
+                options.content = response.text;
+            }
+            if (response.imageBuffer) {
+                options.files = [ response.imageBuffer ];
+                console.log(response.imageBuffer);
+            }
+            await message.reply(options);
         } catch(error) {
             Logger.log(error as string);
         }
@@ -91,8 +100,8 @@ export class MessageHandler{
 
         if (milkRegex.test(message.content)) {
             message.react(melkEmote);
-            client.settings.incrementGlobalVar("milks");
-            client.setMilkStatus();
+            // client.settings.incrementGlobalVar("milks");
+            // client.setMilkStatus();
         }
     }
 
