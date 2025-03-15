@@ -74,7 +74,6 @@ export class MessageHandler{
             }
             if (response.imageBuffer) {
                 options.files = [ response.imageBuffer ];
-                console.log(response.imageBuffer);
             }
             await message.reply(options);
         } catch(error) {

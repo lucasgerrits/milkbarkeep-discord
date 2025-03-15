@@ -99,11 +99,10 @@ export class GoogleGenAIApi {
             chatResponse.text = responseFormatted;
             Logger.log(`[Gemini]: ${responseFormatted}`, "brightCyan");
         }
-        console.log(response?.candidates?.[0]?.content?.parts?.[0]?.inlineData?.mimeType);
-        const inlineData: string | undefined = response?.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
-        if (inlineData) {
-            chatResponse.imageBuffer = Buffer.from(inlineData, "binary");
-            //console.log(chatResponse.imageBuffer);
+        const inlineData: string | undefined = response?.candidates?.[0]?.content?.parts?.[1]?.inlineData?.data;
+        if (inlineData !== undefined) {
+            chatResponse.imageBuffer = Buffer.from(inlineData, "base64");
+            Logger.log(`[Gemini]: [Image Attached]`, "brightCyan");
         }
         return chatResponse;
     }
