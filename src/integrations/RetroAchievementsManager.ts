@@ -156,8 +156,6 @@ export class RetroAchievementsManager {
             if (!await this.clientRef.settings.isFeatureEnabled(guildId, "raWeekly")) {
                 return;
             }
-            const userPointsList: Array<userPoints> = await RetroAchievementsApi.getWeeklyList(this.auth, this.users, true);
-            const embed: EmbedBuilder = RetroAchievementsEmbeds.createRankingEmbed(userPointsList, "weekly");
             const channelId: string = await this.clientRef.settings.getChannelId(guildId, "raWeekly");
             await this.sendRankingsList("weekly", channelId);
         }
