@@ -109,9 +109,13 @@ export class ExtendedClient extends Client {
         }
     }
 
-    public async setMilkStatus(): Promise<void> {
-        const milkCount: GlobalVar = await this.settings.getGlobalVar("milks");
-        const milkString: string = `${milkCount} milks served fresh.`
-        this.user?.setActivity(milkString, { type: ActivityType.Custom });
+    public setStatus(status: string): void {
+        this.user?.setActivity(status, { type: ActivityType.Custom });
+    }
+
+    public async setMilkStatus(countIn?: number): Promise<void> {
+        const count: GlobalVar = (countIn) ? countIn : await this.settings.getGlobalVar("milks");
+        const milkString: string = `${count} milks served fresh.`;
+        this.setStatus(milkString);
     }
 }

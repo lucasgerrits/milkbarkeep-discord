@@ -8,11 +8,12 @@ import type { FeatureName, GlobalVar, GuildSettingsJson } from "../types/GuildTy
 export class GuildSettingsManager {
     private map: Map<string, GuildSettings>
     private dataDir: string = path.resolve(__dirname, './../../data');
-    private guildsParentDir: string = path.resolve(this.dataDir, '/guilds');
+    private guildsParentDir: string = path.resolve(this.dataDir, 'guilds');
 
     constructor() {
         this.map = new Map<string, GuildSettings>();
         this.importAllSettings();
+        console.log(this.guildsParentDir);
     }
 
     public async getGuildIds(): Promise<Array<string>> {
@@ -99,23 +100,23 @@ export class GuildSettingsManager {
         }
     }
 
-    public async setGlobalVar(varName: string, newValue: GlobalVar): Promise<boolean> {
+    public async setGlobalVar(varName: string, newValue: GlobalVar): Promise<GlobalVar | undefined> {
         const varsFile: string = path.resolve(this.dataDir, "vars.json");
         if (fs.existsSync(varsFile)) {
             const vars = JSON.parse(fs.readFileSync(varsFile, 'utf8'));
             vars[varName] = newValue;
             const jsonString = JSON.stringify(vars, null, 4);
             fs.writeFileSync(varsFile, jsonString, "utf-8");
-            return true;
+            return newValue;
         } else {
             const errorString: string = "vars.json not located";
             Logger.log(errorString);
         }
-        return false;
+        return undefined;
     }
 
-    public async incrementGlobalVar(varName: string): Promise<void> {
+    public async incrementGlobalVar(varName: string): Promise<GlobalVar | undefined> {
         const oldValue: number = await this.getGlobalVar(varName) as number;
-        await this.setGlobalVar(varName, oldValue + 1);
+        return this.setGlobalVar(varName, oldValue + 1);
     }
 }

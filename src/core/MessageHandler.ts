@@ -1,15 +1,17 @@
 import { Channel, Collection, Guild, Message, MessagePayload, MessageReplyOptions, MessageResolvable, TextChannel, User } from "discord.js";
 import { EmbedFixManager } from "./EmbedFixManager";
-import { GoogleGeminiApi } from "../integrations/GoogleGemini-API";
 import { GoogleGenAIApi } from "../integrations/GoogleGenAI-API";
 import { Logger } from "../util/Logger";
 import { Util } from "../util/Util";
 import { client } from "..";
+import { consoleOutput } from "../../data/config.json";
 
 export class MessageHandler{
     constructor() {}
 
     public async checkMessage(message: Message): Promise<void> {
+        if (consoleOutput.enabled === true && consoleOutput.channelId === message.channelId) return;
+
         // REACT CHECKS
         this.milkCheck(message);
 
@@ -99,8 +101,8 @@ export class MessageHandler{
 
         if (milkRegex.test(message.content)) {
             message.react(melkEmote);
-            // client.settings.incrementGlobalVar("milks");
-            // client.setMilkStatus();
+            const milks: number = await client.settings.incrementGlobalVar("milks") as number;
+            client.setMilkStatus(milks);
         }
     }
 

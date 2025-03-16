@@ -5,7 +5,7 @@ import { client } from "..";
 
 export default new Event(
     Events.ClientReady,
-    () => {
+    async () => {
         const asciiText = "" +
         "___  ________ _      _   ________  ___  ______ _   __ _____ ___________ \n" +
         "|  \\/  |_   _| |    | | / /| ___ \\/ _ \\ | ___ \\ | / /|  ___|  ___| ___ \\ \n" +
@@ -24,8 +24,8 @@ export default new Event(
         const readyStr: string = `${client.user?.tag} logged in and ready to serve!`;
         Logger.log(readyStr, "red");
 
-        client.setMilkStatus();
-
         client.timers.initialize();
+
+        await client.setMilkStatus();
     }
 );
