@@ -97,12 +97,12 @@ export class GoogleGenAIApi {
         if (responseText) {
             const responseFormatted: string = Util.replaceDoubleSpaces(responseText);
             chatResponse.text = responseFormatted;
-            Logger.log(`[Gemini]: ${responseFormatted}`, "brightCyan");
+            Logger.log(`[GenAI]: ${responseFormatted}`, "brightCyan");
         }
         const inlineData: string | undefined = response?.candidates?.[0]?.content?.parts?.[1]?.inlineData?.data;
         if (inlineData !== undefined) {
             chatResponse.imageBuffer = Buffer.from(inlineData, "base64");
-            Logger.log(`[Gemini]: [Image Attached]`, "brightCyan");
+            Logger.log(`[GenAI]: [Image Attached]`, "brightCyan");
         }
         return chatResponse;
     }

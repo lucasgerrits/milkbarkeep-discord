@@ -22,7 +22,7 @@ export default new Event(
         }
 
         const readyStr: string = `${client.user?.tag} logged in and ready to serve!`;
-        Logger.log(readyStr, "red");
+        Logger.log(`[Bot] ${readyStr}`, "red");
 
         client.timers.initialize();
 
