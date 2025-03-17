@@ -4,7 +4,7 @@ import { Convert } from "../../util/Convert";
 
 export default new Command({
     name: "convert-temperature",
-    description: "Explanation of the point value coloring in the ra-feed embeds.",
+    description: "Convert a temperature from one unit of measurement to another.",
     options: [
         {
             name: "units",
