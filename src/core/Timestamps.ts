@@ -1,4 +1,5 @@
 import { TimestampStylesString, time } from "discord.js";
+import type { TimestampFormats } from "../types/GuildTypes";
 
 export class Timestamps {
 
@@ -8,18 +9,21 @@ export class Timestamps {
      * https://gist.github.com/LeviSnoot/d9147767abeef2f770e9ddcd91eb85aa
      * https://old.discordjs.dev/#/docs/discord.js/14.14.1/typedef/TimestampStylesString
      */
-    private static format(unixEpochTimestamp: Date | number, styleString?: TimestampStylesString): string {
-        let dateToFormat: Date;
-        if (typeof unixEpochTimestamp === "number") {
-            dateToFormat = new Date(unixEpochTimestamp);
-        } else {
-            dateToFormat = unixEpochTimestamp;
-        }
+    private static format(timeIn: Date | number, styleString?: TimestampStylesString): string {
+        const seconds: number = (typeof timeIn === "number") ? timeIn : Math.floor(timeIn.getTime() / 1000);
+        return styleString ? time(seconds, styleString) : time(seconds);
+    }
 
-        if (styleString === undefined) {
-            return time(dateToFormat);
-        } else {
-            return time(dateToFormat, styleString);
+    public static all(timestamp: Date | number): TimestampFormats {
+        return {
+            default: Timestamps.default(timestamp),
+            shortTime: Timestamps.shortTime(timestamp),
+            longTime: Timestamps.longTime(timestamp),
+            shortDate: Timestamps.shortDate(timestamp),
+            longDate: Timestamps.longDate(timestamp),
+            shortDateTime: Timestamps.shortDateTime(timestamp),
+            longDateTime: Timestamps.longDateTime(timestamp),
+            relative: Timestamps.relative(timestamp)
         }
     }
 

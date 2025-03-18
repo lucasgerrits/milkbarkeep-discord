@@ -43,6 +43,17 @@ export type EmoteInfo = {
     cdnUrl: string;
     id: string;
     isAnimated?: boolean;
-}
+};
 
 export type GlobalVar = boolean | number | string;
+
+export type TimestampFormats = {
+    default: string;
+    shortTime: string;
+    longTime: string;
+    shortDate: string;
+    longDate: string;
+    shortDateTime: string;
+    longDateTime: string;
+    relative: string;
+};
