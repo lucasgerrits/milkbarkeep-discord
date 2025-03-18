@@ -26,7 +26,6 @@
         "glob": "^11.0.0",
         "jimp": "^1.6.0",
         "luxon": "^3.5.0",
-        "openai": "^4.29.1",
         "openweathermap-ts": "^1.2.10",
         "selenium-webdriver": "^4.18.1",
         "syllable": "^5.0.1",
