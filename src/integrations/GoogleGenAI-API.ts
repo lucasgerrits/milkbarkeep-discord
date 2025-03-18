@@ -1,4 +1,4 @@
-import { Content, ContentListUnion, GenerateContentResponse, GoogleGenAI, Part } from "@google/genai";
+import { Content, ContentListUnion, GenerateContentResponse, GoogleGenAI, HarmBlockThreshold, HarmCategory, Part, SafetySetting } from "@google/genai";
 import { Message, MessageResolvable } from "discord.js";
 import { Logger } from "../util/Logger";
 import { Util } from "../util/Util";
@@ -13,6 +13,22 @@ export class GoogleGenAIApi {
 
     private conversation: Array<Content>;
     private maxChars: number = 300;
+
+    private safetySettings: Array<SafetySetting> = [
+        {
+            category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+            threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH
+        }, {
+            category: HarmCategory.HARM_CATEGORY_HARASSMENT,
+            threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE
+        }, {
+            category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+            threshold: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE
+        }, {
+            category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+            threshold: HarmBlockThreshold.BLOCK_ONLY_HIGH
+        }
+    ];
 
     constructor() {
         // Initialize GenAI
