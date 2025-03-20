@@ -15,7 +15,7 @@ export default new Event(
         const embed: EmbedBuilder = new EmbedBuilder()
             .setColor("#000000")
             .setTitle(`Deleted :${emote.name}:`)
-            .setThumbnail(emote.imageURL())
+            .setThumbnail((emote.animated) ? emote.imageURL({ extension: "gif" }) : emote.imageURL())
             .setDescription(slotsString);
 
         // Send message to relevant channel

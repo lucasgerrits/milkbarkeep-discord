@@ -15,7 +15,7 @@ export default new Event(
         const embed: EmbedBuilder = new EmbedBuilder()
             .setColor("#000000")
             .setTitle(`Renamed :${newEmote.name}:`)
-            .setThumbnail(newEmote.imageURL())
+            .setThumbnail((newEmote.animated) ? newEmote.imageURL({ extension: "gif" }) : newEmote.imageURL())
             .setDescription(`Previously :${oldEmote.name}:\n\n${slotsString}`);
 
         // Send message to relevant channel
