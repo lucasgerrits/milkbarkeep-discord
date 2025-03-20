@@ -1,17 +1,53 @@
 import { EmbedBuilder, TextChannel } from "discord.js";
+import puppeteer, { BoundingBox, Browser, ElementHandle, Page } from "puppeteer";
 import { ExtendedClient } from "./ExtendedClient";
+import { Logger } from "../util/Logger";
 import { OpenWeatherMapApi } from "../integrations/OpenWeatherMap-API";
-import { SeleniumWebDriver } from "../integrations/SeleniumWebDriver";
+import { Util } from "../util/Util";
 import type { CurrentResponse } from "openweathermap-ts/dist/types";
 
 export class AppletonCam {
 
-    public static async createBuffer(): Promise<Buffer> {
-        const driver: SeleniumWebDriver = new SeleniumWebDriver();
-        const screenString: string = await driver.getAppletonCamScreen();
-        const base64Data: string = screenString.replace(/^data:image\/png;base64,/, '');
-        const buffer: Buffer = Buffer.from(base64Data, "base64");
-        return buffer;
+    public static async getScreenBuffer(): Promise<Buffer> {
+        const width: number = 1920;
+        const height: number = 1080;
+        const url: string = `https://api.wetmet.net/widgets/stream/frame.php?ruc=245-02-01&width=${width}&height=${height}`;
+
+        const browser: Browser = await puppeteer.launch({ headless: true }); // Use headless mode
+        const page: Page = await browser.newPage();
+
+        let imageBase64Str: string = "";
+
+        try {
+            await page.setViewport({ width, height });
+            await page.goto(url, { waitUntil: "networkidle2" });
+
+            await page.waitForSelector("video", { visible: true, timeout: 5000 });
+            await Util.sleep(2000);
+
+            const videoElement: ElementHandle<HTMLVideoElement> | null = await page.$("video");
+            const boundingBox: BoundingBox | null | undefined = await videoElement?.boundingBox();
+
+            if (boundingBox) {
+                imageBase64Str = await page.screenshot({
+                    encoding: "base64",
+                    clip: {
+                        x: boundingBox.x,
+                        y: boundingBox.y,
+                        width: boundingBox.width,
+                        height: boundingBox.height
+                    }
+                })
+            } else {
+                Logger.log("Video element not found or bounding box could not be determined.");
+            }
+        } catch (error: any) {
+            Logger.log(error);
+        } finally {
+            await browser.close();
+        }
+
+        return Buffer.from(imageBase64Str, "base64");
     }
 
     public static async createEmbed(): Promise<EmbedBuilder> {
@@ -45,7 +81,7 @@ export class AppletonCam {
     };
 
     public static async sendToAll(clientRef: ExtendedClient): Promise<void> {
-        const buffer: Buffer = await this.createBuffer();
+        const buffer: Buffer = await this.getScreenBuffer();
         const embed = await this.createEmbed();
 
         const guilds: Array<string> = await clientRef.settings.getGuildIds();

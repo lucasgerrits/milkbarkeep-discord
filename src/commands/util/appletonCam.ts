@@ -9,7 +9,7 @@ export default new Command({
     run: async (args): Promise<void> => {
         await args.interaction.deferReply();
 
-        const buffer: Buffer = await AppletonCam.createBuffer();
+        const buffer: Buffer = await AppletonCam.getScreenBuffer();
         const embed = await AppletonCam.createEmbed();
 
         // Send Discord message
