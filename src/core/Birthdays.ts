@@ -41,7 +41,8 @@ export class Birthdays {
     }
 
     public static async getUserBirthday(clientRef: ExtendedClient, guildId: string, userId: string): Promise<Array<BirthdaysJson>> {
-        if (!this.isEnabledForGuild(clientRef, guildId)) {
+        const isEnabled: boolean = await this.isEnabledForGuild(clientRef, guildId);
+        if (!isEnabled) {
             throw new Error(`Command used for feature not enabled in guild: ${guildId}`);
         }
         const birthdays: Array<BirthdaysJson> = await this.getBirthdaysJsonArray(guildId);
@@ -53,9 +54,8 @@ export class Birthdays {
 
         for (const guildId of guilds) {
             // Check if birthday announcements enabled for each guild
-            if (!this.isEnabledForGuild(clientRef, guildId)) {
-                return;
-            }
+            const isEnabled: boolean = await this.isEnabledForGuild(clientRef, guildId);
+            if (!isEnabled) return;
 
             const guild: Guild = clientRef.guilds.cache.get(guildId) as Guild;
             Logger.log(`Checking birthdays for guild: ${guild.name} (${guildId})`);
