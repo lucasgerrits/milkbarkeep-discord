@@ -13,7 +13,6 @@ export class GuildSettingsManager {
     constructor() {
         this.map = new Map<string, GuildSettings>();
         this.importAllSettings();
-        console.log(this.guildsParentDir);
     }
 
     public async getGuildIds(): Promise<Array<string>> {
