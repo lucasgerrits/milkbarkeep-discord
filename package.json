@@ -20,7 +20,6 @@
         "@breejs/later": "^4.2.0",
         "@google/genai": "^0.3.1",
         "@retroachievements/api": "^2.1.0",
-        "@types/selenium-webdriver": "^4.1.22",
         "discord-screenshot": "github:mrTomatolegit/discord-screenshot",
         "discord.js": "^14.14.1",
         "glob": "^11.0.0",
@@ -28,7 +27,6 @@
         "luxon": "^3.5.0",
         "openweathermap-ts": "^1.2.10",
         "puppeteer": "^24.4.0",
-        "selenium-webdriver": "^4.18.1",
         "syllable": "^5.0.1",
         "zalgo-js": "^1.0.0"
     }
