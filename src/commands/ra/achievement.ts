@@ -1,11 +1,10 @@
-import { ApplicationCommandOptionType, ColorResolvable, EmbedBuilder, MessageFlags, PermissionFlagsBits } from "discord.js";
+import { ApplicationCommandOptionType, MessageFlags } from "discord.js";
 import { Command } from "../../core/Command";
 import { Logger } from "../../util/Logger";
 
 export default new Command({
     name: "ra-achievement",
     description: "Creates an embed of a given achievement for display.",
-    defaultMemberPermissions: PermissionFlagsBits.Administrator,
     options: [
         {
             name: "id",
