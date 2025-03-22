@@ -1,31 +1,36 @@
-import { EmbedAuthorOptions, EmbedBuilder, Events, GuildMember, Message, VoiceBasedChannel, VoiceChannel, VoiceState } from "discord.js";
+import { EmbedBuilder, Events, Guild, GuildMember, VoiceBasedChannel, VoiceState } from "discord.js";
 import { Event } from "../core/Event";
 import { Logger } from "../util/Logger";
-import { client } from "..";
 
 export default new Event(
     Events.VoiceStateUpdate,
     async (oldState: VoiceState, newState: VoiceState) => {
-        const member: GuildMember | null = newState.member || oldState.member;
-        if (!member) return;
-
         const oldChannel: VoiceBasedChannel | null = oldState.channel;
         const newChannel: VoiceBasedChannel | null = newState.channel;
-
         const oldChannelId: string | null = oldState.channelId;
         const newChannelId: string | null = newState.channelId;
+        const guild: Guild = (newChannel?.guild ?? oldChannel?.guild) as Guild;
+
+        // Check for caching issue with member data
+        let member: GuildMember | null = newState.member || oldState.member;
+        if (!member) {
+            try{
+                member = await guild.members.fetch(newState.id);
+            } catch (error: any) {
+                Logger.log(`[Voice] ${guild.name} - Failed to fetch member: ${error}`, "brightMagenta");
+                return;
+            }
+        }
 
         const oldStreaming: boolean | null = oldState.streaming;
         const newStreaming: boolean | null = newState.streaming;
-
-        const oldVideo: boolean | null = oldState.selfVideo;
-        const newVideo: boolean | null = newState.selfVideo;
-
         const oldSessionId = oldState.sessionId;
         const newSessionId = newState.sessionId;
+        const oldVideo: boolean | null = oldState.selfVideo;
+        const newVideo: boolean | null = newState.selfVideo;
         
         const log = function(str: string) {
-            Logger.log(`[Voice] ${oldChannel?.guild.name} - ${member.displayName} ${str}`, "brightBlack");
+            Logger.log(`[Voice] ${guild.name} - ${member.displayName} ${str}`, "brightMagenta");
         }
 
         // Joins and disconnects
@@ -60,6 +65,14 @@ export default new Event(
                 .setColor(`${newStreaming ? "Purple" : "NotQuiteBlack"}`)
                 .setAuthor({ name: `${member.displayName} ${newStreaming ? "started" : "stopped"} streaming`, iconURL: member.user.displayAvatarURL() });
             await oldChannel?.send({ embeds: [ embed ] });
+        // User switched devices
+        } else if (oldSessionId !== newSessionId) {
+            log(`switched devices in voice channel ${newChannel?.name}`);
+            const embed: EmbedBuilder = new EmbedBuilder()
+                .setColor("Yellow")
+                .setAuthor({ name: `${member.displayName} switched devices`, iconURL: member.user.displayAvatarURL() });
+            await newChannel?.send({ embeds: [ embed ]});
         }
+        
     }
 );
