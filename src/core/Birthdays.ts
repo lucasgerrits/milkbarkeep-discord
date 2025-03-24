@@ -3,15 +3,12 @@ import * as path from "path";
 import { ExtendedClient } from "./ExtendedClient";
 import { Logger } from "../util/Logger";
 import type { BirthdaysJson } from "../types/GuildTypes";
-import { Guild } from "discord.js";
+import { Channel, Guild, TextChannel } from "discord.js";
 
 export class Birthdays {
-    private static async isEnabledForGuild(clientRef: ExtendedClient, guildId: string): Promise<boolean> {
-        return clientRef.settings.isFeatureEnabled(guildId, "birthdays");
-    }
 
-    private static async getBirthdayMessageChannel(clientRef: ExtendedClient, guildId: string): Promise<string> {
-        return clientRef.settings.getChannelId(guildId, "birthdays");
+    private static log(str: string): void {
+        Logger.log(`[BDAY] ${str}`, "default");
     }
 
     private static getTodayInMMDD(): string {
@@ -24,24 +21,21 @@ export class Birthdays {
 
     private static async getBirthdaysJsonArray(guildId: string): Promise<Array<BirthdaysJson>> {
         const filePath: string = path.resolve(__dirname, `./../../data/guilds/${guildId}`, "birthdays.json");
-
         try {
             if (!fs.existsSync(filePath)) {
                 throw new Error(`birthdays.json file not located for guild: ${guildId}`);
             }
-            
             const fileData: string = await fs.promises.readFile(filePath, 'utf-8');
             const birthdayData: Array<BirthdaysJson> = JSON.parse(fileData);
-      
             return birthdayData;
         } catch (error) {
-            Logger.log(error as string);
+            this.log(error as string);
             return [];
         }
     }
 
     public static async getUserBirthday(clientRef: ExtendedClient, guildId: string, userId: string): Promise<Array<BirthdaysJson>> {
-        const isEnabled: boolean = await this.isEnabledForGuild(clientRef, guildId);
+        const isEnabled: boolean = await clientRef.settings.isFeatureEnabled(guildId, "birthdays");
         if (!isEnabled) {
             throw new Error(`Command used for feature not enabled in guild: ${guildId}`);
         }
@@ -53,25 +47,33 @@ export class Birthdays {
         const guilds: Array<string> = await clientRef.settings.getGuildIds();
 
         for (const guildId of guilds) {
+            const guild: Guild = clientRef.guilds.cache.get(guildId) as Guild;
+
             // Check if birthday announcements enabled for each guild
-            const isEnabled: boolean = await this.isEnabledForGuild(clientRef, guildId);
+            const isEnabled: boolean = await clientRef.settings.isFeatureEnabled(guildId, "birthdays");
             if (!isEnabled) return;
 
-            const guild: Guild = clientRef.guilds.cache.get(guildId) as Guild;
-            Logger.log(`Checking birthdays for guild: ${guild.name} (${guildId})`);
-
+            // Check if proper channelId stored
+            const channelId: string = await clientRef.settings.getChannelId(guildId, "birthdays");
+            if (!channelId) {
+                this.log(`${guild.name} - Birthday messages enabled, but no channel set.`);
+                return;
+            }
+            
             // Get birthday data for guild then check for matches today
+            this.log(`${guild.name} - Checking for birthdays`);
             const birthdays: Array<BirthdaysJson> = await this.getBirthdaysJsonArray(guildId);
             const todayInMMDD: string = this.getTodayInMMDD();
             const resultIDs: string[] = birthdays.filter(obj => obj.date === todayInMMDD).map(obj => obj.userId);
             const resultTags: string[] = birthdays.filter(obj => obj.date === todayInMMDD).map(obj => `<@${obj.userId}>`);
 
             // Then post birthday message to channel
-            const channelId: string = await this.getBirthdayMessageChannel(clientRef, guildId);
             if (resultIDs.length > 0) {
                 const lf: Intl.ListFormat = new Intl.ListFormat("en");
                 const botStr: string = "Today it's " + lf.format(resultTags) + "'s birthday! POGGGG";
-                clientRef.send(channelId, {
+                this.log(`${guild.name} - ${botStr}`);
+                const channel: Channel = clientRef.channels.cache.get(channelId) as TextChannel;
+                await channel.send({
                     "content": botStr,
                     "allowedMentions": { "users": [ ...resultIDs ] },
                 });
