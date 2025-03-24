@@ -13,9 +13,10 @@ export default new Event(
         const newMemberId: string = member.id;
         const newMemberTag: string = member.user.tag;
 
-        // Log event to console
-        const logStr: string = `New member in guild ${joinedGuildName} (${joinedGuildId}): ${newMemberTag} (${newMemberId})`;
-        Logger.log(logStr, "green");
+        const log = (str: string) => {
+            Logger.log(`[Joins] ${joinedGuildName} - ${str}`, "green");
+        }
+        log(`New member ${newMemberTag} (${newMemberId})`);
 
         // Determine if welcome message should be sent in the joined guild
         if (!await client.settings.isFeatureEnabled(joinedGuildId, "welcome")) {
@@ -24,9 +25,8 @@ export default new Event(
 
         // Check for channel property
         const welcomeChannel: string = await client.settings.getChannelId(joinedGuildId, "welcome");
-        console.log(welcomeChannel);
         if (!welcomeChannel) {
-            Logger.log(`Error: Welcome messages enabled for guild ${joinedGuildId} but no channel set.`);
+            log(`Welcome messages enabled, but no channel set.`);
             return;
         }
 
