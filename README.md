@@ -12,26 +12,28 @@ A Discord chatbot written in TypeScript for Node.js using the discord.js library
 - Social media link embed fixes
 - Retro Achievements live earned feed
 - Automatic emote reaction to given triggers
-- Misc slash commands (unit conversion, stats, update status)
+- Misc slash commands (unit conversion, stats, user avatars, update status)
 
 ## Consumes
 
 [discord.js](https://discord.js.org/)
 
-[Google generative-ai-js](https://github.com/google-gemini/generative-ai-js)
+[Google Gen AI](https://github.com/googleapis/js-genai)
 
-[openai-node](https://github.com/openai/openai-node)
+[AT Protocol API](https://github.com/bluesky-social/atproto)
 
 [openweathermap-ts](https://github.com/Endunry/openweathermap-ts)
 
 [RetroAchievements api-js](https://github.com/RetroAchievements/api-js)
 
-[Selenium](https://github.com/SeleniumHQ/selenium)
+[puppeteer](https://github.com/puppeteer/puppeteer)
+
+[Luxon](https://github.com/moment/luxon)
+
+[@breejs/later](https://github.com/breejs/later)
 
 ## Contact
 
 [Email](mailto:lucasjgerrits@gmail.com)
 
 [Twitch](https://www.twitch.tv/carefreebomb)
-
-[Discord](https://discord.gg/0X84YV4Sn1v0wyUa)
