@@ -13,7 +13,7 @@ import { glob } from "glob";
 import { BlueskyApi } from "../integrations/Bluesky-API";
 import { Event } from "./Event";
 import { GuildSettingsManager } from "./GuildSettingsManager";
-import { Logger } from "../util/Logger";
+import { Logger } from "./Logger";
 import { MessageHandler } from "./MessageHandler";
 import { RetroAchievementsManager } from "../integrations/RetroAchievementsManager";
 import { TimerManager } from "./TimerManager";

@@ -1,6 +1,6 @@
 import { Events } from "discord.js";
 import { Event } from "../core/Event";
-import { Logger } from "../util/Logger";
+import { Logger } from "../core/Logger";
 import { client } from "..";
 
 export default new Event(
@@ -22,7 +22,7 @@ export default new Event(
         }
 
         const readyStr: string = `${client.user?.tag} logged in and ready to serve!`;
-        Logger.log(`[Bot] ${readyStr}`, "red");
+        Logger.log(`[BOT] ${readyStr}`, "red");
 
         client.timers.initialize();
 

@@ -1,7 +1,7 @@
 import { Channel, Collection, Guild, Message, MessagePayload, MessageReplyOptions, MessageResolvable, TextChannel, User } from "discord.js";
 import { EmbedFixManager } from "./EmbedFixManager";
 import { GoogleGenAIApi } from "../integrations/GoogleGenAI-API";
-import { Logger } from "../util/Logger";
+import { Logger } from "./Logger";
 import { Util } from "../util/Util";
 import { client } from "..";
 import { consoleOutput } from "../../data/config.json";

@@ -1,7 +1,7 @@
 import { AppletonCam } from "./AppletonCam";
 import { Birthdays } from "./Birthdays";
 import { ExtendedClient } from "./ExtendedClient";
-import { Logger } from "../util/Logger";
+import { Logger } from "./Logger";
 import later from "@breejs/later";
 
 export class TimerManager {

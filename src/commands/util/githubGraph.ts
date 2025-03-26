@@ -1,6 +1,6 @@
 import { ApplicationCommandOptionType, AttachmentBuilder, EmbedBuilder } from "discord.js";
 import { Command } from "../../core/Command";
-import { Logger } from "../../util/Logger";
+import { Logger } from "../../core/Logger";
 import puppeteer, { Browser, ElementHandle, HTTPResponse, Page } from "puppeteer";
 
 export default new Command({

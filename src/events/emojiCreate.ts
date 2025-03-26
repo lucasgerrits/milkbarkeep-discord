@@ -1,7 +1,7 @@
 import { EmbedBuilder, Events, GuildEmoji, TextChannel } from "discord.js";
 import { Event } from "../core/Event";
 import { client } from "..";
-import { Logger } from "../util/Logger";
+import { Logger } from "../core/Logger";
 
 export default new Event(
     Events.GuildEmojiCreate,

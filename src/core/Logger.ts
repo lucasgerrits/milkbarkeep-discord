@@ -1,5 +1,5 @@
 import { TextChannel } from "discord.js";
-import { Util } from "./Util";
+import { Util } from "../util/Util";
 import { client } from "..";
 import { consoleOutput } from "../../data/config.json";
 

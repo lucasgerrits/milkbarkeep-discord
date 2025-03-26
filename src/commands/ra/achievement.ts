@@ -1,6 +1,6 @@
 import { ApplicationCommandOptionType, MessageFlags } from "discord.js";
 import { Command } from "../../core/Command";
-import { Logger } from "../../util/Logger";
+import { Logger } from "../../core/Logger";
 
 export default new Command({
     name: "ra-achievement",

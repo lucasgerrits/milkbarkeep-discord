@@ -1,6 +1,6 @@
 import { Content, ContentListUnion, GenerateContentResponse, GoogleGenAI, HarmBlockThreshold, HarmCategory, Part, SafetySetting } from "@google/genai";
 import { Message, MessageResolvable } from "discord.js";
-import { Logger } from "../util/Logger";
+import { Logger } from "../core/Logger";
 import { Util } from "../util/Util";
 import { googleGemini as apiKey } from "../../data/apiKeys.json";
 import type { GenAIResponse } from "../types/GenAITypes";

@@ -1,6 +1,6 @@
 import { ApplicationCommandOptionType, EmbedBuilder, Message, MessageFlags, PermissionFlagsBits } from "discord.js";
 import { Command } from "../../core/Command";
-import { Logger } from "../../util/Logger";
+import { Logger } from "../../core/Logger";
 import type { EmoteInfo, EmoteOperation } from "../../types/GuildTypes";
 
 export default new Command({

@@ -1,6 +1,6 @@
 import { ApplicationCommandOptionType, CommandInteraction } from "discord.js";
 import { Command } from "../../core/Command";
-import { Logger } from "../../util/Logger";
+import { Logger } from "../../core/Logger";
 import type { RARankingType } from "../../types/RATypes";
 
 export default new Command({

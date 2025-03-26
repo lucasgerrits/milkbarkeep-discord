@@ -1,7 +1,7 @@
 import { EmbedBuilder, TextChannel } from "discord.js";
 import puppeteer, { BoundingBox, Browser, ElementHandle, Page } from "puppeteer";
 import { ExtendedClient } from "./ExtendedClient";
-import { Logger } from "../util/Logger";
+import { Logger } from "./Logger";
 import { OpenWeatherMapApi } from "../integrations/OpenWeatherMap-API";
 import { Util } from "../util/Util";
 import type { CurrentResponse } from "openweathermap-ts/dist/types";

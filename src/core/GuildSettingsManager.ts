@@ -2,7 +2,7 @@ import * as fs from "fs";
 import * as path from "path";
 import { glob } from "glob";
 import { GuildSettings } from "./GuildSettings";
-import { Logger } from "../util/Logger";
+import { Logger } from "./Logger";
 import type { FeatureName, GlobalVar, GuildSettingsJson } from "../types/GuildTypes";
 
 export class GuildSettingsManager {
@@ -46,7 +46,7 @@ export class GuildSettingsManager {
             const settings: GuildSettings = new GuildSettings(settingsJson);
             this.map.set(settings.id, settings);
         } else {
-            Logger.log(`No settings file located for guild: ${path.basename(guildDir)}`);
+            Logger.log(`[BOT] No settings file located for guild: ${path.basename(guildDir)}`);
         }
     }
 

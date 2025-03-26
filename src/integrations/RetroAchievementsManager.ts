@@ -1,6 +1,6 @@
 import { AchievementUnlocksMetadata, AuthObject, buildAuthorization, GameExtended } from "@retroachievements/api";
 import { ExtendedClient } from "../core/ExtendedClient";
-import { Logger } from "../util/Logger";
+import { Logger } from "../core/Logger";
 import { retroAchievements as api } from "../../data/apiKeys.json";
 import { RetroAchievementsApi } from "./RetroAchievementsApi";
 import { RetroAchievementsEmbeds } from "./RetroAchievementsEmbeds";

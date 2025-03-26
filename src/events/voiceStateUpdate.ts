@@ -1,6 +1,6 @@
 import { EmbedBuilder, Events, Guild, GuildMember, VoiceBasedChannel, VoiceState } from "discord.js";
 import { Event } from "../core/Event";
-import { Logger } from "../util/Logger";
+import { Logger } from "../core/Logger";
 
 export default new Event(
     Events.VoiceStateUpdate,

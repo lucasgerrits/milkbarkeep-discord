@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import { ExtendedClient } from "./ExtendedClient";
-import { Logger } from "../util/Logger";
+import { Logger } from "./Logger";
 import type { BirthdaysJson } from "../types/GuildTypes";
 import { Channel, Guild, TextChannel } from "discord.js";
 

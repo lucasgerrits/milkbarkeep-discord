@@ -12,7 +12,7 @@ import {
     getUserPoints,
     getUserRecentAchievements
 } from "@retroachievements/api";
-import { Logger } from "../util/Logger";
+import { Logger } from "../core/Logger";
 import { Util } from "../util/Util";
 
 import type { achievementData, userPoints } from "../types/RATypes";
