@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType, ColorResolvable, EmbedBuilder, User } from "discord.js";
+import { ApplicationCommandOptionType, ColorResolvable, EmbedBuilder, ImageSize, User } from "discord.js";
 import { Command } from "../../core/Command";
 import { Logger } from "../../core/Logger";
 
@@ -21,7 +21,8 @@ export default new Command({
         await user.fetch();
         const isAnimated: boolean | undefined = user.avatar?.startsWith("a_");
         const avatarExtension = isAnimated ? "gif" : "png";
-        const avatarUrl: string = user.displayAvatarURL({ size: 1024, extension: avatarExtension });
+        const maxResolution: ImageSize = 4096;
+        const avatarUrl: string = user.displayAvatarURL({ size: maxResolution, extension: avatarExtension });
         const userColor: ColorResolvable = user.hexAccentColor ?? "#000000";
 
         // Create embed
