@@ -8,7 +8,7 @@
         },
         "birthdays": {
             "enabled": false,
-            "channelID": ""
+            "channelId": ""
         },
         "emoteFeed": {
             "enabled": false,
