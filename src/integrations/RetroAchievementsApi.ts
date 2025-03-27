@@ -20,13 +20,9 @@ import type { achievementData, userPoints } from "../types/RATypes";
 export class RetroAchievementsApi {
 
     // #region Properties
-    
+
     public static readonly callDelayInMS: number = 175;
     private static readonly gmtOffsetInMS: number = 21600000;
-
-    private static async log(str: string): Promise<void> {
-        Logger.log(`[RA] ${str}`, "yellow");
-    }
 
     // #region Individual Calls
 
@@ -167,12 +163,12 @@ export class RetroAchievementsApi {
             });
             recentList.reverse();
         } catch (error: any) {
-            console.error("An error occurred while fetching user recent achievements: ", error);
+            Logger.ra(`An error occurred while fetching user recent achievements: ${error}`);
             if (error.response && error.response.status) {
-                this.log(`Status code:  ${error.response.status}`);
+                Logger.ra(`Status code:  ${error.response.status}`);
                 // Server error range
                 if (error.response.status >= 500 && error.response.status < 600) {
-                    this.log(`HTTP Error ${error.response.status}: The RA servers appear to be down.`);
+                    Logger.ra(`HTTP Error ${error.response.status}: The RA servers appear to be down.`);
                 }
             }
         }

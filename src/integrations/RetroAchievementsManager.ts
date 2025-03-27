@@ -31,10 +31,6 @@ export class RetroAchievementsManager {
         });
     }
 
-    public async log(str: string): Promise<void> {
-        Logger.log(`[RA] ${str}`, "yellow");
-    }
-
     // #region Achievement Feeds
 
     public async getRecentList(minutesToLookBack: number = this.defaultMinToLookBack): Promise<Array<achievementData>> {
@@ -53,10 +49,10 @@ export class RetroAchievementsManager {
         try {
             recent = await this.getRecentList(minutesToLookBack);
             if (recent.length === 0) {
-                this.log("No new achievements found.");
+                Logger.ra("No new achievements found.");
                 return;
             } else {
-                this.log(`Updating feed with ${recent.length} new achievement(s).`);
+                Logger.ra(`Updating feed with ${recent.length} new achievement(s).`);
             }
         } catch (error: any) {
             Logger.log(error as string);

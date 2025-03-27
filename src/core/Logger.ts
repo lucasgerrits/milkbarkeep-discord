@@ -54,6 +54,9 @@ export class Logger {
     };
     public static readonly bar: string = "========================================================================";
 
+    public static bot(str: string): void { this.log(`[BOT] ${str}`, "red"); }
+    public static ra(str: string): void { this.log(`[RA] ${str}`, "yellow"); }
+
     private static getDateTimeStr(): string {
         const today: Date = new Date();
         const ms: string = today.getMilliseconds().toString().padStart(3, "0");
@@ -64,7 +67,7 @@ export class Logger {
     }
 
     // https://en.m.wikipedia.org/wiki/ANSI_escape_code#Colors
-    public static log(strIn: string, color: string = "default", background: string = "default") {
+    public static log(strIn: string, color: string = "default", background: string = "default"): void {
         if (Logger.DEBUG === true) {
             // Get current local time
             const dateTimeStr = Logger.getDateTimeStr();
