@@ -1,5 +1,5 @@
 import { Content, ContentListUnion, GenerateContentResponse, GoogleGenAI, HarmBlockThreshold, HarmCategory, Part, SafetySetting } from "@google/genai";
-import { Message, MessageResolvable } from "discord.js";
+import { DMChannel, Message, MessageResolvable } from "discord.js";
 import { Logger } from "../core/Logger";
 import { Util } from "../util/Util";
 import { googleGemini as apiKey } from "../../data/apiKeys.json";
@@ -87,8 +87,14 @@ export class GoogleGenAIApi {
         this.conversation.push(param);
     }
 
-    public async chat(message: string | Message): Promise<GenAIResponse> {
+    public async chat(message: Message): Promise<GenAIResponse> {
+        const channel = message.channel;
+        const log = (str: string) => {
+            Logger.ai(`${!message.channel.isDMBased() ? `${message.guild?.name} ~ #${message.channel.name} -` : ""} ${message.member?.displayName}: ${str}`);
+        }
+
         const prompt: string = (message instanceof Message) ? message.content : message;
+        log(`Prompt - ${prompt}`);
 
         // Check for content that violates any of the service's moderation harm categories
         const modStatement: string | undefined = await this.checkContentSafety(prompt);
@@ -113,12 +119,12 @@ export class GoogleGenAIApi {
         if (responseText) {
             const responseFormatted: string = Util.replaceDoubleSpaces(responseText);
             chatResponse.text = responseFormatted;
-            Logger.ai(`${responseFormatted}`);
+            log(`Response - ${responseFormatted}`);
         }
         const inlineData: string | undefined = response?.candidates?.[0]?.content?.parts?.[1]?.inlineData?.data;
         if (inlineData !== undefined) {
             chatResponse.imageBuffer = Buffer.from(inlineData, "base64");
-            Logger.ai(`[Image Attached]`);
+            log(`[Image Attached]`);
         }
         return chatResponse;
     }
