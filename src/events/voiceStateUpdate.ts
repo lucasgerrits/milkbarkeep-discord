@@ -17,7 +17,7 @@ export default new Event(
             try{
                 member = await guild.members.fetch(newState.id);
             } catch (error: any) {
-                Logger.log(`[Voice] ${guild.name} - Failed to fetch member: ${error}`, "brightMagenta");
+                Logger.vc(`${guild.name} - Failed to fetch member: ${error}`);
                 return;
             }
         }
@@ -30,7 +30,7 @@ export default new Event(
         const newVideo: boolean | null = newState.selfVideo;
         
         const log = function(str: string) {
-            Logger.log(`[Voice] ${guild.name} - ${member.displayName} ${str}`, "brightMagenta");
+            Logger.vc(`${guild.name} - ${member.displayName} ${str}`);
         }
 
         // Joins and disconnects

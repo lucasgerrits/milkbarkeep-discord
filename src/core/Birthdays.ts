@@ -7,10 +7,6 @@ import { Channel, Guild, TextChannel } from "discord.js";
 
 export class Birthdays {
 
-    private static log(str: string): void {
-        Logger.log(`[BDAY] ${str}`, "default");
-    }
-
     private static getTodayInMMDD(): string {
         const today: Date = new Date();
         const month: string = (today.getMonth() + 1).toString().padStart(2, "0"); // zero-indexed
@@ -29,7 +25,7 @@ export class Birthdays {
             const birthdayData: Array<BirthdaysJson> = JSON.parse(fileData);
             return birthdayData;
         } catch (error) {
-            this.log(error as string);
+            Logger.bday(error as string);
             return [];
         }
     }
@@ -56,12 +52,12 @@ export class Birthdays {
             // Check if proper channelId stored
             const channelId: string = await clientRef.settings.getChannelId(guildId, "birthdays");
             if (!channelId) {
-                this.log(`${guild.name} - Birthday messages enabled, but no channel set.`);
+                Logger.bday(`${guild.name} - Birthday messages enabled, but no channel set.`);
                 return;
             }
             
             // Get birthday data for guild then check for matches today
-            this.log(`${guild.name} - Checking for birthdays`);
+            Logger.bday(`${guild.name} - Checking for birthdays`);
             const birthdays: Array<BirthdaysJson> = await this.getBirthdaysJsonArray(guildId);
             const todayInMMDD: string = this.getTodayInMMDD();
             const resultIDs: string[] = birthdays.filter(obj => obj.date === todayInMMDD).map(obj => obj.userId);
@@ -71,7 +67,7 @@ export class Birthdays {
             if (resultIDs.length > 0) {
                 const lf: Intl.ListFormat = new Intl.ListFormat("en");
                 const botStr: string = "Today it's " + lf.format(resultTags) + "'s birthday! POGGGG";
-                this.log(`${guild.name} - ${botStr}`);
+                Logger.bday(`${guild.name} - ${botStr}`);
                 const channel: Channel = clientRef.channels.cache.get(channelId) as TextChannel;
                 await channel.send({
                     "content": botStr,

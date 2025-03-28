@@ -15,7 +15,7 @@ export default new Event(
         const guildName: string = guild.name;
 
         const log = (str: string) => {
-            Logger.log(`[CMD] ${guildName} - ${str}`, "red");
+            Logger.cmd(`${guildName} - ${str}`);
         }
 
         const command = client.commands.get(commandName);
