@@ -1,10 +1,29 @@
-export type GuildSettingsJson = {
-    id: string;
-    memo?: string;
-    features: Features;
-    channelsNotToLog: string[];
-    commands: string[];
-}
+import { z } from "zod";
+
+const FeatureSchema = z.object({
+    enabled: z.boolean(),
+    channelId: z.string(),
+    output: z.string().optional(),
+});
+
+export const GuildSettingsSchema = z.object({
+    memo: z.string().optional(),
+    id: z.string(),
+    features: z.object({
+        appletonCam: FeatureSchema,
+        birthdays: FeatureSchema,
+        emoteFeed: FeatureSchema,
+        modLog: FeatureSchema,
+        oddball: FeatureSchema,
+        raFeed: FeatureSchema,
+        raWeekly: FeatureSchema,
+        welcome: FeatureSchema,
+    }),
+    channelsNotToLog: z.array(z.string()),
+    commands: z.array(z.string()),
+});
+
+export type GuildSettingsJson = z.infer<typeof GuildSettingsSchema>;
 
 export type Features = { [key in FeatureName]: Feature; };
 
@@ -22,7 +41,6 @@ export type FeatureName =
     "oddball" |
     "raFeed" |
     "raWeekly" |
-    "testing" |
     "welcome";
 
 export type BirthdaysJson = {

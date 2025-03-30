@@ -3,6 +3,7 @@ import * as path from "path";
 import { glob } from "glob";
 import { GuildSettings } from "./GuildSettings";
 import { Logger } from "./Logger";
+import { GuildSettingsSchema } from "../types/GuildTypes";
 import type { FeatureName, GlobalVar, GuildSettingsJson } from "../types/GuildTypes";
 
 export class GuildSettingsManager {
@@ -42,11 +43,16 @@ export class GuildSettingsManager {
 
         // If settings.json exists at path, update map
         if (fs.existsSync(settingsFile)) {
-            const settingsJson: GuildSettingsJson = JSON.parse(fs.readFileSync(settingsFile, 'utf8'));
-            const settings: GuildSettings = new GuildSettings(settingsJson);
-            this.map.set(settings.id, settings);
+            const rawJson = JSON.parse(fs.readFileSync(settingsFile, 'utf8'));
+            try {
+                const validatedJson: GuildSettingsJson = GuildSettingsSchema.parse(rawJson);
+                const settings: GuildSettings = new GuildSettings(validatedJson);
+                this.map.set(settings.id, settings);
+            } catch (error: any) {
+                Logger.bot(`Invalid JSON settings for guild ${path.basename(guildDir)}: ${error}`);
+            }
         } else {
-            Logger.log(`[BOT] No settings file located for guild: ${path.basename(guildDir)}`);
+            Logger.bot(`No settings file located for guild ${path.basename(guildDir)}`);
         }
     }
 
@@ -94,7 +100,7 @@ export class GuildSettingsManager {
             }
         } else {
             const errorString: string = "vars.json not located";
-            Logger.log(errorString);
+            Logger.bot(errorString);
             throw new Error(errorString);
         }
     }
@@ -109,7 +115,7 @@ export class GuildSettingsManager {
             return newValue;
         } else {
             const errorString: string = "vars.json not located";
-            Logger.log(errorString);
+            Logger.bot(errorString);
         }
         return undefined;
     }
