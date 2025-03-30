@@ -28,6 +28,7 @@
         "openweathermap-ts": "^1.2.10",
         "puppeteer": "^24.4.0",
         "syllable": "^5.0.1",
-        "zalgo-js": "^1.0.0"
+        "zalgo-js": "^1.0.0",
+        "zod": "^3.24.2"
     }
 }
