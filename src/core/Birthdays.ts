@@ -2,7 +2,7 @@ import * as fs from "fs";
 import * as path from "path";
 import { ExtendedClient } from "./ExtendedClient";
 import { Logger } from "./Logger";
-import type { BirthdaysJson } from "../types/GuildTypes";
+import { BirthdaysSchema, type BirthdaysJson } from "../types/GuildTypes";
 import { Channel, Guild, TextChannel } from "discord.js";
 
 export class Birthdays {
@@ -22,8 +22,9 @@ export class Birthdays {
                 throw new Error(`birthdays.json file not located for guild: ${guildId}`);
             }
             const fileData: string = await fs.promises.readFile(filePath, 'utf-8');
-            const birthdayData: Array<BirthdaysJson> = JSON.parse(fileData);
-            return birthdayData;
+            const rawJson: Array<BirthdaysJson> = JSON.parse(fileData);
+            const validatedJson: Array<BirthdaysJson> = BirthdaysSchema.parse(rawJson);
+            return validatedJson;
         } catch (error) {
             Logger.bday(error as string);
             return [];
