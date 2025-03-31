@@ -1,7 +1,7 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Message, MessageActionRowComponentBuilder, User } from "discord.js";
 import { Util } from "../util/Util";
 import { client } from "..";
-import type { EmbedFixUrls } from "../types/EmbedFixTypes";
+import type { EmbedFixUrls } from "../types/FeatureTypes";
 
 export class EmbedFixManager {
     private static readonly domainMap: Map<string, string> = new Map<string, string>([

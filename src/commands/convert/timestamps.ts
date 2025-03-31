@@ -2,7 +2,7 @@ import { ApplicationCommandOptionType, EmbedBuilder } from "discord.js";
 import { DateTime } from 'luxon';
 import { Command } from "../../core/Command";
 import { Timestamps } from "../../core/Timestamps";
-import type { TimestampFormats } from "../../types/GuildTypes";
+import type { TimestampFormats } from "../../types/AppTypes";
 
 const getTimezones = () => {
     const zones = [

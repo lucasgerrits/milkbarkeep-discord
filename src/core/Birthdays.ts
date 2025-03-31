@@ -2,7 +2,7 @@ import * as fs from "fs";
 import * as path from "path";
 import { ExtendedClient } from "./ExtendedClient";
 import { Logger } from "./Logger";
-import { BirthdaysSchema, type BirthdaysJson } from "../types/GuildTypes";
+import { BirthdaysSchema, type BirthdaysJson } from "../types/FeatureTypes";
 import { Channel, Guild, TextChannel } from "discord.js";
 
 export class Birthdays {

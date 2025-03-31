@@ -1,6 +1,6 @@
 import { ApplicationCommandOptionType, EmbedBuilder, MessageFlags, PermissionFlagsBits } from "discord.js";
 import { Command } from "../../core/Command";
-import type { EmoteInfo, EmoteOperation } from "../../types/GuildTypes";
+import type { EmoteInfo, EmoteOperation } from "../../types/AppTypes";
 
 export default new Command({
     name: "emote-rename",

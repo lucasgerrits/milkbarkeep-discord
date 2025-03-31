@@ -1,6 +1,7 @@
 import * as fs from "fs";
 import { User } from "discord.js";
 import { Util } from "../util/Util";
+import { OddballData } from "../types/FeatureTypes";
 
 export class Oddball {
     private static jsonFile: string = `${__dirname}/../../data/oddballStats.json`;

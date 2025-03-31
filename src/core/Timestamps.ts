@@ -1,5 +1,5 @@
 import { TimestampStylesString, time } from "discord.js";
-import type { TimestampFormats } from "../types/GuildTypes";
+import type { TimestampFormats } from "../types/AppTypes";
 
 export class Timestamps {
 

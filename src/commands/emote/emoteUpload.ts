@@ -1,6 +1,6 @@
 import { ApplicationCommandOptionType, Attachment, EmbedBuilder, MessageFlags, PermissionFlagsBits } from "discord.js";
 import { Command } from "../../core/Command";
-import { EmoteOperation } from "../../types/GuildTypes";
+import { EmoteOperation } from "../../types/AppTypes";
 
 export default new Command({
     name: "emote-upload",

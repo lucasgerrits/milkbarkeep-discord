@@ -20,7 +20,7 @@ import { TimerManager } from "./TimerManager";
 import { EmoteManager } from "./EmoteManager";
 import { discordAppToken } from "../../data/config.json";
 import type { CommandType } from "../types/CommandTypes";
-import type { GlobalVar } from "../types/GuildTypes";
+import type { GlobalVar } from "../types/AppTypes";
 
 
 export class ExtendedClient extends Client {

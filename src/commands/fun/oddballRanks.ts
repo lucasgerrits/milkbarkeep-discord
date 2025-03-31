@@ -2,6 +2,7 @@ import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, MessageActi
 import { Command } from "../../core/Command";
 import { Oddball } from "../../core/Oddball";
 import { Util } from "../../util/Util";
+import { OddballData } from "../../types/FeatureTypes";
 
 export default new Command({
     name: "oddball-ranks",

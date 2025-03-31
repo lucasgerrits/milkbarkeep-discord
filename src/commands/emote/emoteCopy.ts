@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType, EmbedBuilder, Message, MessageFlags, PermissionFlagsBits } from "discord.js";
 import { Command } from "../../core/Command";
 import { Logger } from "../../core/Logger";
-import type { EmoteInfo, EmoteOperation } from "../../types/GuildTypes";
+import type { EmoteInfo, EmoteOperation } from "../../types/AppTypes";
 
 export default new Command({
     name: "emote-copy",

@@ -1,4 +1,4 @@
-import type { Features, GuildSettingsJson } from "../types/GuildTypes";
+import type { Features, GuildSettingsJson } from "../types/AppTypes";
 
 export class GuildSettings {
     public id: string;

@@ -1,7 +1,7 @@
 import { Base64Resolvable, BufferResolvable, DiscordAPIError, Guild, GuildEmoji } from "discord.js";
 import { ExtendedClient } from "./ExtendedClient";
 import { Logger } from "./Logger";
-import type { EmoteInfo, EmoteOperation } from "../types/GuildTypes";
+import type { EmoteInfo, EmoteOperation } from "../types/AppTypes";
 
 export class EmoteManager {
     private clientRef: ExtendedClient;

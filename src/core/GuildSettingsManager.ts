@@ -3,8 +3,8 @@ import * as path from "path";
 import { glob } from "glob";
 import { GuildSettings } from "./GuildSettings";
 import { Logger } from "./Logger";
-import { GuildSettingsSchema } from "../types/GuildTypes";
-import type { FeatureName, GlobalVar, GuildSettingsJson } from "../types/GuildTypes";
+import { GuildSettingsSchema } from "../types/AppTypes";
+import type { FeatureName, GlobalVar, GuildSettingsJson } from "../types/AppTypes";
 
 export class GuildSettingsManager {
     private map: Map<string, GuildSettings>
