@@ -32,6 +32,8 @@ A Discord chatbot written in TypeScript for Node.js using the discord.js library
 
 [@breejs/later](https://github.com/breejs/later)
 
+[zod](https://github.com/colinhacks/zod)
+
 ## Contact
 
 [Email](mailto:lucasjgerrits@gmail.com)
