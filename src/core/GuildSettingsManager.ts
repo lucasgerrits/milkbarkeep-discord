@@ -3,8 +3,8 @@ import * as path from "path";
 import { glob } from "glob";
 import { GuildSettings } from "./GuildSettings";
 import { Logger } from "./Logger";
-import { GuildSettingsSchema } from "../types/AppTypes";
-import type { FeatureName, GlobalVar, GuildSettingsJson } from "../types/AppTypes";
+import { GlobalVarSchema, GuildSettingsSchema } from "../types/AppTypes";
+import type { FeatureName, GlobalVar, GlobalVarJson, GuildSettingsJson } from "../types/AppTypes";
 
 export class GuildSettingsManager {
     private map: Map<string, GuildSettings>
@@ -92,11 +92,18 @@ export class GuildSettingsManager {
     public async getGlobalVar(varName: string): Promise<GlobalVar> {
         const varsFile: string = path.resolve(this.dataDir, "vars.json");
         if (fs.existsSync(varsFile)) {
-            const vars = JSON.parse(fs.readFileSync(varsFile, "utf8"));
-            if (vars.hasOwnProperty(varName)) {
-                return vars[varName];
-            } else {
-                throw new Error(`Global var not located: ${varName}`);
+            try {
+                const rawJson = JSON.parse(fs.readFileSync(varsFile, "utf8"));
+                const vars: GlobalVarJson = GlobalVarSchema.parse(rawJson);
+                if (vars.hasOwnProperty(varName)) {
+                    return vars[varName];
+                } else {
+                    throw new Error(`Global var not located: ${varName}`);
+                }
+            } catch (error: any) {
+                const errorString: string = `Invalid JSON for vars.json: ${error}`;
+                Logger.bot(errorString);
+                throw new Error(errorString);
             }
         } else {
             const errorString: string = "vars.json not located";

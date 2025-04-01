@@ -1,5 +1,12 @@
 import { z } from "zod";
 
+export type GlobalVar = boolean | number | string;
+
+const GlobalVarTypeSchema = z.union([z.string(), z.number(), z.boolean()]);
+export const GlobalVarSchema = z.record(GlobalVarTypeSchema);
+
+export type GlobalVarJson = z.infer<typeof GlobalVarSchema>;
+
 const FeatureSchema = z.object({
     enabled: z.boolean(),
     channelId: z.string(),
@@ -57,8 +64,6 @@ export type EmoteInfo = {
     id: string;
     isAnimated?: boolean;
 };
-
-export type GlobalVar = boolean | number | string;
 
 export type TimestampFormats = {
     default: string;
