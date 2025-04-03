@@ -15,12 +15,6 @@ export class Util {
         return Math.floor(Math.random() * (max - min + 1) + min); // Min and max are inclusive
     }
 
-    static gmtStringToCTDateObj(dateTimeStr: string): Date {
-        const sixHoursInMillis: number = (6 * 60 * 60 * 1000);
-        const newTimestamp: number = (new Date(dateTimeStr)).getTime() - sixHoursInMillis;
-        return new Date(newTimestamp);
-    }
-
     static msToTime(duration: number): string {
         const milliseconds: number = Math.floor((duration % 1000) / 100);
         const seconds: number = Math.floor((duration / 1000) % 60);

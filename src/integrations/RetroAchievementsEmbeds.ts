@@ -1,5 +1,5 @@
 import { ColorResolvable, EmbedBuilder } from "discord.js";
-import { Util } from "../util/Util";
+import { DateTime } from "luxon";
 import { Timestamps } from "../core/Timestamps";
 import type { achievementData, RARankingType, userPoints } from "../types/RATypes";
 import { AchievementUnlocksMetadata, GameExtended } from "@retroachievements/api";
@@ -59,8 +59,8 @@ export class RetroAchievementsEmbeds {
         const achievementUrl: string = baseURL + "achievement/" + data.achievementId;
         const achievementString: string = `${data.title} (${data.points})`;
         const color: ColorResolvable = this.determinePointValueColor(data.points) as ColorResolvable;
-        const centralUSDate = Util.gmtStringToCTDateObj(data.date);
-        const discordTimestamp: string = Timestamps.default(centralUSDate);
+        const unixTimestamp: number = DateTime.fromFormat(data.date, "yyyy-MM-dd HH:mm:ss", { zone: "utc" }).toSeconds();
+        const discordTimestamp: string = Timestamps.default(unixTimestamp);
 
         const embed: EmbedBuilder = new EmbedBuilder()
             .setColor(color)
