@@ -1,5 +1,6 @@
 import { ApplicationCommandOptionType, MessageFlags, PermissionFlagsBits } from "discord.js";
 import { Command } from "../../core/Command";
+import { BlueskyApi } from "../../integrations/Bluesky-API";
 
 export default new Command({
     name: "bluesky-post",
@@ -14,15 +15,18 @@ export default new Command({
         }
     ],
     run: async (args): Promise<void> => {
+        await args.interaction.deferReply({ flags: MessageFlags.Ephemeral });
+
         const content: string = args.options.getString("message", true);
 
         try {
-            await args.client.bluesky.post(content);
+            const bsky: BlueskyApi = new BlueskyApi();
+            await bsky.post(args.client, content);
             
-            await args.interaction.reply({ content: "Message success.", flags: MessageFlags.Ephemeral });
+            await args.interaction.editReply({ content: "Message success." });
         } catch (error) {
             console.error(error);
-            await args.interaction.reply({ content: "Something went wrong with sending the message.", flags: MessageFlags.Ephemeral });
+            await args.interaction.editReply({ content: "Something went wrong with sending the message." });
         }
     }
 });

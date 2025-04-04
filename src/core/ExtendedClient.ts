@@ -10,7 +10,6 @@ import {
     MessagePayload,
     TextChannel} from "discord.js";
 import { glob } from "glob";
-import { BlueskyApi } from "../integrations/Bluesky-API";
 import { Event } from "./Event";
 import { GuildSettingsManager } from "./GuildSettingsManager";
 import { Logger } from "./Logger";
@@ -24,7 +23,6 @@ import type { GlobalVar } from "../types/AppTypes";
 
 
 export class ExtendedClient extends Client {
-    public bluesky: BlueskyApi;
     public ra: RetroAchievementsManager;
     public timers: TimerManager;
     public messageHandler: MessageHandler;
@@ -57,7 +55,6 @@ export class ExtendedClient extends Client {
         this.shouldRegisterCommands = shouldRegisterCommands;
         this.start();
         this.ra = new RetroAchievementsManager(this);
-        this.bluesky = new BlueskyApi();
         this.timers = new TimerManager(this);
         this.messageHandler = new MessageHandler();
         this.settings = new GuildSettingsManager();

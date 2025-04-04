@@ -1,5 +1,6 @@
 import { AtpAgent } from "@atproto/api";
 import { bluesky as account } from "../../data/apiKeys.json";
+import { ExtendedClient } from "../core/ExtendedClient";
 
 export class BlueskyApi {
     private agent: AtpAgent;
@@ -18,12 +19,11 @@ export class BlueskyApi {
         });
     }
 
-    public async post(inputText: string): Promise<{uri: string, cid: string}> {
+    public async post(clientRef: ExtendedClient, inputText: string): Promise<{uri: string, cid: string}> {
         const postResult = await this.agent.post({
             text: inputText,
             createdAt: new Date().toISOString()
         });
-
         return postResult;
     }
 }
