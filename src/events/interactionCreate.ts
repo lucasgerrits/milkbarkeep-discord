@@ -2,7 +2,7 @@ import { Channel, CommandInteractionOptionResolver, Events, Guild, Interaction, 
 import { Event } from "../core/Event";
 import { Logger } from "../core/Logger";
 import { client } from "..";
-import type { ExtendedInteraction } from "../types/CommandTypes";
+import type { CommandType, ExtendedInteraction } from "../types/CommandTypes";
 
 export default new Event(
     Events.InteractionCreate,
@@ -13,23 +13,23 @@ export default new Event(
         const guildId: string = interaction.guildId as string;
         const guild: Guild = await client.guilds.fetch(guildId).catch(() => null) as Guild;
         const guildName: string = guild.name;
+        const channel: Channel = interaction.channel as TextChannel;
+        const channelName: string = channel.name;
 
         const log = (str: string) => {
-            Logger.cmd(`${guildName} - ${str}`);
+            Logger.cmd(`${guildName} ~ ${channelName} - ${str}`);
         }
 
-        const command = client.commands.get(commandName);
+        const command: CommandType | undefined = client.commands.get(commandName);
         if (!command) {
             log(`No command matching ${commandName} was found.`);
             return;
         }
 
-        if (commandName === "anon") {
-            log(`/anon ran.`);
-        } else {
-            const channel: Channel = interaction.channel as TextChannel;
-            log(`${interaction.user.tag} ran /${commandName} in #${channel.name}.`);
-        }
+        const optionsStr: string = interaction.options.data
+            .map(opt => `${opt.name}: ${opt.value}`)
+            .join(', ');
+        log(`${interaction.user.tag} ran /${commandName} (${optionsStr})`);
 
         try {
             await command.run({
