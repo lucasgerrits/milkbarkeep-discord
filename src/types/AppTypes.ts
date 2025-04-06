@@ -75,3 +75,26 @@ export type TimestampFormats = {
     longDateTime: string;
     relative: string;
 };
+
+export type ANSIColor = 
+    "default" |
+    "black" |
+    "red" |
+    "green" |
+    "yellow" |
+    "blue" |
+    "magenta" |
+    "cyan" |
+    "white" |
+    "brightBlack" |
+    "brightRed" |
+    "brightGreen" |
+    "brightYellow" |
+    "brightBlue" |
+    "brightMagenta" |
+    "brightCyan" |
+    "brightWhite";
+
+export type ANSIColorMap = {
+    [key in ANSIColor]: [foreground: number, background: number];
+}
