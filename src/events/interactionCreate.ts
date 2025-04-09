@@ -1,4 +1,4 @@
-import { Channel, CommandInteractionOptionResolver, Events, Guild, Interaction, TextChannel } from "discord.js";
+import { CacheType, Channel, CommandInteractionOption, CommandInteractionOptionResolver, Events, Guild, Interaction, TextChannel } from "discord.js";
 import { Event } from "../core/Event";
 import { Logger } from "../core/Logger";
 import { client } from "..";
@@ -26,10 +26,11 @@ export default new Event(
             return;
         }
 
-        const optionsStr: string = interaction.options.data
-            .map(opt => `${opt.name}: ${opt.value}`)
-            .join(', ');
-        log(`${interaction.user.tag} ran /${commandName} (${optionsStr})`);
+        const options: readonly CommandInteractionOption<CacheType>[] = interaction.options.data;
+        const optionsStr: string = options.length
+            ? ` (${options.map(opt => `${opt.name}: ${opt.value}`).join(', ')})`
+            : "";
+        log(`${interaction.user.tag} ran /${commandName}${optionsStr}`);
 
         try {
             await command.run({
