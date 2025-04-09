@@ -7,8 +7,24 @@ import { Util } from "../util/Util";
 import type { CurrentResponse } from "openweathermap-ts/dist/types";
 
 export class AppletonCam {
+    private static mode: "cbs" | "fox" = "fox";
 
     public static async getScreenBuffer(): Promise<Buffer> {
+        if (AppletonCam.mode === "cbs") {
+            return await AppletonCam.getCBSScreenBuffer();
+        } else {
+            return await AppletonCam.getFoxScreenBuffer();
+        }
+    }
+
+    private static async getFoxScreenBuffer(): Promise<Buffer> {
+        const url: string = `https://fox11online.com/resources/ftptransfer/wluk/maps/AvenueCam.jpg`;
+        const response = await fetch(url);
+        const buffer = Buffer.from(await response.arrayBuffer());
+        return buffer;
+    }
+
+    private static async getCBSScreenBuffer(): Promise<Buffer> {
         const width: number = 1920;
         const height: number = 1080;
         const url: string = `https://api.wetmet.net/widgets/stream/frame.php?ruc=245-02-01&width=${width}&height=${height}`;
