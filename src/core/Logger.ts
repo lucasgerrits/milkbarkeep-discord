@@ -4,7 +4,7 @@ import { client } from "..";
 import { consoleOutput } from "../../data/config.json";
 import { ANSIColor, ANSIColorMap } from "../types/AppTypes";
 
-export class Logger2 {
+export class Logger {
     private readonly barStr: string = "========================================================================";
     private readonly DEBUG: boolean = true;
     private readonly colors: ANSIColorMap = {

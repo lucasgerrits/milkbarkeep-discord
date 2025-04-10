@@ -12,7 +12,7 @@ import {
 import { glob } from "glob";
 import { Event } from "./Event";
 import { GuildSettingsManager } from "./GuildSettingsManager";
-import { Logger2 } from "./Logger2";
+import { Logger } from "./Logger";
 import { MessageHandler } from "./MessageHandler";
 import { RetroAchievementsManager } from "../integrations/RetroAchievementsManager";
 import { TimerManager } from "./TimerManager";
@@ -24,7 +24,7 @@ import type { GlobalVar } from "../types/AppTypes";
 export class ExtendedClient extends Client {
     public shouldRegisterCommands: boolean = false;
     
-    public logger: Logger2;
+    public logger: Logger;
     public timers: TimerManager;
     public messageHandler: MessageHandler;
     public settings: GuildSettingsManager;
@@ -51,7 +51,7 @@ export class ExtendedClient extends Client {
                 repliedUser: false,
             },
         });
-        this.logger = new Logger2();
+        this.logger = new Logger();
         this.shouldRegisterCommands = shouldRegisterCommands;
         this.start();
         this.ra = new RetroAchievementsManager(this);
