@@ -30,7 +30,6 @@ export class Logger {
     public static ai(str: string): void { this.log(`[AI] ${str}`, "brightCyan"); }
     public static bday(str: string): void { this.log(`[BDAY] ${str}`, "brightGreen"); }
     public static bot(str: string): void { this.log(`[BOT] ${str}`, "red"); }
-    public static cmd(str: string): void { this.log(`[CMD] ${str}`, "red"); }
     public static dev(str: string): void { this.log(`[DEV] ${str}`, "default"); }
     public static ra(str: string): void { this.log(`[RA] ${str}`, "yellow"); }
     public static vc(str: string): void { this.log(`[VC] ${str}`, "brightMagenta"); }

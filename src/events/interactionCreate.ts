@@ -17,7 +17,7 @@ export default new Event(
         const channelName: string = channel.name;
 
         const log = (str: string) => {
-            Logger.cmd(`${guildName} ~ ${channelName} - ${str}`);
+            Logger.bot(`${guildName} ~ ${channelName} - ${str}`);
         }
 
         const command: CommandType | undefined = client.commands.get(commandName);
