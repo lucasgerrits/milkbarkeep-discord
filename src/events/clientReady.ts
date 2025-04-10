@@ -1,6 +1,5 @@
 import { Events } from "discord.js";
 import { Event } from "../core/Event";
-import { Logger } from "../core/Logger";
 import { client } from "..";
 
 export default new Event(
@@ -13,9 +12,8 @@ export default new Event(
         "| |\\/| | | | | |    |    \\ | ___ \\  _  ||    /|    \\ |  __||  __||  __/ \n" +
         "| |  | |_| |_| |____| |\\  \\| |_/ / | | || |\\ \\| |\\  \\| |___| |___| | \n" +
         "\\_|  |_/\\___/\\_____/\\_| \\_/\\____/\\_| |_/\\_| \\_\\_| \\_/\\____/\\____/\\_|";
-        console.log(Logger.colorize(asciiText, "red"));
-
-        console.log(Logger.colorize(Logger.bar, "red"));
+        client.logger.logWithoutTime(asciiText);
+        client.logger.bar();
 
         if (client.shouldRegisterCommands) {
             client.registerCommands();

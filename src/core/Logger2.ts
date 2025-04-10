@@ -5,7 +5,7 @@ import { consoleOutput } from "../../data/config.json";
 import { ANSIColor, ANSIColorMap } from "../types/AppTypes";
 
 export class Logger2 {
-    public static readonly bar: string = "========================================================================";
+    private readonly barStr: string = "========================================================================";
     private readonly DEBUG: boolean = true;
     private readonly colors: ANSIColorMap = {
         "default": [39, 49], 
@@ -43,6 +43,10 @@ export class Logger2 {
         const timeStr: string = time.substring(0, time.length - 3) + "." + ms + time.substring(time.length - 3);
         const dateStr: string = today.toLocaleDateString("en-CA");
         return `${dateStr} ${timeStr}`;
+    }
+
+    public bar(): void {
+        this.logWithoutTime(this.barStr);
     }
 
     public colorize(strIn: string, color: ANSIColor = "default", background: ANSIColor = "default"): string {
