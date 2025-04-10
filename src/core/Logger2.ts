@@ -4,7 +4,7 @@ import { client } from "..";
 import { consoleOutput } from "../../data/config.json";
 import { ANSIColor, ANSIColorMap } from "../types/AppTypes";
 
-export class Logger {
+export class Logger2 {
     public static readonly bar: string = "========================================================================";
     private readonly DEBUG: boolean = true;
     private readonly colors: ANSIColorMap = {
@@ -26,11 +26,13 @@ export class Logger {
         "brightCyan": [96, 106],
         "brightWhite": [97, 107]
     };
+
+    constructor() {}
     
     public ai(str: string): void { this.log(`[AI] ${str}`, "brightCyan"); }
-    public bday(str: string): void { this.log(`[BDAY] ${str}`, "brightGreen"); }
     public bot(str: string): void { this.log(`[BOT] ${str}`, "red"); }
     public dev(str: string): void { this.log(`[DEV] ${str}`, "default"); }
+    public err(str: string): void { this.log(`[ERR] ${str}`, "default"); }
     public ra(str: string): void { this.log(`[RA] ${str}`, "yellow"); }
     public vc(str: string): void { this.log(`[VC] ${str}`, "brightMagenta"); }
 

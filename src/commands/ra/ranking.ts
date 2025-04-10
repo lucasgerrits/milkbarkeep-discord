@@ -1,6 +1,5 @@
 import { ApplicationCommandOptionType, CommandInteraction } from "discord.js";
 import { Command } from "../../core/Command";
-import { Logger } from "../../core/Logger";
 import type { RARankingType } from "../../types/RATypes";
 
 export default new Command({
@@ -30,7 +29,7 @@ export default new Command({
             try {
                 await args.client.ra.sendRankingsList(listType, args.interaction);
             } catch (error: any) {
-                Logger.log(error as string);
+                args.client.logger.err(error as string);
                 await (args.interaction as CommandInteraction).editReply({
                     content: "Something went wrong with your request.",
                 });

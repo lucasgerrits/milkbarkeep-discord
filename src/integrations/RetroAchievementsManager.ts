@@ -1,6 +1,5 @@
 import { AchievementUnlocksMetadata, AuthObject, buildAuthorization, GameExtended } from "@retroachievements/api";
 import { ExtendedClient } from "../core/ExtendedClient";
-import { Logger } from "../core/Logger";
 import { retroAchievements as api } from "../../data/apiKeys.json";
 import { RetroAchievementsApi } from "./RetroAchievementsApi";
 import { RetroAchievementsEmbeds } from "./RetroAchievementsEmbeds";
@@ -49,13 +48,13 @@ export class RetroAchievementsManager {
         try {
             recent = await this.getRecentList(minutesToLookBack);
             if (recent.length === 0) {
-                Logger.ra("No new achievements found.");
+                this.clientRef.logger.ra("No new achievements found.");
                 return;
             } else {
-                Logger.ra(`Updating feed with ${recent.length} new achievement(s).`);
+                this.clientRef.logger.ra(`Updating feed with ${recent.length} new achievement(s).`);
             }
         } catch (error: any) {
-            Logger.log(error as string);
+            this.clientRef.logger.err(error as string);
             const channel: TextChannel = this.clientRef.channels.cache.get(channelId) as TextChannel;
             await channel.send({ content: `HTTP Error ${error.response.status}: The RA servers appear to be down.` });
             return;
@@ -77,8 +76,8 @@ export class RetroAchievementsManager {
                     embeds: chunk,
                 });
             }
-        } catch (error) {
-            console.log(error);
+        } catch (error: any) {
+            this.clientRef.logger.err(error as string);
         }
     }
 

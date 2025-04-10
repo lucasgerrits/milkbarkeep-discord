@@ -1,6 +1,5 @@
 import { ApplicationCommandOptionType, AttachmentBuilder, EmbedBuilder } from "discord.js";
 import { Command } from "../../core/Command";
-import { Logger } from "../../core/Logger";
 import puppeteer, { Browser, ElementHandle, HTTPResponse, Page } from "puppeteer";
 
 export default new Command({
@@ -54,7 +53,7 @@ export default new Command({
             await browser.close();
         } catch (error: any) {
             await browser.close();
-            Logger.log(error);
+            args.client.logger.err(error);
             await args.interaction.editReply({ content: error });
             return;
         }
@@ -74,7 +73,7 @@ export default new Command({
                 files: [ attachment ]
             });
         } catch (error: any) {
-            Logger.log(error);
+            args.client.logger.err(error);
             await args.interaction.editReply({ content: "Something went wrong with sending the message." });
         }
     }

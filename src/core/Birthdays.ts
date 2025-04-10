@@ -1,7 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
 import { ExtendedClient } from "./ExtendedClient";
-import { Logger } from "./Logger";
 import { BirthdaysSchema, type BirthdaysJson } from "../types/FeatureTypes";
 import { Channel, Guild, TextChannel } from "discord.js";
 
@@ -15,7 +14,7 @@ export class Birthdays {
         return todayInMMDD;
     }
 
-    private static async getBirthdaysJsonArray(guildId: string): Promise<Array<BirthdaysJson>> {
+    private static async getBirthdaysJsonArray(clientRef: ExtendedClient, guildId: string): Promise<Array<BirthdaysJson>> {
         const filePath: string = path.resolve(__dirname, `./../../data/guilds/${guildId}`, "birthdays.json");
         try {
             if (!fs.existsSync(filePath)) {
@@ -26,7 +25,7 @@ export class Birthdays {
             const validatedJson: Array<BirthdaysJson> = BirthdaysSchema.parse(rawJson);
             return validatedJson;
         } catch (error) {
-            Logger.bday(error as string);
+            clientRef.logger.err(error as string);
             return [];
         }
     }
@@ -36,7 +35,7 @@ export class Birthdays {
         if (!isEnabled) {
             throw new Error(`Command used for feature not enabled in guild: ${guildId}`);
         }
-        const birthdays: Array<BirthdaysJson> = await this.getBirthdaysJsonArray(guildId);
+        const birthdays: Array<BirthdaysJson> = await this.getBirthdaysJsonArray(clientRef, guildId);
         return birthdays.filter(obj => obj.userId === userId);
     }
     
@@ -53,13 +52,13 @@ export class Birthdays {
             // Check if proper channelId stored
             const channelId: string = await clientRef.settings.getChannelId(guildId, "birthdays");
             if (!channelId) {
-                Logger.bday(`${guild.name} - Birthday messages enabled, but no channel set.`);
+                clientRef.logger.err(`${guild.name} - Birthday messages enabled, but no channel set.`);
                 return;
             }
             
             // Get birthday data for guild then check for matches today
-            Logger.bday(`${guild.name} - Checking for birthdays`);
-            const birthdays: Array<BirthdaysJson> = await this.getBirthdaysJsonArray(guildId);
+            clientRef.logger.bot(`${guild.name} - Checking for birthdays`);
+            const birthdays: Array<BirthdaysJson> = await this.getBirthdaysJsonArray(clientRef, guildId);
             const todayInMMDD: string = this.getTodayInMMDD();
             const resultIDs: string[] = birthdays.filter(obj => obj.date === todayInMMDD).map(obj => obj.userId);
             const resultTags: string[] = birthdays.filter(obj => obj.date === todayInMMDD).map(obj => `<@${obj.userId}>`);
@@ -68,7 +67,7 @@ export class Birthdays {
             if (resultIDs.length > 0) {
                 const lf: Intl.ListFormat = new Intl.ListFormat("en");
                 const botStr: string = "Today it's " + lf.format(resultTags) + "'s birthday! POGGGG";
-                Logger.bday(`${guild.name} - ${botStr}`);
+                clientRef.logger.bot(`${guild.name} - ${botStr}`);
                 const channel: Channel = clientRef.channels.cache.get(channelId) as TextChannel;
                 await channel.send({
                     "content": botStr,

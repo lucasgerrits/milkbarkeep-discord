@@ -1,6 +1,6 @@
 import { EmbedBuilder, Events, Guild, GuildMember, VoiceBasedChannel, VoiceState } from "discord.js";
 import { Event } from "../core/Event";
-import { Logger } from "../core/Logger";
+import { client } from "..";
 
 export default new Event(
     Events.VoiceStateUpdate,
@@ -17,7 +17,7 @@ export default new Event(
             try{
                 member = await guild.members.fetch(newState.id);
             } catch (error: any) {
-                Logger.vc(`${guild.name} - Failed to fetch member: ${error}`);
+                client.logger.err(`${guild.name} - Failed to fetch voice chat member: ${error}`);
                 return;
             }
         }
@@ -30,7 +30,7 @@ export default new Event(
         const newVideo: boolean | null = newState.selfVideo;
         
         const log = function(channel: string, str: string) {
-            Logger.vc(`${guild.name} ~ #${channel} - ${member.displayName} ${str}`);
+            client.logger.vc(`${guild.name} ~ #${channel} - ${member.displayName} ${str}`);
         }
 
         // Joins and disconnects

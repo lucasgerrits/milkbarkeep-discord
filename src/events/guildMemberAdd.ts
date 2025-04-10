@@ -1,6 +1,5 @@
 import { Events, Guild, GuildMember, TextChannel } from "discord.js";
 import { Event } from "../core/Event";
-import { Logger } from "../core/Logger";
 import { client } from "..";
 
 export default new Event(
@@ -13,10 +12,7 @@ export default new Event(
         const newMemberId: string = member.id;
         const newMemberTag: string = member.user.tag;
 
-        const log = (str: string) => {
-            Logger.log(`[Joins] ${joinedGuildName} - ${str}`, "green");
-        }
-        log(`New member ${newMemberTag} (${newMemberId})`);
+        client.logger.bot(`${joinedGuildName} - New member ${newMemberTag} (${newMemberId})`);
 
         // Determine if welcome message should be sent in the joined guild
         if (!await client.settings.isFeatureEnabled(joinedGuildId, "welcome")) {
@@ -26,7 +22,7 @@ export default new Event(
         // Check for channel property
         const welcomeChannel: string = await client.settings.getChannelId(joinedGuildId, "welcome");
         if (!welcomeChannel) {
-            log(`Welcome messages enabled, but no channel set.`);
+            client.logger.err(`${joinedGuildName} - Welcome messages enabled, but no channel set.`);
             return;
         }
 

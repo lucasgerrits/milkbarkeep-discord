@@ -12,7 +12,7 @@ import {
 import { glob } from "glob";
 import { Event } from "./Event";
 import { GuildSettingsManager } from "./GuildSettingsManager";
-import { Logger } from "./Logger";
+import { Logger2 } from "./Logger2";
 import { MessageHandler } from "./MessageHandler";
 import { RetroAchievementsManager } from "../integrations/RetroAchievementsManager";
 import { TimerManager } from "./TimerManager";
@@ -21,18 +21,18 @@ import { discordAppToken } from "../../data/config.json";
 import type { CommandType } from "../types/CommandTypes";
 import type { GlobalVar } from "../types/AppTypes";
 
-
 export class ExtendedClient extends Client {
-    public ra: RetroAchievementsManager;
+    public shouldRegisterCommands: boolean = false;
+    
+    public logger: Logger2;
     public timers: TimerManager;
     public messageHandler: MessageHandler;
     public settings: GuildSettingsManager;
     public emotes: EmoteManager;
-
     public commands: Collection<string, CommandType> = new Collection();
     private slashCommands: ApplicationCommandDataResolvable[] = [];
 
-    public shouldRegisterCommands: boolean = false;
+    public ra: RetroAchievementsManager;
 
     constructor(shouldRegisterCommands: boolean = false) {
         super({
@@ -50,14 +50,14 @@ export class ExtendedClient extends Client {
                 parse: [],
                 repliedUser: false,
             },
-        })
-
+        });
+        this.logger = new Logger2();
         this.shouldRegisterCommands = shouldRegisterCommands;
         this.start();
         this.ra = new RetroAchievementsManager(this);
         this.timers = new TimerManager(this);
-        this.messageHandler = new MessageHandler();
-        this.settings = new GuildSettingsManager();
+        this.messageHandler = new MessageHandler(this);
+        this.settings = new GuildSettingsManager(this);
         this.emotes = new EmoteManager(this);
     }
 
@@ -90,7 +90,7 @@ export class ExtendedClient extends Client {
     }
 
     async registerCommands(): Promise<void> {
-        //Logger.log(`Registering ${this.slashCommands.length} slash commands...`, "red");
+        //this.logger.bot(`Registering ${this.slashCommands.length} slash commands...`, "red");
         const guildIds: Array<string> = await this.settings.getGuildIds();
         for (const guildId of guildIds) {
             await this.guilds.cache.get(guildId)?.commands.set(this.slashCommands);
@@ -102,7 +102,7 @@ export class ExtendedClient extends Client {
             const channel: Channel = this.channels.cache.get(channelID) as TextChannel;
             await channel.send(options);
         } catch(err) {
-            Logger.log(err as string);
+            this.logger.err(err as string);
         }
     }
 

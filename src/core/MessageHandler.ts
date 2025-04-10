@@ -1,13 +1,16 @@
 import { Channel, Collection, Guild, Message, MessagePayload, MessageReplyOptions, MessageResolvable, TextChannel, User } from "discord.js";
 import { EmbedFixManager } from "./EmbedFixManager";
 import { GoogleGenAIApi } from "../integrations/GoogleGenAI-API";
-import { Logger } from "./Logger";
 import { Util } from "../util/Util";
-import { client } from "..";
 import { consoleOutput } from "../../data/config.json";
+import { ExtendedClient } from "./ExtendedClient";
 
 export class MessageHandler{
-    constructor() {}
+    private clientRef: ExtendedClient;
+
+    constructor(clientRef: ExtendedClient) {
+        this.clientRef = clientRef;
+    }
 
     public async checkMessage(message: Message): Promise<void> {
         if (consoleOutput.enabled === true && consoleOutput.channelId === message.channelId) return;
@@ -31,11 +34,11 @@ export class MessageHandler{
     }
 
     public async getMessage(guildId: string, possibleMessageId: string, startingChannelId?: string): Promise<Message | undefined> {
-        const guild: Guild = client.guilds.cache.get(guildId) as Guild;
+        const guild: Guild = this.clientRef.guilds.cache.get(guildId) as Guild;
         // If initial channel provided
         if (startingChannelId) {
             try {
-                const channel: Channel = client.channels.cache.get(startingChannelId) as TextChannel;
+                const channel: Channel = this.clientRef.channels.cache.get(startingChannelId) as TextChannel;
                 const message: Message = await channel?.messages.fetch(possibleMessageId) as Message;
                 return message;
             } catch (error: any) { }
@@ -48,13 +51,13 @@ export class MessageHandler{
                 return message;
             } catch(error: any) { continue; }
         }
-        Logger.log(`Failed to locate message in guild ${guild.name} (${guildId}) with id: ${possibleMessageId}`);
+        this.clientRef.logger.err(`Failed to locate message in guild ${guild.name} (${guildId}) with id: ${possibleMessageId}`);
         return undefined;
     }
 
     private async getAIResponse(message: Message): Promise<void> {
         // Check if bot user has been tagged specifically, not roles
-        const botId: string = (client.user as User).id;
+        const botId: string = (this.clientRef.user as User).id;
         if (!message.mentions.users.has(botId)) return;
 
         // If replying to an existing bot message, check for special exit char
@@ -79,7 +82,7 @@ export class MessageHandler{
             }
             await message.reply(options);
         } catch(error) {
-            Logger.log(error as string);
+            this.clientRef.logger.err(error as string);
         }
     }
 
@@ -101,8 +104,8 @@ export class MessageHandler{
 
         if (milkRegex.test(message.content)) {
             message.react(melkEmote);
-            const milks: number = await client.settings.incrementGlobalVar("milks") as number;
-            client.setMilkStatus(milks);
+            const milks: number = await this.clientRef.settings.incrementGlobalVar("milks") as number;
+            this.clientRef.setMilkStatus(milks);
         }
     }
 

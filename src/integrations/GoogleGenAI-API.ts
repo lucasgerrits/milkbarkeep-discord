@@ -1,6 +1,5 @@
 import { Content, ContentListUnion, GenerateContentResponse, GoogleGenAI, HarmBlockThreshold, HarmCategory, Part, SafetySetting } from "@google/genai";
 import { DMChannel, Message, MessageResolvable } from "discord.js";
-import { Logger } from "../core/Logger";
 import { Util } from "../util/Util";
 import { googleGemini as apiKey } from "../../data/apiKeys.json";
 import type { GenAIResponse } from "../types/GenAITypes";
@@ -58,7 +57,7 @@ export class GoogleGenAIApi {
                 }
             });
         } catch (error: any) {
-            Logger.ai(error.message);
+            client.logger.err(error.message);
             return error.response;
         }
     }
@@ -90,7 +89,7 @@ export class GoogleGenAIApi {
     public async chat(message: Message): Promise<GenAIResponse> {
         const channel = message.channel;
         const log = (str: string) => {
-            Logger.ai(`${!message.channel.isDMBased() ? `${message.guild?.name} ~ #${message.channel.name} -` : ""} ${message.member?.displayName}: ${str}`);
+            client.logger.ai(`${!message.channel.isDMBased() ? `${message.guild?.name} ~ #${message.channel.name} -` : ""} ${message.member?.displayName}: ${str}`);
         }
 
         const prompt: string = (message instanceof Message) ? message.content : message;
@@ -124,7 +123,7 @@ export class GoogleGenAIApi {
         const inlineData: string | undefined = response?.candidates?.[0]?.content?.parts?.[1]?.inlineData?.data;
         if (inlineData !== undefined) {
             chatResponse.imageBuffer = Buffer.from(inlineData, "base64");
-            log(`[Image Attached]`);
+            log(`Response - [Image Attached]`);
         }
         return chatResponse;
     }

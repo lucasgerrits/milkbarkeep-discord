@@ -1,6 +1,5 @@
 import { CacheType, Channel, CommandInteractionOption, CommandInteractionOptionResolver, Events, Guild, Interaction, TextChannel } from "discord.js";
 import { Event } from "../core/Event";
-import { Logger } from "../core/Logger";
 import { client } from "..";
 import type { CommandType, ExtendedInteraction } from "../types/CommandTypes";
 
@@ -16,13 +15,9 @@ export default new Event(
         const channel: Channel = interaction.channel as TextChannel;
         const channelName: string = channel.name;
 
-        const log = (str: string) => {
-            Logger.bot(`${guildName} ~ ${channelName} - ${str}`);
-        }
-
         const command: CommandType | undefined = client.commands.get(commandName);
         if (!command) {
-            log(`No command matching ${commandName} was found.`);
+            client.logger.err(`${guildName} ~ ${channelName} - No command matching ${commandName} was found.`);
             return;
         }
 
@@ -30,7 +25,7 @@ export default new Event(
         const optionsStr: string = options.length
             ? ` (${options.map(opt => `${opt.name}: ${opt.value}`).join(', ')})`
             : "";
-        log(`${interaction.user.tag} ran /${commandName}${optionsStr}`);
+        client.logger.bot(`${guildName} ~ ${channelName} - ${interaction.user.tag} ran /${commandName}${optionsStr}`);
 
         try {
             await command.run({
@@ -39,7 +34,7 @@ export default new Event(
                 interaction: interaction as ExtendedInteraction
             });
         } catch (error: any) {
-            log(`Error executing ${commandName}: ${error}`);
+            client.logger.err(`${guildName} ~ ${channelName} - Error executing ${commandName}: ${error}`);
         }
     }
 );

@@ -1,6 +1,5 @@
 import { ApplicationCommandOptionType, EmbedBuilder, Message, MessageFlags, PermissionFlagsBits } from "discord.js";
 import { Command } from "../../core/Command";
-import { Logger } from "../../core/Logger";
 import type { EmoteInfo, EmoteOperation } from "../../types/AppTypes";
 
 export default new Command({
@@ -63,7 +62,7 @@ export default new Command({
             if (!response.ok) { throw new Error(`Failed to fetch emoji: ${response.statusText}`); }
             buffer = Buffer.from(await response.arrayBuffer());
         } catch(error: any) {
-            Logger.log(error as string);
+            args.client.logger.err(error as string);
             await args.interaction.editReply({ content: "There was an issue with copying the emote image." });
             return;
         }

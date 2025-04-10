@@ -12,7 +12,6 @@ import {
     getUserPoints,
     getUserRecentAchievements
 } from "@retroachievements/api";
-import { Logger } from "../core/Logger";
 import { Util } from "../util/Util";
 
 import type { achievementData, userPoints } from "../types/RATypes";
@@ -163,14 +162,16 @@ export class RetroAchievementsApi {
             });
             recentList.reverse();
         } catch (error: any) {
-            Logger.ra(`An error occurred while fetching user recent achievements: ${error}`);
+            let errorStr: string = `An error occurred while fetching user recent achievements: `;
             if (error.response && error.response.status) {
-                Logger.ra(`Status code:  ${error.response.status}`);
+                errorStr += `(Status code:  ${error.response.status}) `;
                 // Server error range
                 if (error.response.status >= 500 && error.response.status < 600) {
-                    Logger.ra(`HTTP Error ${error.response.status}: The RA servers appear to be down.`);
+                    errorStr += `The RA servers appear to be down. `;
                 }
             }
+            errorStr += error as string;
+            throw new Error(errorStr);
         }
         return recentList;
     }

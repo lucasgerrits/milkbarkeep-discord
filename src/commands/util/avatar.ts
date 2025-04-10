@@ -1,6 +1,5 @@
 import { ApplicationCommandOptionType, ColorResolvable, EmbedBuilder, ImageSize, User } from "discord.js";
 import { Command } from "../../core/Command";
-import { Logger } from "../../core/Logger";
 
 export default new Command({
     name: "avatar",
@@ -38,7 +37,7 @@ export default new Command({
                 embeds: [ embed ]
             });
         } catch (error: any) {
-            Logger.log(error);
+            args.client.logger.err(error);
             await args.interaction.editReply({ content: "Something went wrong with sending the message." });
         }
     }

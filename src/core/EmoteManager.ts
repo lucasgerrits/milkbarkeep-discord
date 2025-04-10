@@ -1,6 +1,5 @@
 import { Base64Resolvable, BufferResolvable, DiscordAPIError, Guild, GuildEmoji } from "discord.js";
 import { ExtendedClient } from "./ExtendedClient";
-import { Logger } from "./Logger";
 import type { EmoteInfo, EmoteOperation } from "../types/AppTypes";
 
 export class EmoteManager {
@@ -91,10 +90,10 @@ export class EmoteManager {
                 }
                 */
                 operation.response = await this.getSlotsString(guildId);
-                Logger.log(`Successfully deleted emote :${emote.name}: (${emoteId}) from guild ${guild.name} (${guildId})`);
+                this.clientRef.logger.bot(`Successfully deleted emote :${emote.name}: (${emoteId}) from guild ${guild.name} (${guildId})`);
             }
         } catch (error: any) {
-            Logger.log(`Failed to delete emote (${emoteId}) from guild ${guild.name} (${guildId}) : ${error as string}`);
+            this.clientRef.logger.err(`Failed to delete emote (${emoteId}) from guild ${guild.name} (${guildId}) : ${error as string}`);
             if (error instanceof DiscordAPIError) {
                 if (error.code === this.errors.permission) {
                     operation.response = "I lack the proper permission to delete this emote.";
@@ -132,10 +131,10 @@ export class EmoteManager {
                 });
                 operation.success = true;
                 operation.response = `Previously :${oldName}:\n\n${await this.getSlotsString(guildId)}`;
-                Logger.log(`Successfully renamed emote :${oldName}: to :${rename}: (${emoteId}) in guild ${guild.name} (${guildId})`);
+                this.clientRef.logger.bot(`Successfully renamed emote :${oldName}: to :${rename}: (${emoteId}) in guild ${guild.name} (${guildId})`);
             }
         } catch (error: any) {
-            Logger.log(`Failed to rename emote (${emoteId}) in guild ${guild.name} (${guildId}) : ${error as string}`);
+            this.clientRef.logger.err(`Failed to rename emote (${emoteId}) in guild ${guild.name} (${guildId}) : ${error as string}`);
             if (error instanceof DiscordAPIError) {
                 if (error.code === this.errors.permission) {
                     operation.response = "I lack the proper permission to rename this emote.";
@@ -170,9 +169,9 @@ export class EmoteManager {
             operation.emoteId = newEmote.id;
             operation.success = true;
             operation.response = await this.getSlotsString(guildId);
-            Logger.log(`Successfully uploaded emote :${emoteName}: (${newEmote.id}) to guild ${guild.name} (${guildId})`);
+            this.clientRef.logger.bot(`Successfully uploaded emote :${emoteName}: (${newEmote.id}) to guild ${guild.name} (${guildId})`);
         } catch (error: any) {
-            Logger.log(`Failed to upload emote :${emoteName}: to guild ${guild.name} (${guildId}) : ${error as string}`);
+            this.clientRef.logger.err(`Failed to upload emote :${emoteName}: to guild ${guild.name} (${guildId}) : ${error as string}`);
             if (error instanceof DiscordAPIError) {
                 if (error.code === this.errors.limit) {
                     operation.response = `This server is over emote capacity. \n\n ${this.getSlotsString(guildId)}`;

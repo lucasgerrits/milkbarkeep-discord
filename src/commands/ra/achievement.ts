@@ -1,6 +1,5 @@
 import { ApplicationCommandOptionType, MessageFlags } from "discord.js";
 import { Command } from "../../core/Command";
-import { Logger } from "../../core/Logger";
 
 export default new Command({
     name: "ra-achievement",
@@ -23,7 +22,7 @@ export default new Command({
         try {
             await args.client.ra.sendIdAchievement(achievementId, args.interaction);
         } catch (error) {
-            Logger.log(error as string);
+            args.client.logger.err(error as string);
             await args.interaction.reply({ content: "Something went wrong with sending the message.", flags: MessageFlags.Ephemeral });
         }
     }

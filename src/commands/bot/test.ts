@@ -1,7 +1,6 @@
 import { PermissionFlagsBits } from "discord.js";
 import { Command } from "../../core/Command";
 import { Birthdays } from "../../core/Birthdays";
-import { Logger } from "../../core/Logger";
 
 export default new Command({
     name: "test",
@@ -9,6 +8,7 @@ export default new Command({
     defaultMemberPermissions: PermissionFlagsBits.Administrator,
     run: async (args): Promise<void> => {
         try {
+            args.client.logger.dev("Test began");
             await args.interaction.reply({ content: "Test began" });
             // ======================================================================
 
@@ -16,8 +16,10 @@ export default new Command({
 
             // ======================================================================
             await args.interaction.editReply({ content: "Test concluded successfully" });
+            args.client.logger.dev("Test concluded successfully");
         } catch (error: any) {
-            Logger.log(`[DEV] ${error}`);
+            args.client.logger.dev("Test concluded in error");
+            args.client.logger.dev(error as string);
             await args.interaction.editReply({ content: "Test concluded in error" });
         }
     }

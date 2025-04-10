@@ -1,7 +1,6 @@
 import { EmbedBuilder, TextChannel } from "discord.js";
 import puppeteer, { BoundingBox, Browser, ElementHandle, Page } from "puppeteer";
 import { ExtendedClient } from "./ExtendedClient";
-import { Logger } from "./Logger";
 import { OpenWeatherMapApi } from "../integrations/OpenWeatherMap-API";
 import { Util } from "../util/Util";
 import type { CurrentResponse } from "openweathermap-ts/dist/types";
@@ -9,22 +8,28 @@ import type { CurrentResponse } from "openweathermap-ts/dist/types";
 export class AppletonCam {
     private static mode: "cbs" | "fox" = "fox";
 
-    public static async getScreenBuffer(): Promise<Buffer> {
+    public static async getScreenBuffer(clientRef: ExtendedClient): Promise<Buffer> {
+        clientRef.logger.bot("Fetching weather cam screen");
         if (AppletonCam.mode === "cbs") {
-            return await AppletonCam.getCBSScreenBuffer();
+            return await AppletonCam.getCBSScreenBuffer(clientRef);
         } else {
-            return await AppletonCam.getFoxScreenBuffer();
+            return await AppletonCam.getFoxScreenBuffer(clientRef);
         }
     }
 
-    private static async getFoxScreenBuffer(): Promise<Buffer> {
+    private static async getFoxScreenBuffer(clientRef: ExtendedClient): Promise<Buffer> {
         const url: string = `https://fox11online.com/resources/ftptransfer/wluk/maps/AvenueCam.jpg`;
-        const response = await fetch(url);
-        const buffer = Buffer.from(await response.arrayBuffer());
-        return buffer;
+        try {
+            const response = await fetch(url);
+            const buffer = Buffer.from(await response.arrayBuffer());
+            return buffer;
+        } catch (error: any) {
+            clientRef.logger.err(error as string);
+            return Buffer.from("", "base64");
+        }
     }
 
-    private static async getCBSScreenBuffer(): Promise<Buffer> {
+    private static async getCBSScreenBuffer(clientRef: ExtendedClient): Promise<Buffer> {
         const width: number = 1920;
         const height: number = 1080;
         const url: string = `https://api.wetmet.net/widgets/stream/frame.php?ruc=245-02-01&width=${width}&height=${height}`;
@@ -55,14 +60,13 @@ export class AppletonCam {
                     }
                 })
             } else {
-                Logger.log("Video element not found or bounding box could not be determined.");
+                clientRef.logger.err("Video element not found or bounding box could not be determined.");
             }
         } catch (error: any) {
-            Logger.log(error);
+            clientRef.logger.err(error);
         } finally {
             await browser.close();
         }
-
         return Buffer.from(imageBase64Str, "base64");
     }
 
@@ -97,7 +101,7 @@ export class AppletonCam {
     };
 
     public static async sendToAll(clientRef: ExtendedClient): Promise<void> {
-        const buffer: Buffer = await this.getScreenBuffer();
+        const buffer: Buffer = await this.getScreenBuffer(clientRef);
         const embed = await this.createEmbed();
 
         const guilds: Array<string> = await clientRef.settings.getGuildIds();

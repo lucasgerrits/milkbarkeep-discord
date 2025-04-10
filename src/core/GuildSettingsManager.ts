@@ -2,16 +2,18 @@ import * as fs from "fs";
 import * as path from "path";
 import { glob } from "glob";
 import { GuildSettings } from "./GuildSettings";
-import { Logger } from "./Logger";
+import { ExtendedClient } from "./ExtendedClient";
 import { GlobalVarSchema, GuildSettingsSchema } from "../types/AppTypes";
 import type { FeatureName, GlobalVar, GlobalVarJson, GuildSettingsJson } from "../types/AppTypes";
 
 export class GuildSettingsManager {
+    private clientRef: ExtendedClient;
     private map: Map<string, GuildSettings>
     private dataDir: string = path.resolve(__dirname, './../../data');
     private guildsParentDir: string = path.resolve(this.dataDir, 'guilds');
 
-    constructor() {
+    constructor(clientRef: ExtendedClient) {
+        this.clientRef = clientRef;
         this.map = new Map<string, GuildSettings>();
         this.importAllSettings();
     }
@@ -49,10 +51,10 @@ export class GuildSettingsManager {
                 const settings: GuildSettings = new GuildSettings(validatedJson);
                 this.map.set(settings.id, settings);
             } catch (error: any) {
-                Logger.bot(`Invalid JSON settings for guild ${path.basename(guildDir)}: ${error}`);
+                this.clientRef.logger.err(`Invalid JSON settings for guild ${path.basename(guildDir)}: ${error}`);
             }
         } else {
-            Logger.bot(`No settings file located for guild ${path.basename(guildDir)}`);
+            this.clientRef.logger.err(`No settings file located for guild ${path.basename(guildDir)}`);
         }
     }
 
@@ -102,12 +104,12 @@ export class GuildSettingsManager {
                 }
             } catch (error: any) {
                 const errorString: string = `Invalid JSON for vars.json: ${error}`;
-                Logger.bot(errorString);
+                this.clientRef.logger.err(errorString);
                 throw new Error(errorString);
             }
         } else {
             const errorString: string = "vars.json not located";
-            Logger.bot(errorString);
+            this.clientRef.logger.err(errorString);
             throw new Error(errorString);
         }
     }
@@ -122,7 +124,7 @@ export class GuildSettingsManager {
             return newValue;
         } else {
             const errorString: string = "vars.json not located";
-            Logger.bot(errorString);
+            this.clientRef.logger.err(errorString);
         }
         return undefined;
     }
