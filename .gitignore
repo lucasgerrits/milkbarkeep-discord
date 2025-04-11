@@ -9,5 +9,6 @@ data/guilds/*
 !data/guilds/example
 
 # Ignore misc project dirs
+logs/
 node_modules/
 prod/

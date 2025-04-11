@@ -16,6 +16,9 @@ export class TimerManager {
     public initialize(): void {
         later.date.localTime();
 
+        const logRotateSchedule = later.parse.cron("0 0 * * *");
+        const logRotateInterval = later.setInterval(() => { this.clientRef.logger.rotate(); }, logRotateSchedule);
+
         const raFeedSchedule = later.parse.cron("*/15 * * * * ");
         const raFeedInterval = later.setInterval(() => { this.clientRef.ra.updateAllFeeds(); }, raFeedSchedule);
 
