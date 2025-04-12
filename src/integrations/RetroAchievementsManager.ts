@@ -48,10 +48,11 @@ export class RetroAchievementsManager {
         try {
             recent = await this.getRecentList(minutesToLookBack);
             if (recent.length === 0) {
-                this.clientRef.logger.ra("No new achievements found.");
+                this.clientRef.logger.ra("No new achievements found");
                 return;
             } else {
-                this.clientRef.logger.ra(`Updating feed with ${recent.length} new achievement(s).`);
+                const plural: string = recent.length === 1 ? "" : "s";
+                this.clientRef.logger.ra(`Updating feed with ${recent.length} new achievement${plural}`);
             }
         } catch (error: any) {
             this.clientRef.logger.err(error as string);
