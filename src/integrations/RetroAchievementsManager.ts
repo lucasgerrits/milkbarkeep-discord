@@ -56,7 +56,7 @@ export class RetroAchievementsManager {
         } catch (error: any) {
             this.clientRef.logger.err(error as string);
             const channel: TextChannel = this.clientRef.channels.cache.get(channelId) as TextChannel;
-            await channel.send({ content: `HTTP Error ${error.response.status}: The RA servers appear to be down.` });
+            await channel.send({ content: error as string });
             return;
         }
 
