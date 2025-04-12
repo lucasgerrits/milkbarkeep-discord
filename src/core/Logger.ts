@@ -69,6 +69,7 @@ export class Logger {
 
     public bar(): void {
         this.logWithoutTime(this.barStr);
+        this.logStream.write(`${this.barStr}\n`);
     }
 
     private colorize(strIn: string, color: ANSIColor = "default", background: ANSIColor = "default"): string {
