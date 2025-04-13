@@ -25,9 +25,10 @@ export default new Command({
 
         try {
             const listType: RARankingType = args.options.getSubcommand() as RARankingType;
+            const guildId: string = args.interaction.guildId as string;
 
             try {
-                await args.client.ra.sendRankingsList(listType, args.interaction);
+                await args.client.ra.sendRankingsList(guildId, listType, args.interaction);
             } catch (error: any) {
                 args.client.logger.err(error as string);
                 await (args.interaction as CommandInteraction).editReply({

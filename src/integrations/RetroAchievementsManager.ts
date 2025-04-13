@@ -1,13 +1,14 @@
+import * as fs from "fs";
+import * as path from "path";
 import { AchievementUnlocksMetadata, AuthObject, buildAuthorization, GameExtended } from "@retroachievements/api";
 import { ExtendedClient } from "../core/ExtendedClient";
 import { retroAchievements as api } from "../../data/apiKeys.json";
 import { RetroAchievementsApi } from "./RetroAchievementsApi";
 import { RetroAchievementsEmbeds } from "./RetroAchievementsEmbeds";
-import { achievementData, RARankingType, userPoints } from "../types/RATypes";
-import { EmbedBuilder, TextChannel } from "discord.js";
-import { users as raUsers } from "../../data/raUsers.json";
+import { achievementData, RARankingType, RASettingsJson, RASettingsSchema, userPoints } from "../types/RATypes";
+import { EmbedBuilder, Guild, TextChannel } from "discord.js";
 import { Util } from "../util/Util";
-import { ExtendedInteraction } from "../types/CommandTypes";
+import type { ExtendedInteraction } from "../types/CommandTypes";
 
 export class RetroAchievementsManager {
 
@@ -17,7 +18,6 @@ export class RetroAchievementsManager {
     private webApiKey: string = api.key;
     private auth: AuthObject;
     private clientRef: ExtendedClient;
-    private users: string[] = raUsers;
 
     /**
      * Docs: https://api-docs.retroachievements.org/getting-started.html#quick-start-client-library
@@ -30,29 +30,62 @@ export class RetroAchievementsManager {
         });
     }
 
+    // #region Json
+
+    private async getGuildRASettings(guildId: string): Promise<RASettingsJson> {
+        const guildDir: string = path.resolve(__dirname, './../../data/guilds', guildId);
+        const settingsFile: string = path.resolve(guildDir, "raUsers.json");
+
+        if (fs.existsSync(settingsFile)) {
+            const rawJson = JSON.parse(fs.readFileSync(settingsFile, 'utf8'));
+            try {
+                const validatedJson: RASettingsJson = RASettingsSchema.parse(rawJson);
+                return validatedJson;
+            } catch (error: any) {
+                this.clientRef.logger.err(`Invalid RA JSON settings for guild ${path.basename(guildDir)}: ${error}`);
+                throw error;
+            }
+        } else {
+            const errorStr: string = `No RA settings file located for guild ${path.basename(guildDir)}`;
+            this.clientRef.logger.err(errorStr);
+            throw new Error(errorStr);
+        }
+    }
+
+    private async getGuildRAUsers(guildId: string): Promise<Array<string>> {
+        return (await this.getGuildRASettings(guildId)).users;
+    }
+
     // #region Achievement Feeds
 
-    public async getRecentList(minutesToLookBack: number = this.defaultMinToLookBack): Promise<Array<achievementData>> {
+    public async getRecentList(userList: Array<string>, minutesToLookBack: number = this.defaultMinToLookBack): Promise<Array<achievementData>> {
         let recentList: Array<achievementData> = new Array<achievementData>;
         try {
-            recentList = await RetroAchievementsApi.getRecentList(this.auth, this.users, minutesToLookBack);
+            recentList = await RetroAchievementsApi.getRecentList(this.auth, userList, minutesToLookBack);
         } catch (error: any) {
             throw error;
         }
         return recentList;
     }
 
-    public async updateFeed(channelId: string, minutesToLookBack: number = this.defaultMinToLookBack) {
+    public async updateFeed(guildId: string, minutesToLookBack: number = this.defaultMinToLookBack) {
+        const userList: Array<string> = await this.getGuildRAUsers(guildId);
+        const channelId: string = await this.clientRef.settings.getChannelId(guildId, "raFeed");
+        const channel: TextChannel = await this.clientRef.channels.fetch(channelId) as TextChannel;
+        const channelName: string = channel.name;
+        const guild: Guild = await this.clientRef.guilds.fetch(guildId);
+        const guildName = guild.name;
+
         // Get array of recent achievements
         let recent: achievementData[];
         try {
-            recent = await this.getRecentList(minutesToLookBack);
+            recent = await this.getRecentList(userList, minutesToLookBack);
             if (recent.length === 0) {
-                this.clientRef.logger.ra("No new achievements found");
+                this.clientRef.logger.ra(`${guildName} ~ ${channelName} - No new achievements found`);
                 return;
             } else {
                 const plural: string = recent.length === 1 ? "" : "s";
-                this.clientRef.logger.ra(`Updating feed with ${recent.length} new achievement${plural}`);
+                this.clientRef.logger.ra(`${guildName} ~ ${channelName} - Updating feed with ${recent.length} new achievement${plural}`);
             }
         } catch (error: any) {
             this.clientRef.logger.err(error as string);
@@ -87,12 +120,8 @@ export class RetroAchievementsManager {
 
         for (const guildId of guilds) {
             // Check if RA feed enabled for each guild
-            if (!await this.clientRef.settings.isFeatureEnabled(guildId, "raFeed")) {
-                return;
-            }
-            // If so, get appropriate channel and create embeds
-            const channelId: string = await this.clientRef.settings.getChannelId(guildId, "raFeed");
-            this.updateFeed(channelId, minutesToLookBack);
+            if (!await this.clientRef.settings.isFeatureEnabled(guildId, "raFeed")) { return; }
+            await this.updateFeed(guildId, minutesToLookBack);
         }
     }
 
@@ -116,14 +145,16 @@ export class RetroAchievementsManager {
     // #region Rankings
 
     // TODO: Make content string guild agnostic
-    public async sendRankingsList(listType: RARankingType, destination: string | ExtendedInteraction): Promise<void> {
+    public async sendRankingsList(guildId: string, listType: RARankingType, destination: string | ExtendedInteraction): Promise<void> {
+        const userList: Array<string> = await this.getGuildRAUsers(guildId);
+
         let userPointsList: Array<userPoints>;
         if (listType === "daily") {
-            userPointsList = await RetroAchievementsApi.getDailyList(this.auth, this.users, true);
+            userPointsList = await RetroAchievementsApi.getDailyList(this.auth, userList, true);
         } else if (listType === "weekly") {
-            userPointsList = await RetroAchievementsApi.getWeeklyList(this.auth, this.users, true);
+            userPointsList = await RetroAchievementsApi.getWeeklyList(this.auth, userList, true);
         } else {
-            userPointsList = await RetroAchievementsApi.getAllTimeList(this.auth, this.users);
+            userPointsList = await RetroAchievementsApi.getAllTimeList(this.auth, userList);
         } 
         const embed: EmbedBuilder = RetroAchievementsEmbeds.createRankingEmbed(userPointsList, listType);
 
@@ -153,7 +184,7 @@ export class RetroAchievementsManager {
                 return;
             }
             const channelId: string = await this.clientRef.settings.getChannelId(guildId, "raWeekly");
-            await this.sendRankingsList("weekly", channelId);
+            await this.sendRankingsList(guildId, "weekly", channelId);
         }
     }
 }

@@ -30,15 +30,9 @@ export default new Command({
         const isFeedEnabled: boolean = await args.client.settings.isFeatureEnabled(guildId, "raFeed");
         if (!isDevTestChannel && !isFeedEnabled) { return; }
 
-        // Determine where to post
-        let toPostChannelId: string = devTestChannelId;
-        if (!isDevTestChannel) {
-            toPostChannelId = await args.client.settings.getChannelId(guildId, "raFeed");
-        }
-
         // Begin the feed update, report success
         try {
-            await args.client.ra.updateFeed(toPostChannelId, minutesToLookBack);
+            await args.client.ra.updateFeed(guildId, minutesToLookBack);
             await args.interaction.editReply({
                 content: "Update successful."
             });
