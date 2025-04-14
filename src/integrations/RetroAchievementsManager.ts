@@ -158,8 +158,11 @@ export class RetroAchievementsManager {
         } 
         const embed: EmbedBuilder = RetroAchievementsEmbeds.createRankingEmbed(userPointsList, listType);
 
+        const guild: Guild = this.clientRef.guilds.cache.get(guildId) as Guild;
+        const guildName: string = guild.name;
+        const contentStr: string = `${guildName} RA Users Ranking`;
         const message = {
-            content: "Bombsquad RA Users Ranking",
+            content: contentStr,
             embeds: [ embed ],
         };
 
