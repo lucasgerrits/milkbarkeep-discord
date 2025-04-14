@@ -16,7 +16,7 @@ export class OpenWeatherMapApi extends OpenWeatherMap {
         this.setUnits("imperial");
     }
 
-    public iconUrl(iconId: string): string {
+    private iconUrl(iconId: string): string {
         return `https://openweathermap.org/img/wn/${iconId}@2x.png`;
     }
 
@@ -42,7 +42,7 @@ export class OpenWeatherMapApi extends OpenWeatherMap {
             minute: '2-digit',
             hour12: true
         };
-        const formattedTime = new Intl.DateTimeFormat('en-US', options).format(now);
+        const formattedTime: string = new Intl.DateTimeFormat('en-US', options).format(now);
         
         // Formatted embed strings
         const tempStr: string = `${temp.toFixed(0)} °F (${Convert.fToC(temp).toFixed(0)} °C)`;

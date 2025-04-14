@@ -58,7 +58,7 @@ export class RetroAchievementsManager {
 
     // #region Achievement Feeds
 
-    public async getRecentList(userList: Array<string>, minutesToLookBack: number = this.defaultMinToLookBack): Promise<Array<achievementData>> {
+    private async getRecentList(userList: Array<string>, minutesToLookBack: number = this.defaultMinToLookBack): Promise<Array<achievementData>> {
         let recentList: Array<achievementData> = new Array<achievementData>;
         try {
             recentList = await RetroAchievementsApi.getRecentList(this.auth, userList, minutesToLookBack);
@@ -74,7 +74,7 @@ export class RetroAchievementsManager {
         const channel: TextChannel = await this.clientRef.channels.fetch(channelId) as TextChannel;
         const channelName: string = channel.name;
         const guild: Guild = await this.clientRef.guilds.fetch(guildId);
-        const guildName = guild.name;
+        const guildName: string = guild.name;
 
         // Get array of recent achievements
         let recent: achievementData[];

@@ -21,8 +21,8 @@ export class RetroAchievementsEmbeds {
     }
 
     private static createRankingString(userPointsList: userPoints[]): string {
-        const profileURL = "https://www.retroachievements.org/user/";
-        let output = "";
+        const profileURL: string = "https://www.retroachievements.org/user/";
+        let output: string = "";
         for (let i = 0; i < userPointsList.length; i++) {
             output += `${i + 1}. [${userPointsList[i].username}]` +
                 `(${profileURL}${userPointsList[i].username}): ` +

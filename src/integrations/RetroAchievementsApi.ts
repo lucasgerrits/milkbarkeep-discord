@@ -105,7 +105,7 @@ export class RetroAchievementsApi {
      */
     public static async getWeeklyList(auth: AuthObject, users: Array<string>, filterZero: boolean = false): Promise<Array<userPoints>> {
         const getLastMonday = (dateIn: Date): Date => {
-            const dateOut = new Date(dateIn);
+            const dateOut: Date = new Date(dateIn);
             dateOut.setDate(dateOut.getDate() - (dateOut.getDay() || 7) + 1);
             return dateOut;
         };
