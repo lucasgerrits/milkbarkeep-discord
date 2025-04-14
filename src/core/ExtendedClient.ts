@@ -15,7 +15,7 @@ import { GuildSettingsManager } from "./GuildSettingsManager";
 import { Logger } from "./Logger";
 import { MessageHandler } from "./MessageHandler";
 import { RetroAchievementsManager } from "../integrations/RetroAchievementsManager";
-import { TimerManager } from "./TimerManager";
+import { Scheduler } from "./Scheduler";
 import { EmoteManager } from "./EmoteManager";
 import { discordAppToken } from "../../data/config.json";
 import type { CommandType } from "../types/CommandTypes";
@@ -25,7 +25,7 @@ export class ExtendedClient extends Client {
     public shouldRegisterCommands: boolean = false;
     
     public logger: Logger;
-    public timers: TimerManager;
+    public scheduler: Scheduler;
     public messageHandler: MessageHandler;
     public settings: GuildSettingsManager;
     public emotes: EmoteManager;
@@ -55,7 +55,7 @@ export class ExtendedClient extends Client {
         this.shouldRegisterCommands = shouldRegisterCommands;
         this.start();
         this.ra = new RetroAchievementsManager(this);
-        this.timers = new TimerManager(this);
+        this.scheduler = new Scheduler(this);
         this.messageHandler = new MessageHandler(this);
         this.settings = new GuildSettingsManager(this);
         this.emotes = new EmoteManager(this);

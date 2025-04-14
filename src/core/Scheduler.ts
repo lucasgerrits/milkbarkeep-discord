@@ -3,7 +3,7 @@ import { Birthdays } from "./Birthdays";
 import { ExtendedClient } from "./ExtendedClient";
 import later from "@breejs/later";
 
-export class TimerManager {
+export class Scheduler {
     clientRef: ExtendedClient;
 
     constructor(client: ExtendedClient) {
