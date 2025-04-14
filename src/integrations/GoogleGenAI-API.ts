@@ -87,7 +87,6 @@ export class GoogleGenAIApi {
     }
 
     public async chat(message: Message): Promise<GenAIResponse> {
-        const channel = message.channel;
         const log = (str: string) => {
             client.logger.ai(`${!message.channel.isDMBased() ? `${message.guild?.name} ~ #${message.channel.name} -` : ""} ${message.member?.displayName}: ${str}`);
         }
