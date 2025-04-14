@@ -16,8 +16,8 @@ export class Scheduler {
     public initialize(): void {
         later.date.localTime();
 
-        const logRotateSchedule = later.parse.cron("0 0 * * *");
-        const logRotateInterval = later.setInterval(() => { this.clientRef.logger.rotate(); }, logRotateSchedule);
+        const midnightSchedule = later.parse.cron("0 0 * * *");
+        const midnightInterval = later.setInterval(() => { this.midnightChecks() });
 
         const raFeedSchedule = later.parse.cron("*/15 * * * * ");
         const raFeedInterval = later.setInterval(() => { this.clientRef.ra.updateAllFeeds(); }, raFeedSchedule);
@@ -27,8 +27,10 @@ export class Scheduler {
 
         const appletonCamSchedule = later.parse.cron("0 * * * *");
         const appletonCamInterval = later.setInterval(() => { AppletonCam.sendToAll(this.clientRef); }, appletonCamSchedule);
+    }
 
-        const birthdaySchedule = later.parse.cron("0 0 * * *");
-        const birthdayInterval = later.setInterval(() => { Birthdays.check(this.clientRef); }, birthdaySchedule);
+    private midnightChecks(): void {
+        this.clientRef.logger.rotate();
+        Birthdays.check(this.clientRef);
     }
 }
