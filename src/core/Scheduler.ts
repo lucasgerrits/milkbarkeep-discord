@@ -17,7 +17,7 @@ export class Scheduler {
         later.date.localTime();
 
         const midnightSchedule = later.parse.cron("0 0 * * *");
-        const midnightInterval = later.setInterval(() => { this.midnightChecks() });
+        const midnightInterval = later.setInterval(() => { this.midnightChecks() }, midnightSchedule);
 
         const raFeedSchedule = later.parse.cron("*/15 * * * * ");
         const raFeedInterval = later.setInterval(() => { this.clientRef.ra.updateAllFeeds(); }, raFeedSchedule);
