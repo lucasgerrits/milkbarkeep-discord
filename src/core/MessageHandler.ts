@@ -1,27 +1,29 @@
 import { Channel, Collection, Guild, Message, MessagePayload, MessageReplyOptions, MessageResolvable, TextChannel, User } from "discord.js";
 import { EmbedFixManager } from "./EmbedFixManager";
+import { ExtendedClient } from "./ExtendedClient";
 import { GoogleGenAIApi } from "../integrations/GoogleGenAI-API";
+import { TriggerMap } from "./TriggerMap";
 import { Util } from "../util/Util";
 import { consoleOutput } from "../../data/config.json";
-import { ExtendedClient } from "./ExtendedClient";
 
 export class MessageHandler{
     private clientRef: ExtendedClient;
+    private triggers: TriggerMap;
 
     constructor(clientRef: ExtendedClient) {
         this.clientRef = clientRef;
+        this.triggers = new TriggerMap(clientRef);
     }
 
     public async checkMessage(message: Message): Promise<void> {
         if (consoleOutput.enabled === true && consoleOutput.channelId === message.channelId) return;
 
-        // REACT CHECKS
+        // Replace these with trigger map
         this.milkCheck(message);
-
-        // COMMAND CHECKS
-        // Convert this to some kind of colllection for non-slash macro commands
         this.tipCheck(message);
 
+        this.triggers.check(message);
+        
         // MISC CHECKS
         EmbedFixManager.check(message);
         this.getAIResponse(message);
