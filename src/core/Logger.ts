@@ -40,13 +40,13 @@ export class Logger {
         this.logStream = this.createStream();
     }
     
-    public ai(str: string): void { this.log(`[AI] ${str}`, "brightCyan"); }
+    public ai(str: string): void { this.log(`[GAI] ${str}`, "brightCyan"); }
     public bot(str: string): void { this.log(`[BOT] ${str}`, "red"); }
     public dev(str: string): void { this.log(`[DEV] ${str}`, "default"); }
     public err(str: string): void { this.log(`[ERR] ${str}`, "default"); }
-    public ra(str: string): void { this.log(`[RA] ${str}`, "yellow"); }
+    public ra(str: string): void { this.log(`[RAC] ${str}`, "yellow"); }
     public sky(str: string): void { this.log(`[SKY] ${str}`, "blue"); }
-    public vc(str: string): void { this.log(`[VC] ${str}`, "brightMagenta"); }
+    public vc(str: string): void { this.log(`[VOC] ${str}`, "brightMagenta"); }
 
     public rotate(): void {
         this.logStream.end();
