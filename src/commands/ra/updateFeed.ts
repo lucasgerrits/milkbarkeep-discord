@@ -38,7 +38,7 @@ export default new Command({
             });
         } catch (error) {
             console.log(error);
-            await args.interaction.reply({ content: "Something went wrong with sending the message.", flags: MessageFlags.Ephemeral });
+            await args.interaction.editReply({ content: "Something went wrong with sending the message." });
         }
     }
 });
