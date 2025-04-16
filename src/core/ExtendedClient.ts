@@ -16,10 +16,12 @@ import { Logger } from "./Logger";
 import { MessageHandler } from "./MessageHandler";
 import { RetroAchievementsManager } from "../integrations/RetroAchievementsManager";
 import { Scheduler } from "./Scheduler";
+import { BlueskyManager } from "../integrations/BlueskyManager";
 import { EmoteManager } from "./EmoteManager";
 import { discordAppToken } from "../../data/config.json";
 import type { CommandType } from "../types/CommandTypes";
 import type { GlobalVar } from "../types/AppTypes";
+
 
 export class ExtendedClient extends Client {
     public shouldRegisterCommands: boolean = false;
@@ -33,6 +35,7 @@ export class ExtendedClient extends Client {
     private slashCommands: ApplicationCommandDataResolvable[] = [];
 
     public ra: RetroAchievementsManager;
+    public bsky: BlueskyManager;
 
     constructor(shouldRegisterCommands: boolean = false) {
         super({
@@ -59,6 +62,7 @@ export class ExtendedClient extends Client {
         this.messageHandler = new MessageHandler(this);
         this.settings = new GuildSettingsManager(this);
         this.emotes = new EmoteManager(this);
+        this.bsky = new BlueskyManager(this);
     }
 
     start(): void {

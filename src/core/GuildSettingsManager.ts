@@ -77,6 +77,10 @@ export class GuildSettingsManager {
         return this.getSettings(guildId).then(settings => settings.commands);
     }
 
+    public async getFeedUri(guildId:string): Promise<string | undefined> {
+        return this.getSettings(guildId).then(settings => settings.features["bskyFeed"].feedUri);
+    }
+
     public async getUnloggedChannelIds(guildId: string): Promise<Array<string>> {
         return this.getSettings(guildId).then(settings => settings.channelsNotToLog);
     }

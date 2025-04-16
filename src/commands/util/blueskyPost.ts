@@ -1,6 +1,6 @@
 import { ApplicationCommandOptionType, MessageFlags, PermissionFlagsBits } from "discord.js";
 import { Command } from "../../core/Command";
-import { BlueskyApi } from "../../integrations/Bluesky-API";
+import { BlueskyApi } from "../../integrations/BlueskyAPI";
 
 export default new Command({
     name: "bluesky-post",
@@ -21,7 +21,7 @@ export default new Command({
 
         try {
             const bsky: BlueskyApi = new BlueskyApi();
-            await bsky.post(args.client, content);
+            await bsky.post(content);
             
             await args.interaction.editReply({ content: "Message success." });
         } catch (error) {

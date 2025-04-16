@@ -10,6 +10,11 @@
             "enabled": false,
             "channelId": ""
         },
+        "bskyFeed": {
+            "enabled": false,
+            "channelId": "",
+            "feedUri": ""
+        },
         "emoteFeed": {
             "enabled": false,
             "channelId": ""

@@ -11,6 +11,7 @@ const FeatureSchema = z.object({
     enabled: z.boolean(),
     channelId: z.string(),
     output: z.string().optional(),
+    feedUri: z.string().optional(),
 });
 
 export const GuildSettingsSchema = z.object({
@@ -19,6 +20,7 @@ export const GuildSettingsSchema = z.object({
     features: z.object({
         appletonCam: FeatureSchema,
         birthdays: FeatureSchema,
+        bskyFeed: FeatureSchema,
         emoteFeed: FeatureSchema,
         modLog: FeatureSchema,
         oddball: FeatureSchema,
@@ -38,11 +40,13 @@ export type Feature = {
     enabled: boolean;
     channelId: string;
     output?: string;
+    feedUri?: string;
 };
 
 export type FeatureName =
     "appletonCam" |
     "birthdays" |
+    "bskyFeed" |
     "emoteFeed" |
     "modLog" |
     "oddball" |
