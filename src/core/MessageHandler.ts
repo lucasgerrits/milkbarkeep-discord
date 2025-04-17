@@ -66,7 +66,8 @@ export class MessageHandler{
         if (message.reference !== null) {
             const referencedMessage: Message = await message.channel.messages.fetch(message.reference.messageId as MessageResolvable);
             // If braille pattern blank detected, ignore reply (for embed fixes, welcome msg, etc)
-            if (Util.hasBrailleBlank(referencedMessage.content)) {
+            if (Util.hasBrailleBlank(referencedMessage.content) ||
+                (referencedMessage.embeds.length > 0 && referencedMessage.embeds[0].description && Util.hasBrailleBlank(referencedMessage.embeds[0].description))) {
                 return;
             }
         }

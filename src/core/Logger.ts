@@ -45,7 +45,7 @@ export class Logger {
     public dev(str: string): void { this.log(`[DEV] ${str}`, "default"); }
     public err(str: string): void { this.log(`[ERR] ${str}`, "default"); }
     public ra(str: string): void { this.log(`[RAC] ${str}`, "yellow"); }
-    public sky(str: string): void { this.log(`[SKY] ${str}`, "blue"); }
+    public sky(str: string): void { this.log(`[SKY] ${str}`, "brightBlue"); }
     public vc(str: string): void { this.log(`[VOC] ${str}`, "brightMagenta"); }
 
     public rotate(): void {

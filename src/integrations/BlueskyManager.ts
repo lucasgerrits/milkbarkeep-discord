@@ -1,22 +1,78 @@
 import { EmbedBuilder, Guild, TextChannel } from "discord.js";
 import { BlueskyApi } from "./BlueskyAPI";
 import { ExtendedClient } from "../core/ExtendedClient";
-import { FeedViewPost } from "@atproto/api/dist/client/types/app/bsky/feed/defs";
+import { FeedViewPost, PostView } from "@atproto/api/dist/client/types/app/bsky/feed/defs";
 import { Timestamps } from "../core/Timestamps";
+import { ProfileViewBasic } from "@atproto/api/dist/client/types/app/bsky/actor/defs";
+import { AppBskyFeedPost } from "@atproto/api";
+import { ParentPostInfo } from "../types/BlueskyTypes";
+import { Util } from "../util/Util";
 
 export class BlueskyManager {
     private clientRef: ExtendedClient;
+    private agent: BlueskyApi;
 
     constructor(clientRef: ExtendedClient) {
         this.clientRef = clientRef;
+        this.agent = new BlueskyApi();
     }
 
-    public async updateFeed(guildId: string) {
+    private postUrl(authorDid: string, postUri: string): string {
+        return `https://bsky.app/profile/${authorDid}/post/${postUri.split("/").pop()}`;
+    }
+
+    public async buildDiscordEmbedFromPost(post: PostView): Promise<EmbedBuilder | null> {
+        const author: ProfileViewBasic = post.author;
+        const authorName: string = author.displayName ? `${author.displayName} (${author.handle})` : author.handle;
+        const postUrl: string = this.postUrl(author.did, post.uri);
+        const indexedAt: string = post.indexedAt;
+        const timestampDefault: string = Timestamps.default(new Date(indexedAt));
+        const timestampRelative: string = Timestamps.relative(new Date(indexedAt));
+        let description: string = "";
+
+        const record: AppBskyFeedPost.Record | null = this.agent.getValidatedRecord(post.record);
+        if (!record) { return null; }
+        description += record?.text;
+        const reply: AppBskyFeedPost.ReplyRef | null = this.agent.getValidatedReplyRef(record.reply);
+        if (reply) {
+            const parentPost: ParentPostInfo | null = await this.agent.getParentPostInfo(reply.parent.uri);
+            if (parentPost) {
+                const parentPostUrl: string = this.postUrl(parentPost.author.did, parentPost.uri);
+                const parentPostAuthorLink: string = `[${parentPost.author.displayName} (${parentPost.author.handle})](<${parentPostUrl}>)`;
+                description += `\n\n> -# ↩ Replying to ${parentPostAuthorLink}:${Util.addBrailleBlank()}\n> -# ${parentPost?.text}`;
+            }
+        }
+
+        const messageEmbed = new EmbedBuilder()
+            .setColor("#1183FE")
+            .setAuthor({
+                name: authorName,
+                iconURL: author.avatar || undefined,
+                url: postUrl
+            })
+            .setDescription(description)
+            .setURL(postUrl)
+            .addFields(
+                { name: "", value: `${timestampDefault}\n${timestampRelative}`, inline: true },
+            );
+        return messageEmbed;
+    }
+
+    public async updateAllFeeds(): Promise<void> {
+        const guilds: Array<string> = await this.clientRef.settings.getGuildIds();
+        for (const guildId of guilds) {
+            if (!await this.clientRef.settings.isFeatureEnabled(guildId, "bskyFeed")) { return; }
+            await this.updateFeed(guildId);
+        }
+    }
+
+    public async updateFeed(guildId: string): Promise<void> {
         if (!await this.clientRef.settings.isFeatureEnabled(guildId, "bskyFeed")) { return; }
 
         const guild: Guild = await this.clientRef.guilds.fetch(guildId);
         const guildName: string = guild.name;
 
+        // Get guild specific feed settings
         const channelId: string = await this.clientRef.settings.getChannelId(guildId, "bskyFeed");
         if (!channelId) {
             this.clientRef.logger.err(`${guildName} - Bluesky feed enabled, but no channel set`);
@@ -31,8 +87,8 @@ export class BlueskyManager {
             return;
         }
 
-        const bskyApi: BlueskyApi = new BlueskyApi();
-        const recentPosts: FeedViewPost[] = await bskyApi.getListFeed(feedUri);
+        // Get feed posts
+        const recentPosts: FeedViewPost[] = await this.agent.getListFeed(feedUri);
         if (!recentPosts.length) {
             this.clientRef.logger.sky(`${guildName} ~ ${channelName} - No recent posts found`);
         } else {
@@ -40,36 +96,16 @@ export class BlueskyManager {
             this.clientRef.logger.sky(`${guildName} ~ ${channelName} - Updating feed with ${recentPosts.length} new post${plural}`);
         }
 
-        for (const { post } of recentPosts) {
-            const { author, record, indexedAt, uri, embed } = post;
-            const postUrl: string = `https://bsky.app/profile/${author.did}/post/${uri.split("/").pop()}`;
-            const timestamp: string = Timestamps.default(new Date(indexedAt));
-
-            const messageEmbed = new EmbedBuilder()
-                .setColor("#1183FE")
-                .setAuthor({ 
-                    name: author.displayName ?? author.handle,
-                    iconURL: author.avatar || undefined,
-                    url: `https://bsky.app/profile/${author.did}`
-                })
-                .setDescription((record as any)?.text)
-                .setURL(postUrl)
-                .setTimestamp(new Date(indexedAt))
-                .setFooter({ text: timestamp });
-            
+        // For each post, create an embed
+        for (const postWrapper of recentPosts) {
+            const post: PostView = postWrapper.post;
+            const embed: EmbedBuilder | null = await this.buildDiscordEmbedFromPost(post);
+            if (!embed) { continue; }
             try {
-                await channel.send({ embeds: [messageEmbed] });
+                await channel.send({ embeds: [embed] });
             } catch (error: any) {
                 this.clientRef.logger.err(`Failed to send Bluesky embed: ${error as string}`);
             }
-        }
-    }
-
-    public async updateAllFeeds(): Promise<void> {
-        const guilds: Array<string> = await this.clientRef.settings.getGuildIds();
-        for (const guildId of guilds) {
-            if (!await this.clientRef.settings.isFeatureEnabled(guildId, "bskyFeed")) { return; }
-            await this.updateFeed(guildId);
         }
     }
 }
