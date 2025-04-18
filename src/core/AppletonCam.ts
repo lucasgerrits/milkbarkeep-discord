@@ -6,7 +6,7 @@ import { Util } from "../util/Util";
 import type { CurrentResponse } from "openweathermap-ts/dist/types";
 
 export class AppletonCam {
-    private static mode: "cbs" | "fox" = "fox";
+    private static mode: "cbs" | "fox" = "cbs";
 
     public static async getScreenBuffer(clientRef: ExtendedClient): Promise<Buffer> {
         clientRef.logger.bot("Fetching weather cam screen");
