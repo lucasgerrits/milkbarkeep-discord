@@ -11,6 +11,7 @@ import { Util } from "../util/Util";
 export class BlueskyManager {
     private clientRef: ExtendedClient;
     private agent: BlueskyApi;
+    public readonly defaultMinutesToLookBack: number = 10;
 
     constructor(clientRef: ExtendedClient) {
         this.clientRef = clientRef;
@@ -58,15 +59,15 @@ export class BlueskyManager {
         return messageEmbed;
     }
 
-    public async updateAllFeeds(): Promise<void> {
+    public async updateAllFeeds(minutesToLookBack: number = this.defaultMinutesToLookBack): Promise<void> {
         const guilds: Array<string> = await this.clientRef.settings.getGuildIds();
         for (const guildId of guilds) {
             if (!await this.clientRef.settings.isFeatureEnabled(guildId, "bskyFeed")) { return; }
-            await this.updateFeed(guildId);
+            await this.updateFeed(guildId, minutesToLookBack);
         }
     }
 
-    public async updateFeed(guildId: string): Promise<void> {
+    public async updateFeed(guildId: string, minutesToLookBack: number = this.defaultMinutesToLookBack): Promise<void> {
         if (!await this.clientRef.settings.isFeatureEnabled(guildId, "bskyFeed")) { return; }
 
         const guild: Guild = await this.clientRef.guilds.fetch(guildId);
@@ -88,7 +89,7 @@ export class BlueskyManager {
         }
 
         // Get feed posts
-        const recentPosts: FeedViewPost[] = await this.agent.getListFeed(feedUri);
+        const recentPosts: FeedViewPost[] = await this.agent.getListFeed(feedUri, minutesToLookBack);
         if (!recentPosts.length) {
             this.clientRef.logger.sky(`${guildName} ~ ${channelName} - No recent posts found`);
         } else {

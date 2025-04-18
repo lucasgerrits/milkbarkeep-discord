@@ -12,7 +12,7 @@ import type { ExtendedInteraction } from "../types/CommandTypes";
 
 export class RetroAchievementsManager {
     public readonly sendEmbedsInChunks: boolean = false;
-    public readonly defaultMinToLookBack: number = 15;
+    public readonly defaultMinToLookBack: number = 10;
 
     private username: string = api.username;
     private webApiKey: string = api.key;

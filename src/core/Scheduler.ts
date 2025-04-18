@@ -19,11 +19,13 @@ export class Scheduler {
         const midnightSchedule = later.parse.cron("0 0 * * *");
         const midnightInterval = later.setInterval(() => { this.midnightChecks() }, midnightSchedule);
 
-        const bskyFeedSchedule = later.parse.cron("*/10 * * * *");
-        const bskyFeedInterval = later.setInterval(() => { this.clientRef.bsky.updateAllFeeds(); }, bskyFeedSchedule);
+        const bskyFeedMinutes: number = 10;
+        const bskyFeedSchedule = later.parse.cron(`*/${bskyFeedMinutes} * * * *`);
+        const bskyFeedInterval = later.setInterval(() => { this.clientRef.bsky.updateAllFeeds(bskyFeedMinutes); }, bskyFeedSchedule);
 
-        const raFeedSchedule = later.parse.cron("*/10 * * * *");
-        const raFeedInterval = later.setInterval(() => { this.clientRef.ra.updateAllFeeds(); }, raFeedSchedule);
+        const raFeedMinutes: number = 10;
+        const raFeedSchedule = later.parse.cron(`*/${raFeedMinutes} * * * *`);
+        const raFeedInterval = later.setInterval(() => { this.clientRef.ra.updateAllFeeds(raFeedMinutes); }, raFeedSchedule);
 
         const raWeeklySchedule = later.parse.cron("58 17 * * 0");
         const raWeeklyInteral = later.setInterval(() => { this.clientRef.ra.weeklyReport(); }, raWeeklySchedule);

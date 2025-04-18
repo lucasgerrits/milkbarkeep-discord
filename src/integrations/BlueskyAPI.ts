@@ -33,7 +33,7 @@ export class BlueskyApi {
         return postResult;
     }
 
-    public async getListFeed(listUri: string, minutesToLoookBack: number = 15): Promise<FeedViewPost[]> {
+    public async getListFeed(listUri: string, minutesToLoookBack: number = 10): Promise<FeedViewPost[]> {
         const now: Date = new Date();
         const xMinutesAgo: Date = new Date(now.getTime() - (minutesToLoookBack * 60 * 1000));
         const result = await this.agent.app.bsky.feed.getListFeed({
