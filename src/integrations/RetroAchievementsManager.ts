@@ -11,7 +11,7 @@ import { Util } from "../util/Util";
 import type { ExtendedInteraction } from "../types/CommandTypes";
 
 export class RetroAchievementsManager {
-
+    public readonly sendEmbedsInChunks: boolean = false;
     public readonly defaultMinToLookBack: number = 15;
 
     private username: string = api.username;
@@ -68,6 +68,17 @@ export class RetroAchievementsManager {
         return recentList;
     }
 
+    private async chunkEmbeds(recent: achievementData[]): Promise<Array<EmbedBuilder[]>> {
+        // For each result, create a new embed
+        const embeds: EmbedBuilder[] = [];
+        for (const row of recent) {
+            const embed: EmbedBuilder = await RetroAchievementsEmbeds.createFeedAchievementEmbed(row);
+            embeds.push(embed);
+        }
+        const chunkedEmbeds: Array<EmbedBuilder[]> = Util.chunkArray(embeds, 10);
+        return chunkedEmbeds;
+    }
+
     public async updateFeed(guildId: string, minutesToLookBack: number = this.defaultMinToLookBack) {
         const userList: Array<string> = await this.getGuildRAUsers(guildId);
         const channelId: string = await this.clientRef.settings.getChannelId(guildId, "raFeed");
@@ -93,22 +104,25 @@ export class RetroAchievementsManager {
             await channel.send({ content: error as string });
             return;
         }
-
-        // For each result, create a new embed
-        const embeds: EmbedBuilder[] = [];
-        for (const row of recent) {
-            const embed: EmbedBuilder = await RetroAchievementsEmbeds.createFeedAchievementEmbed(row);
-            embeds.push(embed);
-        }
-        const chunkedEmbeds: Array<EmbedBuilder[]> = Util.chunkArray(embeds, 10);
-
-        // Send all embeds in one message to chat
+        
         try {
             const channel: TextChannel = this.clientRef.channels.cache.get(channelId) as TextChannel;
-            for (const chunk of chunkedEmbeds) {
-                await channel.send({
-                    embeds: chunk,
-                });
+            if (this.sendEmbedsInChunks === false) {
+                // Send messages with 1 embed each
+                for (const row of recent) {
+                    const embed: EmbedBuilder = await RetroAchievementsEmbeds.createFeedAchievementEmbed(row);
+                    await channel.send({
+                        embeds: [ embed ],
+                    });
+                }
+            } else {
+                // Send messages with 10 embeds each
+                const chunkedEmbeds: Array<EmbedBuilder[]> = await this.chunkEmbeds(recent);
+                for (const chunk of chunkedEmbeds) {
+                    await channel.send({
+                        embeds: chunk
+                    })
+                }
             }
         } catch (error: any) {
             this.clientRef.logger.err(error as string);
