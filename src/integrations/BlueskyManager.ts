@@ -22,6 +22,10 @@ export class BlueskyManager {
         return `https://bsky.app/profile/${authorDid}/post/${postUri.split("/").pop()}`;
     }
 
+    private quoteify(text: string): string {
+        return text.replace(/\n/g, "\n> -# ");
+    }
+
     public async buildDiscordEmbedFromPost(post: PostView): Promise<EmbedBuilder | null> {
         const author: ProfileViewBasic = post.author;
         const authorName: string = author.displayName ? `${author.displayName} (${author.handle})` : author.handle;
@@ -29,18 +33,20 @@ export class BlueskyManager {
         const indexedAt: string = post.indexedAt;
         const timestampDefault: string = Timestamps.default(new Date(indexedAt));
         const timestampRelative: string = Timestamps.relative(new Date(indexedAt));
-        let description: string = "";
+        let description: string = " ";
 
         const record: AppBskyFeedPost.Record | null = this.agent.getValidatedRecord(post.record);
         if (!record) { return null; }
-        description += record?.text;
+        description = record?.text ?? " ";
         const reply: AppBskyFeedPost.ReplyRef | null = this.agent.getValidatedReplyRef(record.reply);
         if (reply) {
             const parentPost: ParentPostInfo | null = await this.agent.getParentPostInfo(reply.parent.uri);
             if (parentPost) {
                 const parentPostUrl: string = this.postUrl(parentPost.author.did, parentPost.uri);
                 const parentPostAuthorLink: string = `[${parentPost.author.displayName} (${parentPost.author.handle})](<${parentPostUrl}>)`;
-                description += `\n\n> -# ↩ Replying to ${parentPostAuthorLink}:${Util.addBrailleBlank()}\n> -# ${parentPost?.text}`;
+                const replyAuthorText: string = this.quoteify(`\n↩ Replying to ${parentPostAuthorLink}:${Util.addBrailleBlank()}`);
+                const replyPostText: string = (parentPost?.text) ? this.quoteify(`\n${parentPost?.text}`) : "";
+                description += `\n${replyAuthorText}${replyPostText}`;
             }
         }
 
