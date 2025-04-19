@@ -23,7 +23,9 @@ export class BlueskyManager {
     }
 
     private quoteify(text: string): string {
-        return text.replace(/\n/g, "\n> -# ");
+        return text.replace(/\n\n|\n(?!\n)/g, match =>
+            match === '\n\n' ? '\n> \n> -# ' : '\n> -# '
+        );
     }
 
     public async buildDiscordEmbedFromPost(post: PostView): Promise<EmbedBuilder | null> {
@@ -44,7 +46,7 @@ export class BlueskyManager {
             if (parentPost) {
                 const parentPostUrl: string = this.postUrl(parentPost.author.did, parentPost.uri);
                 const parentPostAuthorLink: string = `[${parentPost.author.displayName} (${parentPost.author.handle})](<${parentPostUrl}>)`;
-                const replyAuthorText: string = this.quoteify(`\n↩ Replying to ${parentPostAuthorLink}:${Util.addBrailleBlank()}`);
+                const replyAuthorText: string = `\n> -# ↩ Replying to ${parentPostAuthorLink}:${Util.addBrailleBlank()}`;
                 const replyPostText: string = (parentPost?.text) ? this.quoteify(`\n${parentPost?.text}`) : "";
                 description += `\n${replyAuthorText}${replyPostText}`;
             }
