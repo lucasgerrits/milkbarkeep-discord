@@ -28,18 +28,7 @@ export class BlueskyManager {
         );
     }
 
-    public async buildDiscordEmbedFromPost(post: PostView): Promise<EmbedBuilder | null> {
-        const author: ProfileViewBasic = post.author;
-        const authorName: string = author.displayName ? `${author.displayName} (${author.handle})` : author.handle;
-        const postUrl: string = this.postUrl(author.did, post.uri);
-        const indexedAt: string = post.indexedAt;
-        const timestampDefault: string = Timestamps.default(new Date(indexedAt));
-        const timestampRelative: string = Timestamps.relative(new Date(indexedAt));
-        let description: string = " ";
-
-        const record: AppBskyFeedPost.Record | null = this.agent.getValidatedRecord(post.record);
-        if (!record) { return null; }
-        description = record?.text ?? " ";
+    private async getReplyContext(record: AppBskyFeedPost.Record): Promise<string> {
         const reply: AppBskyFeedPost.ReplyRef | null = this.agent.getValidatedReplyRef(record.reply);
         if (reply) {
             const parentPost: ParentPostInfo | null = await this.agent.getParentPostInfo(reply.parent.uri);
@@ -48,9 +37,25 @@ export class BlueskyManager {
                 const parentPostAuthorLink: string = `[${parentPost.author.displayName} (${parentPost.author.handle})](<${parentPostUrl}>)`;
                 const replyAuthorText: string = `\n> -# ↩ Replying to ${parentPostAuthorLink}:${Util.addBrailleBlank()}`;
                 const replyPostText: string = (parentPost?.text) ? this.quoteify(`\n${parentPost?.text}`) : "";
-                description += `\n${replyAuthorText}${replyPostText}`;
+                return `\n${replyAuthorText}${replyPostText}`;
             }
         }
+        return "";
+    }
+
+    public async buildDiscordEmbedFromPost(post: PostView): Promise<EmbedBuilder | null> {
+        const record: AppBskyFeedPost.Record | null = this.agent.getValidatedRecord(post.record);
+        if (!record) { return null; }
+
+        const author: ProfileViewBasic = post.author;
+        const authorName: string = author.displayName ? `${author.displayName} (${author.handle})` : author.handle;
+        const postUrl: string = this.postUrl(author.did, post.uri);
+        const indexedAt: string = post.indexedAt;
+        const timestampDefault: string = Timestamps.default(new Date(indexedAt));
+        const timestampRelative: string = Timestamps.relative(new Date(indexedAt));
+        
+        let description: string = record?.text ?? " ";
+        description += await this.getReplyContext(record);
 
         const messageEmbed = new EmbedBuilder()
             .setColor("#1183FE")
