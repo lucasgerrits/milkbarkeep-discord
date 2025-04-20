@@ -51,7 +51,7 @@ export class RetroAchievementsEmbeds {
         // DATA STRING FORMATTING
         const baseURL: string = "https://www.retroachievements.org/";
         const avatarURL: string = "https://media.retroachievements.org/UserPic/" +
-            data.username + ".png";
+            data.username + ".png?cb=" + Date.now();
         const profileURL: string = baseURL + "user/" + data.username;
         const badgeURL: string = baseURL + data.badgeUrl;
         const gameURL: string = baseURL + "game/" + data.gameId;
