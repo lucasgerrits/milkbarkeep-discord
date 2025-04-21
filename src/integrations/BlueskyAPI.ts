@@ -1,8 +1,9 @@
-import { AppBskyFeedPost, AtpAgent } from "@atproto/api";
+import { AppBskyEmbedRecord, AppBskyFeedPost, AtpAgent } from "@atproto/api";
 import { bluesky as account } from "../../data/apiKeys.json";
 import { FeedViewPost, isThreadViewPost, PostView } from "@atproto/api/dist/client/types/app/bsky/feed/defs";
 import { ValidationResult } from "@atproto/lexicon/src/types";
 import { AuthorInfo, ParentPostInfo } from "../types/BlueskyTypes";
+import { ViewRecord } from "@atproto/api/dist/client/types/app/bsky/embed/record";
 
 export class BlueskyApi {
     private agent: AtpAgent;
@@ -78,5 +79,17 @@ export class BlueskyApi {
         const validation: ValidationResult = AppBskyFeedPost.validateReplyRef(replyRef);
         if (!validation.success) { return null; }
         return replyRef as AppBskyFeedPost.ReplyRef;
+    }
+
+    public getValidatedViewRecord(record: unknown): AppBskyEmbedRecord.ViewRecord | null {
+        if (
+            typeof record === "object" &&
+            record !== null &&
+            "$type" in record &&
+            (record as any).$type === "app.bsky.embed.record#viewRecord"
+        ) {
+            return record as ViewRecord;
+        }
+        return null;
     }
 }

@@ -4,7 +4,7 @@ import { ExtendedClient } from "../core/ExtendedClient";
 import { FeedViewPost, PostView } from "@atproto/api/dist/client/types/app/bsky/feed/defs";
 import { Timestamps } from "../core/Timestamps";
 import { ProfileViewBasic } from "@atproto/api/dist/client/types/app/bsky/actor/defs";
-import { AppBskyFeedPost } from "@atproto/api";
+import { AppBskyEmbedRecord, AppBskyEmbedRecordWithMedia, AppBskyFeedPost } from "@atproto/api";
 import { ParentPostInfo } from "../types/BlueskyTypes";
 import { Util } from "../util/Util";
 
@@ -43,6 +43,26 @@ export class BlueskyManager {
         return "";
     }
 
+    private async getQuoteContext(record: AppBskyFeedPost.Record): Promise<string> {
+        let embeddedRecord: unknown = null;
+        if (record.embed?.$type === "app.bsky.embed.record#view") {
+            const embed = record.embed as AppBskyEmbedRecord.View;
+            embeddedRecord = embed.record;
+        } else if (record.embed?.$type === "app.bsky.embed.recordWithMedia#view") {
+            const embed = record.embed as AppBskyEmbedRecordWithMedia.View;
+            embeddedRecord = embed.record?.record;
+        }
+        const quotePost: AppBskyEmbedRecord.ViewRecord | null = this.agent.getValidatedViewRecord(embeddedRecord);
+        if (!quotePost) return "";
+        console.log(quotePost);
+        const quotePostAuthor: ProfileViewBasic = quotePost.author;
+        const quotePostUrl: string = this.postUrl(quotePost.author.did, quotePost.uri);
+        const quotePostAuthorLink: string = `[${quotePostAuthor.displayName} (${quotePostAuthor.handle})](<${quotePostUrl}>)`;
+        const quotePostAuthorText: string = `\n> -# 🔁︎ Quoting ${quotePostAuthorLink}:${Util.addBrailleBlank()}`;
+        const quotePostText: string = ((quotePost.value as any)?.text) ? this.quoteify((quotePost.value as any).text) : "";
+        return `\n${quotePostAuthorText}${quotePostText}`;
+    }
+
     public async buildDiscordEmbedFromPost(post: PostView): Promise<EmbedBuilder | null> {
         const record: AppBskyFeedPost.Record | null = this.agent.getValidatedRecord(post.record);
         if (!record) { return null; }
@@ -56,6 +76,7 @@ export class BlueskyManager {
         
         let description: string = record?.text ?? " ";
         description += await this.getReplyContext(record);
+        description += await this.getQuoteContext(record);
 
         const messageEmbed = new EmbedBuilder()
             .setColor("#1183FE")
