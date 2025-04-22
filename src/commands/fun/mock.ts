@@ -21,6 +21,6 @@ export default new Command({
         };
         const mockedText: string = text.split("").map(mock).join("");
 
-        await args.interaction.reply(`**${mockEmote} ${mockedText}**`);
+        await args.interaction.reply(`## *${mockEmote} ${mockedText}*`);
     }
 });
