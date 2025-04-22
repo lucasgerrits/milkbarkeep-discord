@@ -73,10 +73,7 @@ export class BlueskyManager {
         const indexedAt: string = post.indexedAt;
         const timestampDefault: string = Timestamps.default(new Date(indexedAt));
         const timestampRelative: string = Timestamps.relative(new Date(indexedAt));
-        
-        let description: string = record?.text ?? " ";
-        description += await this.getReplyContext(record);
-        description += await this.getQuoteContext(record);
+        const description: string | null = (record?.text && record.text.trim().length > 0) ? record.text : null;
 
         const messageEmbed = new EmbedBuilder()
             .setColor("#1183FE")
@@ -90,6 +87,11 @@ export class BlueskyManager {
             .addFields(
                 { name: "", value: `${timestampDefault}\n${timestampRelative}`, inline: true },
             );
+        
+        const replyStr: string = await this.getReplyContext(record);
+        const quoteStr: string = await this.getQuoteContext(record);
+        if (replyStr) { messageEmbed.addFields({ name: "", value: replyStr }); }
+        if (quoteStr) { messageEmbed.addFields({ name: "", value: quoteStr }); }
         return messageEmbed;
     }
 
