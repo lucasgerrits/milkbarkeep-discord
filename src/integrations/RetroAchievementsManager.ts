@@ -79,29 +79,34 @@ export class RetroAchievementsManager {
         return chunkedEmbeds;
     }
 
-    public async updateFeed(guildId: string, minutesToLookBack: number = this.defaultMinToLookBack) {
+    public async updateFeed(guildId: string, minutesToLookBack: number = this.defaultMinToLookBack): Promise<void> {
         const userList: Array<string> = await this.getGuildRAUsers(guildId);
         const channelId: string = await this.clientRef.settings.getChannelId(guildId, "raFeed");
         const channel: TextChannel = await this.clientRef.channels.fetch(channelId) as TextChannel;
         const channelName: string = channel.name;
         const guild: Guild = await this.clientRef.guilds.fetch(guildId);
         const guildName: string = guild.name;
+        const logStr: string = `${guildName} ~ ${channelName} - `;
 
         // Get array of recent achievements
         let recent: achievementData[];
         try {
             recent = await this.getRecentList(userList, minutesToLookBack);
             if (recent.length === 0) {
-                this.clientRef.logger.ra(`${guildName} ~ ${channelName} - No new achievements found`);
+                this.clientRef.logger.ra(`${logStr}No new achievements found`);
                 return;
             } else {
                 const plural: string = recent.length === 1 ? "" : "s";
-                this.clientRef.logger.ra(`${guildName} ~ ${channelName} - Updating feed with ${recent.length} new achievement${plural}`);
+                this.clientRef.logger.ra(`${logStr}Updating feed with ${recent.length} new achievement${plural}`);
             }
         } catch (error: any) {
-            this.clientRef.logger.err(error as string);
+            this.clientRef.logger.err(`${logStr}${(error as string)}`);
             const channel: TextChannel = this.clientRef.channels.cache.get(channelId) as TextChannel;
-            await channel.send({ content: error as string });
+            try {
+                await channel.send({ content: `${(error as string)}` });
+            } catch (error: any) {
+                this.clientRef.logger.err(`${logStr}Failed to send error notif to RA feed channel`);
+            }
             return;
         }
         
@@ -129,7 +134,7 @@ export class RetroAchievementsManager {
         }
     }
 
-    public async updateAllFeeds(minutesToLookBack: number = this.defaultMinToLookBack) {
+    public async updateAllFeeds(minutesToLookBack: number = this.defaultMinToLookBack): Promise<void> {
         const guilds: Array<string> = await this.clientRef.settings.getGuildIds();
 
         for (const guildId of guilds) {
