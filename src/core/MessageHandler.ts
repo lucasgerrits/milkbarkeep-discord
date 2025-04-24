@@ -57,22 +57,34 @@ export class MessageHandler{
         return undefined;
     }
 
-    private async getAIResponse(message: Message): Promise<void> {
+    private async shouldAIRespond(message: Message): Promise<boolean> {
         // Check if bot user has been tagged specifically, not roles
         const botId: string = (this.clientRef.user as User).id;
-        if (!message.mentions.users.has(botId)) return;
-
-        // If replying to an existing bot message, check for special exit char
+        if (!message.mentions.users.has(botId)) { return false; }
+        // Check replied to message for inserted invisible character to determine if ignorable
         if (message.reference !== null) {
             const referencedMessage: Message = await message.channel.messages.fetch(message.reference.messageId as MessageResolvable);
-            // If braille pattern blank detected, ignore reply (for embed fixes, welcome msg, etc)
-            if (Util.hasBrailleBlank(referencedMessage.content) ||
-                (referencedMessage.embeds.length > 0 && referencedMessage.embeds[0].description && Util.hasBrailleBlank(referencedMessage.embeds[0].description))) {
-                return;
-            }
+            if (this.messageHasBrailleBlank(referencedMessage)) { return false; }
         }
+        // All clear
+        return true;
+    }
 
-        // Otherwise, newly tagged or repliable bot message, so generate AI response
+    private messageHasBrailleBlank(message: Message): boolean {
+        // Check for inserted braille pattern blank characters in message contents
+        if (Util.hasBrailleBlank(message.content) ||
+            (message.embeds.length > 0 && (
+                (message.embeds[0].description && Util.hasBrailleBlank(message.embeds[0].description)) ||
+                (message.embeds[0].author?.name && Util.hasBrailleBlank(message.embeds[0].author.name))
+            ))) {
+                return true;
+        } else {
+            return false;
+        }
+    }
+
+    private async getAIResponse(message: Message): Promise<void> {
+        if (await this.shouldAIRespond(message) === false) { return; }
         try {
             const gemini = new GoogleGenAIApi();
             const response = await gemini.chat(message);

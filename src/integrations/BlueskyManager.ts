@@ -35,7 +35,7 @@ export class BlueskyManager {
             if (parentPost) {
                 const parentPostUrl: string = this.postUrl(parentPost.author.did, parentPost.uri);
                 const parentPostAuthorLink: string = `[${parentPost.author.displayName} (${parentPost.author.handle})](<${parentPostUrl}>)`;
-                const replyAuthorText: string = `\n> -# ↩ Replying to ${parentPostAuthorLink}:${Util.addBrailleBlank()}`;
+                const replyAuthorText: string = `\n> -# ↩ Replying to ${parentPostAuthorLink}:`;
                 const replyPostText: string = (parentPost?.text) ? this.quoteify(`\n${parentPost?.text}`) : "";
                 return `\n${replyAuthorText}${replyPostText}`;
             }
@@ -45,6 +45,8 @@ export class BlueskyManager {
 
     private async getQuoteContext(record: AppBskyFeedPost.Record): Promise<string> {
         let embeddedRecord: unknown = null;
+        this.clientRef.logger.dev("record: ");
+        console.log(record);
         if (record.embed?.$type === "app.bsky.embed.record#view") {
             const embed = record.embed as AppBskyEmbedRecord.View;
             embeddedRecord = embed.record;
@@ -52,13 +54,16 @@ export class BlueskyManager {
             const embed = record.embed as AppBskyEmbedRecordWithMedia.View;
             embeddedRecord = embed.record?.record;
         }
+        this.clientRef.logger.dev("embeddedRecord: ");
+        console.log(embeddedRecord);
         const quotePost: AppBskyEmbedRecord.ViewRecord | null = this.agent.getValidatedViewRecord(embeddedRecord);
         if (!quotePost) return "";
+        this.clientRef.logger.dev("quotePost: ");
         console.log(quotePost);
         const quotePostAuthor: ProfileViewBasic = quotePost.author;
         const quotePostUrl: string = this.postUrl(quotePost.author.did, quotePost.uri);
         const quotePostAuthorLink: string = `[${quotePostAuthor.displayName} (${quotePostAuthor.handle})](<${quotePostUrl}>)`;
-        const quotePostAuthorText: string = `\n> -# 🔁︎ Quoting ${quotePostAuthorLink}:${Util.addBrailleBlank()}`;
+        const quotePostAuthorText: string = `\n> -# 🔁︎ Quoting ${quotePostAuthorLink}:`;
         const quotePostText: string = ((quotePost.value as any)?.text) ? this.quoteify((quotePost.value as any).text) : "";
         return `\n${quotePostAuthorText}${quotePostText}`;
     }
@@ -78,7 +83,7 @@ export class BlueskyManager {
         const messageEmbed = new EmbedBuilder()
             .setColor("#1183FE")
             .setAuthor({
-                name: authorName,
+                name: authorName + Util.addBrailleBlank(),
                 iconURL: author.avatar || undefined,
                 url: postUrl
             })
