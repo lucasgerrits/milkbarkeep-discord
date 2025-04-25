@@ -7,6 +7,7 @@ import { ProfileViewBasic } from "@atproto/api/dist/client/types/app/bsky/actor/
 import { AppBskyEmbedRecord, AppBskyEmbedRecordWithMedia, AppBskyFeedPost } from "@atproto/api";
 import { ParentPostInfo } from "../types/BlueskyTypes";
 import { Util } from "../util/Util";
+import { XRPCError } from '@atproto/xrpc';
 
 export class BlueskyManager {
     private clientRef: ExtendedClient;
@@ -45,8 +46,7 @@ export class BlueskyManager {
 
     private async getQuoteContext(record: AppBskyFeedPost.Record): Promise<string> {
         let embeddedRecord: unknown = null;
-        this.clientRef.logger.dev("record: ");
-        console.log(record);
+        this.clientRef.logger.deb(record);
         if (record.embed?.$type === "app.bsky.embed.record#view") {
             const embed = record.embed as AppBskyEmbedRecord.View;
             embeddedRecord = embed.record;
@@ -54,12 +54,10 @@ export class BlueskyManager {
             const embed = record.embed as AppBskyEmbedRecordWithMedia.View;
             embeddedRecord = embed.record?.record;
         }
-        this.clientRef.logger.dev("embeddedRecord: ");
-        console.log(embeddedRecord);
+        this.clientRef.logger.deb(embeddedRecord);
         const quotePost: AppBskyEmbedRecord.ViewRecord | null = this.agent.getValidatedViewRecord(embeddedRecord);
         if (!quotePost) return "";
-        this.clientRef.logger.dev("quotePost: ");
-        console.log(quotePost);
+        this.clientRef.logger.deb(quotePost);
         const quotePostAuthor: ProfileViewBasic = quotePost.author;
         const quotePostUrl: string = this.postUrl(quotePost.author.did, quotePost.uri);
         const quotePostAuthorLink: string = `[${quotePostAuthor.displayName} (${quotePostAuthor.handle})](<${quotePostUrl}>)`;
@@ -69,6 +67,7 @@ export class BlueskyManager {
     }
 
     public async buildDiscordEmbedFromPost(post: PostView): Promise<EmbedBuilder | null> {
+        this.clientRef.logger.deb(post);
         const record: AppBskyFeedPost.Record | null = this.agent.getValidatedRecord(post.record);
         if (!record) { return null; }
 
@@ -130,23 +129,32 @@ export class BlueskyManager {
         }
 
         // Get feed posts
-        const recentPosts: FeedViewPost[] = await this.agent.getListFeed(feedUri, minutesToLookBack);
-        if (!recentPosts.length) {
-            this.clientRef.logger.sky(`${guildName} ~ ${channelName} - No recent posts found`);
-        } else {
-            const plural: string = recentPosts.length === 1 ? "" : "s";
-            this.clientRef.logger.sky(`${guildName} ~ ${channelName} - Updating feed with ${recentPosts.length} new post${plural}`);
-        }
+        try{
+            const recentPosts: FeedViewPost[] = await this.agent.getListFeed(feedUri, minutesToLookBack);
 
-        // For each post, create an embed
-        for (const postWrapper of recentPosts) {
-            const post: PostView = postWrapper.post;
-            const embed: EmbedBuilder | null = await this.buildDiscordEmbedFromPost(post);
-            if (!embed) { continue; }
-            try {
-                await channel.send({ embeds: [embed] });
-            } catch (error: any) {
-                this.clientRef.logger.err(`Failed to send Bluesky embed: ${error as string}`);
+            if (!recentPosts.length) {
+                this.clientRef.logger.sky(`${guildName} ~ ${channelName} - No recent posts found`);
+            } else {
+                const plural: string = recentPosts.length === 1 ? "" : "s";
+                this.clientRef.logger.sky(`${guildName} ~ ${channelName} - Updating feed with ${recentPosts.length} new post${plural}`);
+            }
+    
+            // For each post, create an embed
+            for (const postWrapper of recentPosts) {
+                const post: PostView = postWrapper.post;
+                const embed: EmbedBuilder | null = await this.buildDiscordEmbedFromPost(post);
+                if (!embed) { continue; }
+                try {
+                    await channel.send({ embeds: [embed] });
+                } catch (error: unknown) {
+                    this.clientRef.logger.err(`${guildName} ~ ${channelName} - Failed to send Bluesky embed: ${error as string}`);
+                }
+            }
+        } catch (error: unknown) {
+            if (error instanceof XRPCError) {
+                this.clientRef.logger.err(`${guildName} ~ ${channelName} - Failed to fetch Bluesky list feed: ${error.error}`);
+            } else {
+                this.clientRef.logger.err(`${guildName} ~ ${channelName} - Failed to fetch Bluesky list feed: ${error as string}`);
             }
         }
     }

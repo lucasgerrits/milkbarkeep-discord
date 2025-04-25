@@ -37,15 +37,19 @@ export class BlueskyApi {
     public async getListFeed(listUri: string, minutesToLoookBack: number = 10): Promise<FeedViewPost[]> {
         const now: Date = new Date();
         const xMinutesAgo: Date = new Date(now.getTime() - (minutesToLoookBack * 60 * 1000));
-        const result = await this.agent.app.bsky.feed.getListFeed({
-            list: listUri,
-            limit: 100,
-        });
-        const recentPosts: FeedViewPost[] = result.data.feed.filter(item => {
-            const indexedAt = new Date(item.post.indexedAt);
-            return indexedAt >= xMinutesAgo;
-        }).reverse();
-        return recentPosts;
+        try {
+            const result = await this.agent.app.bsky.feed.getListFeed({
+                list: listUri,
+                limit: 100,
+            });
+            const recentPosts: FeedViewPost[] = result.data.feed.filter(item => {
+                const indexedAt = new Date(item.post.indexedAt);
+                return indexedAt >= xMinutesAgo;
+            }).reverse();
+            return recentPosts;
+        } catch(error: unknown) {
+            throw error;
+        }
     }
 
     public async getParentPostInfo(uri: string): Promise<ParentPostInfo | null> {
