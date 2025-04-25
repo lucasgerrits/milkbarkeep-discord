@@ -47,6 +47,12 @@ export class Logger {
     public ra(str: string): void { this.log(`[RAC] ${str}`, "yellow"); }
     public sky(str: string): void { this.log(`[SKY] ${str}`, "brightBlue"); }
     public vc(str: string): void { this.log(`[VOC] ${str}`, "brightMagenta"); }
+    
+    public deb(debugVar: any): void {
+        const wrapper = { debugVar };
+        this.log(`[DEB] ${Object.keys(wrapper)[0]}:`, "default");
+        console.log(debugVar);
+    }
 
     public rotate(): void {
         this.logStream.end();
