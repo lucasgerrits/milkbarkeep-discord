@@ -17,7 +17,7 @@ export default new Command({
             // ======================================================================
             await args.interaction.editReply({ content: "Test concluded successfully" });
             args.client.logger.dev("Test concluded successfully");
-        } catch (error: any) {
+        } catch (error: unknown) {
             args.client.logger.dev("Test concluded in error");
             args.client.logger.dev(error as string);
             await args.interaction.editReply({ content: "Test concluded in error" });

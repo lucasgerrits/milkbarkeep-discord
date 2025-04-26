@@ -50,7 +50,7 @@ export class GuildSettingsManager {
                 const validatedJson: GuildSettingsJson = GuildSettingsSchema.parse(rawJson);
                 const settings: GuildSettings = new GuildSettings(validatedJson);
                 this.map.set(settings.id, settings);
-            } catch (error: any) {
+            } catch (error: unknown) {
                 this.clientRef.logger.err(`Invalid JSON settings for guild ${path.basename(guildDir)}: ${error}`);
             }
         } else {
@@ -106,7 +106,7 @@ export class GuildSettingsManager {
                 } else {
                     throw new Error(`Global var not located: ${varName}`);
                 }
-            } catch (error: any) {
+            } catch (error: unknown) {
                 const errorString: string = `Invalid JSON for vars.json: ${error}`;
                 this.clientRef.logger.err(errorString);
                 throw new Error(errorString);

@@ -16,7 +16,7 @@ export default new Event(
         if (!member) {
             try{
                 member = await guild.members.fetch(newState.id);
-            } catch (error: any) {
+            } catch (error: unknown) {
                 client.logger.err(`${guild.name} - Failed to fetch voice chat member: ${error}`);
                 return;
             }

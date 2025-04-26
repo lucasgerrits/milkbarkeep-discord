@@ -33,7 +33,7 @@ export default new Event(
                 client,
                 interaction: interaction as ExtendedInteraction
             });
-        } catch (error: any) {
+        } catch (error: unknown) {
             client.logger.err(`${guildName} ~ ${channelName} - Error executing ${commandName}: ${error}`);
         }
     }

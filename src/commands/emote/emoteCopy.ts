@@ -61,7 +61,7 @@ export default new Command({
             const response: Response = await fetch(emote.cdnUrl);
             if (!response.ok) { throw new Error(`Failed to fetch emoji: ${response.statusText}`); }
             buffer = Buffer.from(await response.arrayBuffer());
-        } catch(error: any) {
+        } catch(error: unknown) {
             args.client.logger.err(error as string);
             await args.interaction.editReply({ content: "There was an issue with copying the emote image." });
             return;

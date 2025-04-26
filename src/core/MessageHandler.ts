@@ -43,7 +43,7 @@ export class MessageHandler{
                 const channel: Channel = this.clientRef.channels.cache.get(startingChannelId) as TextChannel;
                 const message: Message = await channel?.messages.fetch(possibleMessageId) as Message;
                 return message;
-            } catch (error: any) { }
+            } catch (error: unknown) { }
         }
         // Else try the rest belonging to this guild
         const textChannels: Collection<string, TextChannel> = guild.channels.cache.filter(channel => channel.isTextBased()) as Collection<string, TextChannel>;
@@ -51,7 +51,7 @@ export class MessageHandler{
             try {
                 const message: Message = await channel.messages.fetch(possibleMessageId);
                 return message;
-            } catch(error: any) { continue; }
+            } catch(error: unknown) { continue; }
         }
         this.clientRef.logger.err(`Failed to locate message in guild ${guild.name} (${guildId}) with id: ${possibleMessageId}`);
         return undefined;

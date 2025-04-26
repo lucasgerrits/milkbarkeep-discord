@@ -161,16 +161,8 @@ export class RetroAchievementsApi {
                 }
             });
             recentList.reverse();
-        } catch (error: any) {
-            let errorStr: string = `An error occurred while fetching user recent achievements: `;
-            if (error.response && error.response.status) {
-                errorStr += `(Status code:  ${error.response.status}) `;
-                // Server error range
-                if (error.response.status >= 500 && error.response.status < 600) {
-                    errorStr += `The RA servers appear to be down. `;
-                }
-            }
-            errorStr += error as string;
+        } catch (error: unknown) {
+            const errorStr: string = `An error occurred while fetching user recent achievements: ${(error as string)}`;
             throw new Error(errorStr);
         }
         return recentList;

@@ -51,10 +51,10 @@ export default new Command({
             contributions = (match && match[0]) ? match[0] : "";
 
             await browser.close();
-        } catch (error: any) {
+        } catch (error: unknown) {
             await browser.close();
-            args.client.logger.err(error);
-            await args.interaction.editReply({ content: error });
+            args.client.logger.err(error as string);
+            await args.interaction.editReply({ content: error as string });
             return;
         }
 
@@ -72,8 +72,8 @@ export default new Command({
                 embeds: [ embed ],
                 files: [ attachment ]
             });
-        } catch (error: any) {
-            args.client.logger.err(error);
+        } catch (error: unknown) {
+            args.client.logger.err(error as string);
             await args.interaction.editReply({ content: "Something went wrong with sending the message." });
         }
     }

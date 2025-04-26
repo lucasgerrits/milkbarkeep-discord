@@ -26,7 +26,7 @@ export default new Command({
         try {
             await clientUser.setAvatar(attachment.url);
             await args.interaction.editReply({ content: "Client avatar set successfully." });
-        } catch (error: any) {
+        } catch (error: unknown) {
             args.client.logger.err(error as string);
             await args.interaction.editReply({ content: "There was a problem with setting the client avatar." });
         }

@@ -85,14 +85,14 @@ export class EmoteManager {
                 try {
                     guild.emojis.cache.clear();
                     await guild.emojis.fetch(); // Ensure newest data
-                } catch (error: any) {
+                } catch (error: unknown) {
                     throw new Error("An error occurred while fetching emote data.");
                 }
                 */
                 operation.response = await this.getSlotsString(guildId);
                 this.clientRef.logger.bot(`Successfully deleted emote :${emote.name}: (${emoteId}) from guild ${guild.name} (${guildId})`);
             }
-        } catch (error: any) {
+        } catch (error: unknown) {
             this.clientRef.logger.err(`Failed to delete emote (${emoteId}) from guild ${guild.name} (${guildId}) : ${error as string}`);
             if (error instanceof DiscordAPIError) {
                 if (error.code === this.errors.permission) {
@@ -133,7 +133,7 @@ export class EmoteManager {
                 operation.response = `Previously :${oldName}:\n\n${await this.getSlotsString(guildId)}`;
                 this.clientRef.logger.bot(`Successfully renamed emote :${oldName}: to :${rename}: (${emoteId}) in guild ${guild.name} (${guildId})`);
             }
-        } catch (error: any) {
+        } catch (error: unknown) {
             this.clientRef.logger.err(`Failed to rename emote (${emoteId}) in guild ${guild.name} (${guildId}) : ${error as string}`);
             if (error instanceof DiscordAPIError) {
                 if (error.code === this.errors.permission) {
@@ -170,7 +170,7 @@ export class EmoteManager {
             operation.success = true;
             operation.response = await this.getSlotsString(guildId);
             this.clientRef.logger.bot(`Successfully uploaded emote :${emoteName}: (${newEmote.id}) to guild ${guild.name} (${guildId})`);
-        } catch (error: any) {
+        } catch (error: unknown) {
             this.clientRef.logger.err(`Failed to upload emote :${emoteName}: to guild ${guild.name} (${guildId}) : ${error as string}`);
             if (error instanceof DiscordAPIError) {
                 if (error.code === this.errors.limit) {

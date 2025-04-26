@@ -56,9 +56,9 @@ export class GoogleGenAIApi {
                     ]
                 }
             });
-        } catch (error: any) {
-            client.logger.err(error.message);
-            return error.response;
+        } catch (error: unknown) {
+            client.logger.err(error as string);
+            throw error;
         }
     }
 

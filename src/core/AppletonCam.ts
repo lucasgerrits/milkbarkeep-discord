@@ -23,7 +23,7 @@ export class AppletonCam {
             const response = await fetch(url);
             const buffer = Buffer.from(await response.arrayBuffer());
             return buffer;
-        } catch (error: any) {
+        } catch (error: unknown) {
             clientRef.logger.err(error as string);
             return Buffer.from("", "base64");
         }
@@ -62,8 +62,8 @@ export class AppletonCam {
             } else {
                 clientRef.logger.err("Video element not found or bounding box could not be determined.");
             }
-        } catch (error: any) {
-            clientRef.logger.err(error);
+        } catch (error: unknown) {
+            clientRef.logger.err(error as string);
         } finally {
             await browser.close();
         }

@@ -36,8 +36,8 @@ export default new Command({
             await args.interaction.editReply({
                 embeds: [ embed ]
             });
-        } catch (error: any) {
-            args.client.logger.err(error);
+        } catch (error: unknown) {
+            args.client.logger.err(error as string);
             await args.interaction.editReply({ content: "Something went wrong with sending the message." });
         }
     }

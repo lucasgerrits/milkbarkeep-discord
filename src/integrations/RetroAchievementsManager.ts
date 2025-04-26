@@ -41,7 +41,7 @@ export class RetroAchievementsManager {
             try {
                 const validatedJson: RASettingsJson = RASettingsSchema.parse(rawJson);
                 return validatedJson;
-            } catch (error: any) {
+            } catch (error: unknown) {
                 this.clientRef.logger.err(`Invalid RA JSON settings for guild ${path.basename(guildDir)}: ${error}`);
                 throw error;
             }
@@ -62,7 +62,7 @@ export class RetroAchievementsManager {
         let recentList: Array<achievementData> = new Array<achievementData>;
         try {
             recentList = await RetroAchievementsApi.getRecentList(this.auth, userList, minutesToLookBack);
-        } catch (error: any) {
+        } catch (error: unknown) {
             throw error;
         }
         return recentList;
@@ -99,12 +99,12 @@ export class RetroAchievementsManager {
                 const plural: string = recent.length === 1 ? "" : "s";
                 this.clientRef.logger.ra(`${logStr}Updating feed with ${recent.length} new achievement${plural}`);
             }
-        } catch (error: any) {
+        } catch (error: unknown) {
             this.clientRef.logger.err(`${logStr}${(error as string)}`);
             const channel: TextChannel = this.clientRef.channels.cache.get(channelId) as TextChannel;
             try {
                 await channel.send({ content: `${(error as string)}` });
-            } catch (error: any) {
+            } catch (error: unknown) {
                 this.clientRef.logger.err(`${logStr}Failed to send error notif to RA feed channel`);
             }
             return;
@@ -129,7 +129,7 @@ export class RetroAchievementsManager {
                     })
                 }
             }
-        } catch (error: any) {
+        } catch (error: unknown) {
             this.clientRef.logger.err(error as string);
         }
     }
@@ -156,7 +156,7 @@ export class RetroAchievementsManager {
                 content: "",
                 embeds: [ embed ],
             });
-        } catch (error: any) {
+        } catch (error: unknown) {
             throw error;
         }
     }

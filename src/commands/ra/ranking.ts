@@ -29,7 +29,7 @@ export default new Command({
 
             try {
                 await args.client.ra.sendRankingsList(guildId, listType, args.interaction);
-            } catch (error: any) {
+            } catch (error: unknown) {
                 args.client.logger.err(error as string);
                 await (args.interaction as CommandInteraction).editReply({
                     content: "Something went wrong with your request.",
