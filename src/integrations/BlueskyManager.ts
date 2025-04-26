@@ -32,6 +32,7 @@ export class BlueskyManager {
     private async getReplyContext(record: AppBskyFeedPost.Record): Promise<string> {
         const reply: AppBskyFeedPost.ReplyRef | null = this.agent.getValidatedReplyRef(record.reply);
         if (reply) {
+            this.clientRef.logger.deb("validated reply", reply);
             const parentPost: ParentPostInfo | null = await this.agent.getParentPostInfo(reply.parent.uri);
             if (parentPost) {
                 const parentPostUrl: string = this.postUrl(parentPost.author.did, parentPost.uri);
@@ -46,7 +47,7 @@ export class BlueskyManager {
 
     private async getQuoteContext(record: AppBskyFeedPost.Record): Promise<string> {
         let embeddedRecord: unknown = null;
-        this.clientRef.logger.deb(record);
+        this.clientRef.logger.deb("record passed to quote", record);
         if (record.embed?.$type === "app.bsky.embed.record#view") {
             const embed = record.embed as AppBskyEmbedRecord.View;
             embeddedRecord = embed.record;
@@ -54,10 +55,10 @@ export class BlueskyManager {
             const embed = record.embed as AppBskyEmbedRecordWithMedia.View;
             embeddedRecord = embed.record?.record;
         }
-        this.clientRef.logger.deb(embeddedRecord);
+        this.clientRef.logger.deb("embeddedRecord after typing", embeddedRecord);
         const quotePost: AppBskyEmbedRecord.ViewRecord | null = this.agent.getValidatedViewRecord(embeddedRecord);
         if (!quotePost) return "";
-        this.clientRef.logger.deb(quotePost);
+        this.clientRef.logger.deb("validated quote post", quotePost);
         const quotePostAuthor: ProfileViewBasic = quotePost.author;
         const quotePostUrl: string = this.postUrl(quotePost.author.did, quotePost.uri);
         const quotePostAuthorLink: string = `[${quotePostAuthor.displayName} (${quotePostAuthor.handle})](<${quotePostUrl}>)`;
@@ -67,7 +68,7 @@ export class BlueskyManager {
     }
 
     public async buildDiscordEmbedFromPost(post: PostView): Promise<EmbedBuilder | null> {
-        this.clientRef.logger.deb(post);
+        this.clientRef.logger.deb("post data passed to embed builder", post);
         const record: AppBskyFeedPost.Record | null = this.agent.getValidatedRecord(post.record);
         if (!record) { return null; }
 

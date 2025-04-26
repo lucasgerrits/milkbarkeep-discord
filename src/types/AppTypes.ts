@@ -102,3 +102,9 @@ export type ANSIColor =
 export type ANSIColorMap = {
     [key in ANSIColor]: [foreground: number, background: number];
 }
+
+export type LogOptions = {
+    color: ANSIColor;
+    background?: ANSIColor;
+    toFile?: boolean;
+}

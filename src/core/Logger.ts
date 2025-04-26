@@ -4,7 +4,7 @@ import { TextChannel } from "discord.js";
 import { Util } from "../util/Util";
 import { client } from "..";
 import { consoleOutput } from "../../data/config.json";
-import { ANSIColor, ANSIColorMap } from "../types/AppTypes";
+import { ANSIColor, ANSIColorMap, LogOptions } from "../types/AppTypes";
 
 export class Logger {
     private logStream: fs.WriteStream;
@@ -33,6 +33,12 @@ export class Logger {
         "brightWhite": [97, 107]
     };
 
+    private readonly defaultOptions: LogOptions = {
+        color: "default",
+        background: "default",
+        toFile: true
+    }
+
     constructor() {
         this.logDir = path.resolve(__dirname, "../../logs");
         if (!fs.existsSync(this.logDir)) { fs.mkdirSync(this.logDir); }
@@ -40,18 +46,17 @@ export class Logger {
         this.logStream = this.createStream();
     }
     
-    public ai(str: string): void { this.log(`[GAI] ${str}`, "brightCyan"); }
-    public bot(str: string): void { this.log(`[BOT] ${str}`, "red"); }
-    public dev(str: string): void { this.log(`[DEV] ${str}`, "default"); }
-    public err(str: string): void { this.log(`[ERR] ${str}`, "default"); }
-    public ra(str: string): void { this.log(`[RAC] ${str}`, "yellow"); }
-    public sky(str: string): void { this.log(`[SKY] ${str}`, "brightBlue"); }
-    public vc(str: string): void { this.log(`[VOC] ${str}`, "brightMagenta"); }
+    public ai(str: string): void { this.log(`[GAI] ${str}`, { color: "brightCyan" }); }
+    public bot(str: string): void { this.log(`[BOT] ${str}`, { color: "red" }); }
+    public dev(str: string): void { this.log(`[DEV] ${str}`, { color: "default" }); }
+    public err(str: string): void { this.log(`[ERR] ${str}`, { color: "default" }); }
+    public ra(str: string): void { this.log(`[RAC] ${str}`, { color: "yellow" }); }
+    public sky(str: string): void { this.log(`[SKY] ${str}`, { color: "brightBlue" }); }
+    public vc(str: string): void { this.log(`[VOC] ${str}`, { color: "brightMagenta" }); }
     
-    public deb(debugVar: any): void {
-        const wrapper = { debugVar };
-        this.log(`[DEB] ${Object.keys(wrapper)[0]}:`, "default");
-        console.log(debugVar);
+    public deb(label: string, value: any): void {
+        this.log(`[DEB] ${label}:`, { color: "default", toFile: false });
+        console.log(value);
     }
 
     public rotate(): void {
@@ -94,12 +99,12 @@ export class Logger {
         console.log(strColorized);
     }
 
-    public log(strIn: string, color: ANSIColor = "default", background: ANSIColor = "default"): void {
+    public log(strIn: string, options: LogOptions = this.defaultOptions): void {
         if (this.DEBUG === true) {
             const dateTimeStr: string = this.getDateTimeStr();
             this.logToDiscord(dateTimeStr, strIn);
-            this.logToConsole(dateTimeStr, strIn, color, background);
-            this.logToFile(dateTimeStr, strIn);
+            this.logToConsole(dateTimeStr, strIn, options.color, options.background);
+            (options.toFile) ?? this.logToFile(dateTimeStr, strIn);
         }
     }
 
