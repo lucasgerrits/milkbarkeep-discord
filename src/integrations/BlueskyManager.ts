@@ -45,14 +45,26 @@ export class BlueskyManager {
         return "";
     }
 
-    private async getQuoteContext(record: AppBskyFeedPost.Record): Promise<string> {
+    private async processBlueskyEmbed(post: PostView) {
+        // No embed
+        if (!post.embed) { return; }
+        // No images, quoted post
+        if (post.embed.$type === "app.bsky.embed.record#view") {
+
+        // Images, quoted post
+        } else if (post.embed.$type === "app.bsky.embed.recordWithMedia#view") {
+
+        }
+    }
+
+    private async getQuoteContext(post: PostView): Promise<string> {
         let embeddedRecord: unknown = null;
-        this.clientRef.logger.deb("record passed to quote", record);
-        if (record.embed?.$type === "app.bsky.embed.record#view") {
-            const embed = record.embed as AppBskyEmbedRecord.View;
+        if (!post.embed) { return ""; }
+        if (post.embed?.$type === "app.bsky.embed.record#view") {
+            const embed = post.embed as AppBskyEmbedRecord.View;
             embeddedRecord = embed.record;
-        } else if (record.embed?.$type === "app.bsky.embed.recordWithMedia#view") {
-            const embed = record.embed as AppBskyEmbedRecordWithMedia.View;
+        } else if (post.embed?.$type === "app.bsky.embed.recordWithMedia#view") {
+            const embed = post.embed as AppBskyEmbedRecordWithMedia.View;
             embeddedRecord = embed.record?.record;
         }
         this.clientRef.logger.deb("embeddedRecord after typing", embeddedRecord);
@@ -88,15 +100,18 @@ export class BlueskyManager {
                 url: postUrl
             })
             .setDescription(description)
-            .setURL(postUrl)
-            .addFields(
-                { name: "", value: `${timestampDefault}\n${timestampRelative}`, inline: true },
-            );
+            .setURL(postUrl);
         
+        //const quoteStr: string = await this.getQuoteContext(record);
+        //if (quoteStr) { messageEmbed.addFields({ name: "", value: quoteStr }); }
+        await this.processBlueskyEmbed(post);
+
+
         const replyStr: string = await this.getReplyContext(record);
-        const quoteStr: string = await this.getQuoteContext(record);
         if (replyStr) { messageEmbed.addFields({ name: "", value: replyStr }); }
-        if (quoteStr) { messageEmbed.addFields({ name: "", value: quoteStr }); }
+        
+
+        messageEmbed.addFields({ name: "", value: `${timestampDefault}\n${timestampRelative}`, inline: true });
         return messageEmbed;
     }
 

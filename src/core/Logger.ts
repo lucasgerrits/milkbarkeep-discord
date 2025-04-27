@@ -55,7 +55,7 @@ export class Logger {
     public vc(str: string): void { this.log(`[VOC] ${str}`, { color: "brightMagenta" }); }
     
     public deb(label: string, value: any): void {
-        this.log(`[DEB] ${label}:`, { color: "default", toFile: false });
+        this.log(`[DEB] ${label}:`, { color: "white", background: "red", toFile: false });
         console.log(value);
     }
 
