@@ -20,6 +20,7 @@
         "@breejs/later": "^4.2.0",
         "@google/genai": "^1.4.0",
         "@retroachievements/api": "^2.1.0",
+        "bree": "^9.2.4",
         "discord-screenshot": "github:mrTomatolegit/discord-screenshot",
         "discord.js": "^14.14.1",
         "glob": "^11.0.0",
