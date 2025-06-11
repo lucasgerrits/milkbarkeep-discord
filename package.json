@@ -12,13 +12,13 @@
     "devDependencies": {
         "@types/glob": "^8.1.0",
         "@types/luxon": "^3.4.2",
-        "@types/node": "^22.2.0",
+        "@types/node": "^24.0.1",
         "typescript": "^5.3.3"
     },
     "dependencies": {
         "@atproto/api": "^0.15.0",
         "@breejs/later": "^4.2.0",
-        "@google/genai": "^0.10.0",
+        "@google/genai": "^1.4.0",
         "@retroachievements/api": "^2.1.0",
         "discord-screenshot": "github:mrTomatolegit/discord-screenshot",
         "discord.js": "^14.14.1",
