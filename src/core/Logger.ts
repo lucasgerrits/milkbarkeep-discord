@@ -42,7 +42,7 @@ export class Logger {
     constructor() {
         this.logDir = path.resolve(__dirname, "../../logs");
         if (!fs.existsSync(this.logDir)) { fs.mkdirSync(this.logDir); }
-        this.currentDate = new Date().toISOString().split('T')[0];
+        this.currentDate = new Date().toLocaleDateString("en-CA");
         this.logStream = this.createStream();
     }
     
@@ -61,7 +61,7 @@ export class Logger {
 
     public rotate(): void {
         this.logStream.end();
-        this.currentDate = new Date().toISOString().split('T')[0];
+        this.currentDate = new Date().toLocaleDateString("en-CA");
         this.logStream = this.createStream();
     }
 
