@@ -3,7 +3,7 @@ import { z } from "zod";
 export type GlobalVar = boolean | number | string;
 
 const GlobalVarTypeSchema = z.union([z.string(), z.number(), z.boolean()]);
-export const GlobalVarSchema = z.record(GlobalVarTypeSchema);
+export const GlobalVarSchema = z.record(z.string(), GlobalVarTypeSchema);
 
 export type GlobalVarJson = z.infer<typeof GlobalVarSchema>;
 
