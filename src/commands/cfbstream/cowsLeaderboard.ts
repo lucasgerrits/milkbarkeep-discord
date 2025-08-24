@@ -1,4 +1,4 @@
-import { EmbedBuilder } from "discord.js";
+import { EmbedBuilder, inlineCode } from "discord.js";
 import { Command } from "../../core/Command";
 import { Timestamps } from "../../core/Timestamps";
 import urls from "../../../data/urls.json";
@@ -19,12 +19,12 @@ export default new Command({
                     launches: string,
                     most_recent: string,
                 }> = JSON.parse(text);
-
+                
                 let formattedText: string = "";
                 data.forEach((row) => {
                     const timestamp: string = Timestamps.relative(new Date(row.most_recent));
-                    formattedText += `${row.rank}. [${row.user_name}](https://www.twitch.tv/${row.user_name})` +
-                        `: ${row.launches}\t(${timestamp})\n`;
+                    formattedText += `### ${row.rank}. [${inlineCode(row.user_name)}](https://www.twitch.tv/${row.user_name})` +
+                        `: ${row.launches} \n-# ${timestamp}\n`;
                 });
                 
                 const embed: EmbedBuilder = new EmbedBuilder()
