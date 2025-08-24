@@ -20,7 +20,7 @@ export default new Command({
         //const defaultDir: string = `${__dirname}/../../../assets/`;
         //const defaultFileName: string = defaultDir + defaultFile;
 
-        const attachment = args.interaction.options.get("file", true)?.attachment as Attachment;
+        const attachment = args.options.get("file", true)?.attachment as Attachment;
         const clientUser: ClientUser = args.client.user as ClientUser;
 
         try {
