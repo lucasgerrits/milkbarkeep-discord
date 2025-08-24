@@ -102,7 +102,7 @@ export class GuildSettingsManager {
                 const rawJson = JSON.parse(fs.readFileSync(varsFile, "utf8"));
                 const vars: GlobalVarJson = GlobalVarSchema.parse(rawJson);
                 if (vars.hasOwnProperty(varName)) {
-                    return vars[varName];
+                    return vars[varName] as GlobalVar;
                 } else {
                     throw new Error(`Global var not located: ${varName}`);
                 }
