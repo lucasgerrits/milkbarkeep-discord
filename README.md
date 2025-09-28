@@ -8,7 +8,6 @@ A Discord chatbot written in TypeScript for Node.js using the discord.js library
 - Scheduler with birthday reminders
 - Hourly Appleton Cam feed screencap
 - Sound effect embeds playable in mobile + desktop
-- AI responses with reply chain context
 - Social media link embed fixes
 - Retro Achievements live earned feed
 - Automatic emote reaction to given triggers
@@ -17,8 +16,6 @@ A Discord chatbot written in TypeScript for Node.js using the discord.js library
 ## Consumes
 
 [discord.js](https://discord.js.org/)
-
-[Google Gen AI](https://github.com/googleapis/js-genai)
 
 [AT Protocol API](https://github.com/bluesky-social/atproto)
 
