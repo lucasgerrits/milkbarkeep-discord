@@ -1,7 +1,6 @@
 import { Channel, Collection, Guild, Message, MessagePayload, MessageReplyOptions, MessageResolvable, TextChannel, User } from "discord.js";
 import { EmbedFixManager } from "./EmbedFixManager";
 import { ExtendedClient } from "./ExtendedClient";
-import { GoogleGenAIApi } from "../integrations/GoogleGenAI-API";
 import { TriggerMap } from "./TriggerMap";
 import { Util } from "../util/Util";
 import { consoleOutput } from "../../data/config.json";
@@ -26,7 +25,6 @@ export class MessageHandler{
         
         // MISC CHECKS
         EmbedFixManager.check(message);
-        this.getAIResponse(message);
     }
 
     public isPossibleMessageId(possibleId: string): boolean {
@@ -57,19 +55,6 @@ export class MessageHandler{
         return undefined;
     }
 
-    private async shouldAIRespond(message: Message): Promise<boolean> {
-        // Check if bot user has been tagged specifically, not roles
-        const botId: string = (this.clientRef.user as User).id;
-        if (!message.mentions.users.has(botId)) { return false; }
-        // Check replied to message for inserted invisible character to determine if ignorable
-        if (message.reference !== null) {
-            const referencedMessage: Message = await message.channel.messages.fetch(message.reference.messageId as MessageResolvable);
-            if (this.messageHasBrailleBlank(referencedMessage)) { return false; }
-        }
-        // All clear
-        return true;
-    }
-
     private messageHasBrailleBlank(message: Message): boolean {
         // Check for inserted braille pattern blank characters in message contents
         if (Util.hasBrailleBlank(message.content) ||
@@ -80,24 +65,6 @@ export class MessageHandler{
                 return true;
         } else {
             return false;
-        }
-    }
-
-    private async getAIResponse(message: Message): Promise<void> {
-        if (await this.shouldAIRespond(message) === false) { return; }
-        try {
-            const gemini = new GoogleGenAIApi();
-            const response = await gemini.chat(message);
-            const options: MessageReplyOptions = {};
-            if (response.text) {
-                options.content = response.text;
-            }
-            if (response.imageBuffer) {
-                options.files = [ response.imageBuffer ];
-            }
-            await message.reply(options);
-        } catch(error) {
-            this.clientRef.logger.err(error as string);
         }
     }
 
