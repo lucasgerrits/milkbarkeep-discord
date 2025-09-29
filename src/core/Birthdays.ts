@@ -14,6 +14,20 @@ export class Birthdays {
         return todayInMMDD;
     }
 
+    public static getUpcomingDateFromMMDD(inputMMDD: string): Date {
+        const [month, day] = inputMMDD.split("-").map(Number);
+        const today = new Date();
+        const year = today.getFullYear();
+        let dateObj = new Date(year, month - 1, day);
+        if (
+            dateObj.getMonth() < today.getMonth() ||
+            (dateObj.getMonth() === today.getMonth() && dateObj.getDate() < today.getDate())
+        ) {
+            dateObj = new Date(year + 1, month - 1, day);
+        }
+        return dateObj;
+    }
+
     private static async getBirthdaysJsonArray(clientRef: ExtendedClient, guildId: string): Promise<Array<BirthdaysJson>> {
         const filePath: string = path.resolve(__dirname, `./../../data/guilds/${guildId}`, "birthdays.json");
         try {
@@ -28,6 +42,20 @@ export class Birthdays {
             clientRef.logger.err(error as string);
             return [];
         }
+    }
+
+    public static async getUpcomingByDayCount(clientRef: ExtendedClient, guildId: string, dayCount: number = 5) {
+        const isEnabled: boolean = await clientRef.settings.isFeatureEnabled(guildId, "birthdays");
+        if (!isEnabled) {
+            throw new Error(`Command used for feature not enabled in guild: ${guildId}`);
+        }
+        const todayInMMDD: string = this.getTodayInMMDD();
+        const birthdays: Array<BirthdaysJson> = await this.getBirthdaysJsonArray(clientRef, guildId);
+        const thisYear: Array<BirthdaysJson> = birthdays.filter(obj => obj.date >= todayInMMDD);
+        const nextYear: Array<BirthdaysJson> = birthdays.filter(obj => obj.date < todayInMMDD);
+        const ordered: Array<BirthdaysJson> = [...thisYear, ...nextYear];
+        const distinctDates = Array.from(new Set(ordered.map(obj => obj.date))).slice(0, dayCount);
+        return ordered.filter(obj => distinctDates.includes(obj.date));
     }
 
     public static async getUserBirthday(clientRef: ExtendedClient, guildId: string, userId: string): Promise<Array<BirthdaysJson>> {
