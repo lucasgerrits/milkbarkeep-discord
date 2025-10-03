@@ -5,7 +5,7 @@ import type { EmbedFixUrls } from "../types/FeatureTypes";
 
 export class EmbedFixManager {
     private static readonly domainMap: Map<string, string> = new Map<string, string>([
-        ["instagram.com", "vxinstagram.com"],
+        ["instagram.com", "eeinstagram.com"],
         ["tiktok.com", "vxtiktok.com"],
         ["twitter.com", "fixupx.com"],
         ["x.com", "fixupx.com"]
