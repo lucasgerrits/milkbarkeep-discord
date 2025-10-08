@@ -16,7 +16,7 @@
         "typescript": "^5.3.3"
     },
     "dependencies": {
-        "@atproto/api": "^0.16.3",
+        "@atproto/api": "^0.17.2",
         "@breejs/later": "^4.2.0",
         "@retroachievements/api": "^2.1.0",
         "discord-screenshot": "github:mrTomatolegit/discord-screenshot",
